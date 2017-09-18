@@ -1,0 +1,17 @@
+{
+  "name": "finalyearproject",
+  "version": "1.0.0",
+  "description": "This is Project for Final Year",
+  "main": "index.js",
+  "scripts": {
+    "test": "SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
+    "testWatch": "nodemon --exec 'npm test'",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "MEAN",
+    "stack"
+  ],
+  "author": "Himanshu Mittal",
+  "license": "MIT"
+}
