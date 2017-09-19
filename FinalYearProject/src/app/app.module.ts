@@ -5,14 +5,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './Components/navbar/navbar.component';
 import { RouteNotFoundComponent } from './Components/route-not-found/route-not-found.component';
-import { LoadingComponent } from './Components/src/app/Components/loading/loading.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    RouteNotFoundComponent,
-    LoadingComponent
+    RouteNotFoundComponent
   ],
   imports: [
     BrowserModule,
