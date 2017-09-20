@@ -31,7 +31,7 @@ module.exports = (router) => {
     router.post('/logout', authenticate, (request, response) => {
         request.student.removeToken(request.token).then(() => {
             response.status(200).send();
-        }).catch(() => response.status(200).send());
+        }).catch(() => response.status(401).send());
     });
 
     router.get('/me', authenticate, (request, response) => {
