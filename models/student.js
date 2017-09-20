@@ -2,38 +2,69 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
 
 const StudentSchema = new mongoose.Schema({
-    /*name,  */
-
-    /*email: {
-        type: String,
-        required: true,
-        maxlength: 50,
-        trim: true,
-        unique: true,
-        validate: {
-            validator: value => validator.isEmail(value),
-            message: '{VALUE} is not a Valid Email.'
+    name: {
+        firstName: {
+            type: String,
+            maxlength: 15,
+            required: true,
+            trim: true
+        },
+        middleName: {
+            type: String,
+            maxlength: 15,
+            trim: true
+        },
+        lastName: {
+            type: String,
+            maxlength: 15,
+            required: true,
+            trim: true
         }
     },
-    username: {
+    contact: {
+        phoneNumber: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 14,
+            validate: {
+                validator: value => validator.isMobilePhone(value, 'en-IN'),
+                message: '{VALUE} is not a Valid Phone Number.'
+            }
+        },
+        email: {
+            type: String,
+            required: true,
+            maxlength: 50,
+            trim: true,
+            unique: true,
+            validate: {
+                validator: value => validator.isEmail(value),
+                message: '{VALUE} is not a Valid Email.'
+            }
+        }
+    },
+    rollNumber: {
+        type: Number,
+        unique: true,
+        maxlength: 15,
+
+    },
+    branch: {
         type: String,
         required: true,
-        minlength: 5,
-        maxlength: 20,
-        trim: true,
-        unique: true,
-        validate: {
-            validator: value => validator.isAlphanumeric(value),
-            message: '{VALUE} is not a valid username'
-        }
+        maxlength: 10,
+
     },
     password: {
         type: String,
         required: true,
         minlength: 8, //unencrypted max pass length 64
-    } ,
+    },
     tokens: [{
         access: {
             type: String,
@@ -43,49 +74,49 @@ const StudentSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }] */
+    }]
 });
 
+StudentSchema.methods.generateAuthToken = function () {
 
-/*
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-
-
-
-UserSchema.methods.toJSON = function () {
-  var user = this;
-  var userObject = user.toObject();
-
-  return _.pick(userObject, ['_id', 'email']);
-};
-
-UserSchema.methods.generateAuthToken = function () {
-
-    var user = this;
+    var student = this;
     var access = 'auth';
-    var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
+    var token = jwt.sign({_id: student._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
-    user.tokens.push({access, token});
+    student.tokens.push({access, token});
 
-    return user.save().then(() => {
+    return student.save().then(() => {
         return token;
     });
 
 };
+    
+StudentSchema.methods.removeToken = function (token) {
+    var student = this;
 
-UserSchema.methods.removeToken = function (token) {
-    var user = this;
-
-    return user.update({
+    return student.update({
         $pull: {
             tokens: {token}
         }
     });
 };
 
-UserSchema.statics.findByToken = function (token) {
-    var User = this;
+StudentSchema.methods.toJSON = function () {
+    var studentObject = this.toObject();
+  
+    return _.pick(studentObject, ['_id', 'email']);
+};  //final  
+
+StudentSchema.methods.comparePassword = function (password) {
+    return bcrypt.compare(password, this.password, (error, response) => {
+        if (error) 
+            return false;
+        return true;
+    });
+};  //not final
+
+StudentSchema.statics.findByToken = function (token) {
+    var Student = this;
     var decoded;
 
     try {
@@ -94,7 +125,7 @@ UserSchema.statics.findByToken = function (token) {
         return Promise.reject(error);
     }
 
-    return User.findOne({
+    return Student.findOne({
         '_id': decoded._id,
         'tokens.token': token,
         'tokens.access': 'auth'
@@ -104,12 +135,12 @@ UserSchema.statics.findByToken = function (token) {
 StudentSchema.statics.findByCredentials = function (body) {
     var Student = this;
 
-    return User.findOne({email: body.email, username: body.username}).then((user) => {
-        if (!user)
+    return Student.findOne({email: body.email}).then((student) => {
+        if (!student)
             return Promise.reject();
-        
-        return new Promise((resolve, reject) => {
-            bcrypt.compare(body.password, user.password, (error, response) => {
+
+            return new Promise((resolve, reject) => {
+            bcrypt.compare(body.password, student.password, (error, response) => {
                 if (response) 
                     resolve(user);
                 else 
@@ -117,15 +148,8 @@ StudentSchema.statics.findByCredentials = function (body) {
             });
         });
     }).catch((error) => Promise.reject(error));
-};
-*/
-StudentSchema.methods.comparePassword = function (password) {
-    return bcrypt.compare(password, this.password, (error, response) => {
-        if (error) 
-            return false;
-        return true;
-    });
-};
+
+};  //final
 
 StudentSchema.pre('save', function (next) {
     var student = this;
@@ -138,7 +162,7 @@ StudentSchema.pre('save', function (next) {
             next();
         });
     });
-});
+}); //final
 
 const Student = mongoose.model('Student', StudentSchema);
 

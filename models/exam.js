@@ -16,7 +16,7 @@ const ExamSchema = new mongoose.Schema({
         maxlength: 500
     },
     allowedTime: {
-        type: number,
+        type: Number,
         required: true,
         minlength: 1
     },

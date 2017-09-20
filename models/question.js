@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const validator = require('validator');
 
-const QuestionSchema = new mongoose.Schema({
+const MultipleChoiceQuestionSchema = new mongoose.Schema({
     body: {
         type: String,
         required: true,
@@ -25,19 +25,20 @@ const QuestionSchema = new mongoose.Schema({
         trim: true
     },
     marksForCorrectAnswer: {
-        type: number,
+        type: Number,
         required: true,
         maxlength: 2
     },
     negativeMark: {
-        type: number,
+        type: Number,
         required: true,
         maxlength: 2
     },
     difficulty: {
-        type: number,
+        type: Number,
         min: 1,
-        max: 5
+        max: 5,
+        maxlength: 1
         /*validate: {
             validator: value => validator.isIn(value, [1, 2, 3, 4, 5]),
             message: '{VALUE} must be between 1 (lowest difficulty) to 5 (highest difficulty).'
@@ -47,5 +48,5 @@ const QuestionSchema = new mongoose.Schema({
 
 });
 
-const Question = mongoose.model('Question', QuestionSchema);
-module.exports = {Question};
+const MCQuestion = mongoose.model('MCQuestion', MultipleChoiceQuestionSchema);
+module.exports = {MCQuestion};
