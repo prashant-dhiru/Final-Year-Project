@@ -19,7 +19,7 @@ app.use('/user', userRoutes);
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (request, response) => {
-    response.send('Hello World!');
+    response.send('API service');
 });
 
 app.listen(port, () => {
