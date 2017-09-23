@@ -1,2 +1,5 @@
 node_modules/
 Client/node_modules/
+config/key.json
+models/admin.js
+Playground/

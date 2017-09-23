@@ -88,7 +88,7 @@ StudentSchema.methods.generateAuthToken = function () {
     return student.save().then(() => {
         return token;
     });
-
+    
 };
     
 StudentSchema.methods.removeToken = function (token) {
@@ -135,21 +135,21 @@ StudentSchema.statics.findByToken = function (token) {
 StudentSchema.statics.findByCredentials = function (body) {
     var Student = this;
 
-    return Student.findOne({email: body.email}).then((student) => {
+    return Student.findOne({'contact.email': body.email}).then((student) => {
         if (!student)
-            return Promise.reject();
+            return Promise.reject('No one found');
 
-            return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             bcrypt.compare(body.password, student.password, (error, response) => {
                 if (response) 
-                    resolve(user);
+                    resolve(student);
                 else 
                     reject(error);
             });
         });
     }).catch((error) => Promise.reject(error));
 
-};  //final
+};
 
 StudentSchema.pre('save', function (next) {
     var student = this;

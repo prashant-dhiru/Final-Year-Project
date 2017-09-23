@@ -29,6 +29,7 @@
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.10",
+    "mysql-model": "0.0.2",
     "validator": "^8.1.0"
   }
 }

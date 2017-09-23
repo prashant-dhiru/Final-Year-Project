@@ -44,9 +44,16 @@ const MultipleChoiceQuestionSchema = new mongoose.Schema({
             message: '{VALUE} must be between 1 (lowest difficulty) to 5 (highest difficulty).'
         }*/
     },
-    numberOfOptions: this.answerOptions.length
+    numberOfOptions: {
+        type: Number
+    }
 
 });
 
+MultipleChoiceQuestionSchema.pre('save', (next) => {
+    this.numberOfOptions = this.answerOptions.length;
+    next();
+});
+
 const MCQuestion = mongoose.model('MCQuestion', MultipleChoiceQuestionSchema);
-module.exports = {MCQuestion};
+module.exports = {MCQuestion, MultipleChoiceQuestionSchema};

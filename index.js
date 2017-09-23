@@ -8,18 +8,19 @@ const router = express.Router();
 const port = process.env.PORT || 3000;
 
 const mongoose = require('./db/mongoose');
-const userRoutes = require('./middleware/userRoutes')(router);
 
 const app = express();
 
 app.use(cors({origin: 'http://localhost:4200'}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/Client/dist'));
-app.use('/user', userRoutes);
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(require('./Routes/userRoutes'));
+app.use(require('./Routes/adminRoutes'));
+
 app.get('/', (request, response) => {
-    response.send('API service');
+    response.send('Hello World!');
 });
 
 app.listen(port, () => {

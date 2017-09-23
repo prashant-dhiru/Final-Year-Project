@@ -1,5 +1,4 @@
-const crypto = require('crypto');
-// Crypto is used to create the secret key (private key), it is inbuilt with nodejs
+const {key} = require('./key');
 
 var env = process.env.NODE_ENV || 'development';
 
@@ -8,13 +7,13 @@ var config = {
         PORT: 3000,
         db: 'FinalYearAppTest',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearAppTest',
-        JWT_SECRET: crypto.randomBytes(256).toString('hex')
+        JWT_SECRET: key
     },
     development: {
         PORT: 3000,
         db: 'FinalYearApp',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearApp',
-        JWT_SECRET: crypto.randomBytes(256).toString('hex')
+        JWT_SECRET: key
     }
 }
 

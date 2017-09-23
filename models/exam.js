@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const validator = require('validator');
-const {Question} = require('./question');
+const {MCQuestion, MultipleChoiceQuestionSchema} = require('./question');
 
 const ExamSchema = new mongoose.Schema({
     
@@ -31,8 +31,17 @@ const ExamSchema = new mongoose.Schema({
         required: true,
         minlength: 1,
         maxlength: 50
-    },
-    questions: [Question]
+     },
+    questions: [MultipleChoiceQuestionSchema],
+    // [{ type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' }]
+    numberOfQuestions: {
+        type: Number
+    }
+});
+
+ExamSchema.pre((next) => {
+    this.numberOfQuestions = this.questions.length;
+    next();
 });
 
 const Exam = mongoose.model('Exam', ExamSchema);
