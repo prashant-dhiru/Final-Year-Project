@@ -32,16 +32,8 @@ const ExamSchema = new mongoose.Schema({
         minlength: 1,
         maxlength: 50
      },
-    questions: [MultipleChoiceQuestionSchema],
-    // [{ type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' }]
-    numberOfQuestions: {
-        type: Number
-    }
-});
-
-ExamSchema.pre((next) => {
-    this.numberOfQuestions = this.questions.length;
-    next();
+    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' }]
+    //  [MultipleChoiceQuestionSchema]
 });
 
 const Exam = mongoose.model('Exam', ExamSchema);

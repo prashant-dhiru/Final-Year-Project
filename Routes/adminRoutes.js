@@ -18,48 +18,33 @@ router.post('/admin/createExam', adminAuthenticate, (request, response) => {
     if (!request.isAdmin)
         return response.status(401).send('You cannot access admin panel');
 
-    var exam = new Exam(request.body);  // use lodash created body instead of actual body here
-
-    if (!exam)
-        response.status(400).send('bad exam');
-
-    exam.save().then((examdoc) => {
-        response.send(examdoc);
-    }, (error) => response.status(400).send(error));
-
-});
-
-
-/*
-router.post('/admin/createExam', adminAuthenticate, (request, response) => {
-    if (!request.isAdmin)
-        return response.status(401).send('You cannot access admin panel');
-
-    questions = request.body.questions;
-
-    var idarray = [];
-
-    questions.forEach(function(element) {
-        var question = new MCQuestion(element);
-        question.save().then((doc) => idarray.push(doc._id), (error) => console.log(error));
-    });
-
     var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject', 'assignedInCharge']);
-    body.questions = idarray;
+    var exam = new Exam(body);
 
-    var exam = new Exam(body);  // use lodash created body instead of actual body here
+    request.body.questions.forEach(function(element) {
+        element.exam = exam._id;
+        var question = new MCQuestion(element);
+        exam.questions.push(question._id);
+        question.save().catch((error) => console.log(error));
+    });
 
     exam.save().then(() =>{
         response.send(exam);
-    }).catch((error) => {
-        response.status(400).send(error);
-    });
+    }).catch((error) => response.status(400).send(error));
 
 });
 
-*/
+router.get('/admin/exam/:id',adminAuthenticate, (request, response) => {
+    if (!request.isAdmin)
+        return response.status(401).send('You cannot access admin panel');
 
-
+    var id = request.params.id;
+    Exam.findById(id).populate('questions').exec((error, exam) => {
+        if (error) 
+            response.status(400).send(error);
+        response.send(exam);
+    });
+});
 
 router.post('/admin/login', (request, response) => {
     

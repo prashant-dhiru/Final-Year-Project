@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const validator = require('validator');
+const {Exam} = require('./exam');
 
 const MultipleChoiceQuestionSchema = new mongoose.Schema({
     body: {
@@ -44,15 +45,8 @@ const MultipleChoiceQuestionSchema = new mongoose.Schema({
             message: '{VALUE} must be between 1 (lowest difficulty) to 5 (highest difficulty).'
         }*/
     },
-    numberOfOptions: {
-        type: Number
-    }
+    exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }
 
-});
-
-MultipleChoiceQuestionSchema.pre('save', (next) => {
-    this.numberOfOptions = this.answerOptions.length;
-    next();
 });
 
 const MCQuestion = mongoose.model('MCQuestion', MultipleChoiceQuestionSchema);
