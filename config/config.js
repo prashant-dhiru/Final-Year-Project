@@ -7,13 +7,13 @@ var config = {
         PORT: 3000,
         db: 'FinalYearAppTest',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearAppTest',
-        JWT_SECRET: key
+        SESSION_KEY: key
     },
     development: {
         PORT: 3000,
         db: 'FinalYearApp',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearApp',
-        JWT_SECRET: key
+        SESSION_KEY: key
     }
 }
 

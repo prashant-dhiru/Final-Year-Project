@@ -1,22 +1,37 @@
 const _ = require('lodash');
 
-const {adminAuthenticate} = require('../middleware/adminAuthenticate');
+const {authenticate} = require('../middleware/authenticate');
 const {Exam} = require('../models/exam');
-const {findByCredentials, generateAuthToken} = require('../models/admin');
 const {MCQuestion} = require('../models/question');
 
 var express = require('express');
 var router = express.Router();
 
-router.get('/admin/me', adminAuthenticate, (request, response) => {
-    if (!request.isAdmin)
-        return response.status(401).send('You cannot access admin panel');
-    response.send('You ave access to admin panel');
+router.post('/admin/login', (request, response) => {
+    // do pickings here
+    
+    if (request.body.password === 'adminpass')
+        response.send('Unauthorised access');
+
+    request.session.isAuthenticated = true;
+    request.session.userLevel = 0;
+    response.send();
+    
 });
 
-router.post('/admin/createExam', adminAuthenticate, (request, response) => {
-    if (!request.isAdmin)
-        return response.status(401).send('You cannot access admin panel');
+router.get('/admin/me', authenticate, (request, response) => {
+    response.send('You have access to admin panel');
+});
+
+router.post('/admin/logout', (request, response) => {
+    request.session.destroy ((error) => {
+        if (error)
+            response.status(406).send(error);
+        response.status(200).send();
+    });
+});
+
+router.post('/admin/createExam', authenticate, (request, response) => {
 
     var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject', 'assignedInCharge']);
     var exam = new Exam(body);
@@ -34,9 +49,7 @@ router.post('/admin/createExam', adminAuthenticate, (request, response) => {
 
 });
 
-router.get('/admin/exam/:id',adminAuthenticate, (request, response) => {
-    if (!request.isAdmin)
-        return response.status(401).send('You cannot access admin panel');
+router.get('/admin/exam/:id', authenticate, (request, response) => {
 
     var id = request.params.id;
     Exam.findById(id).populate('questions').exec((error, exam) => {
@@ -44,18 +57,6 @@ router.get('/admin/exam/:id',adminAuthenticate, (request, response) => {
             response.status(400).send(error);
         response.send(exam);
     });
-});
-
-router.post('/admin/login', (request, response) => {
-    
-    if (!request.body.password)
-        response.status(400).send('Password Field Empty');
-    
-    if (findByCredentials(request.body.password).passTrue === false)
-        return response.send('Unauthorised access');
-
-    response.header('x-auth', generateAuthToken()).send();
-    
 });
 
 module.exports = router;

@@ -3,7 +3,6 @@ mongoose.Promise = global.Promise;
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
-const jwt = require('jsonwebtoken');
 
 const StudentSchema = new mongoose.Schema({
     name: {
@@ -64,73 +63,14 @@ const StudentSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 8, //unencrypted max pass length 64
-    },
-    tokens: [{
-        access: {
-            type: String,
-            required: true
-        },
-        token: {
-            type: String,
-            required: true
-        }
-    }]
+    }
 });
 
-StudentSchema.methods.generateAuthToken = function () {
-
-    var student = this;
-    var access = 'auth';
-    var token = jwt.sign({_id: student._id.toHexString(), access}, process.env.JWT_SECRET).toString();
-
-    student.tokens.push({access, token});
-
-    return student.save().then(() => {
-        return token;
-    });
-    
-};
-    
-StudentSchema.methods.removeToken = function (token) {
-    var student = this;
-
-    return student.update({
-        $pull: {
-            tokens: {token}
-        }
-    });
-};
-
 StudentSchema.methods.toJSON = function () {
-    var studentObject = this.toObject();
+    var student = this.toObject();
   
-    return _.pick(studentObject, ['_id', 'email']);
+    return _.pick(student, ['_id', 'email']);
 };  //final  
-
-StudentSchema.methods.comparePassword = function (password) {
-    return bcrypt.compare(password, this.password, (error, response) => {
-        if (error) 
-            return false;
-        return true;
-    });
-};  //not final
-
-StudentSchema.statics.findByToken = function (token) {
-    var Student = this;
-    var decoded;
-
-    try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        return Promise.reject(error);
-    }
-
-    return Student.findOne({
-        '_id': decoded._id,
-        'tokens.token': token,
-        'tokens.access': 'auth'
-    });
-};
 
 StudentSchema.statics.findByCredentials = function (body) {
     var Student = this;
