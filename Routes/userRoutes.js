@@ -32,6 +32,8 @@ router.post('/user/login', (request, response) => {
 }); // retest
 
 router.post('/user/logout', authenticate, (request, response) => {
+    if (!request.session.userLevel)
+        response.status(401).send();
     
     request.session.destroy ((error) => {
         if (error)
@@ -42,6 +44,8 @@ router.post('/user/logout', authenticate, (request, response) => {
 });
 
 router.get('/user/me', authenticate, (request, response) => {
+    if (!request.session.userLevel)
+        response.status(401).send();
     response.send(request.student);
 });
 

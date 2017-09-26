@@ -10,7 +10,7 @@ var router = express.Router();
 router.post('/admin/login', (request, response) => {
     // do pickings here
     
-    if (request.body.password === 'adminpass')
+    if (request.body.password !== 'adminpass')
         response.send('Unauthorised access');
 
     request.session.isAuthenticated = true;
@@ -20,10 +20,14 @@ router.post('/admin/login', (request, response) => {
 });
 
 router.get('/admin/me', authenticate, (request, response) => {
+    if (request.session.userLevel)
+        response.status(401).send();
     response.send('You have access to admin panel');
 });
 
-router.post('/admin/logout', (request, response) => {
+router.post('/admin/logout', authenticate, (request, response) => {
+    if (request.session.userLevel)
+        response.status(401).send();
     request.session.destroy ((error) => {
         if (error)
             response.status(406).send(error);
@@ -32,8 +36,10 @@ router.post('/admin/logout', (request, response) => {
 });
 
 router.post('/admin/createExam', authenticate, (request, response) => {
+    if (request.session.userLevel)
+        response.status(401).send();
 
-    var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject', 'assignedInCharge']);
+    var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject']);
     var exam = new Exam(body);
 
     request.body.questions.forEach(function(element) {
@@ -50,6 +56,8 @@ router.post('/admin/createExam', authenticate, (request, response) => {
 });
 
 router.get('/admin/exam/:id', authenticate, (request, response) => {
+    if (request.session.userLevel)
+        response.status(401).send();
 
     var id = request.params.id;
     Exam.findById(id).populate('questions').exec((error, exam) => {
