@@ -20,24 +20,26 @@ router.post('/admin/login', (request, response) => {
 });
 
 router.get('/admin/me', authenticate, (request, response) => {
-    if (request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 1)
+        return response.status(401).send();
+    
     response.send('You have access to admin panel');
 });
 
 router.post('/admin/logout', authenticate, (request, response) => {
-    if (request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 1)
+        return response.status(401).send();
+    
     request.session.destroy ((error) => {
         if (error)
-            response.status(406).send(error);
+            return response.status(406).send(error);
         response.status(200).send();
     });
 });
 
 router.post('/admin/createExam', authenticate, (request, response) => {
-    if (request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 1)
+        return response.status(401).send();
 
     var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject']);
     var exam = new Exam(body);
@@ -49,20 +51,18 @@ router.post('/admin/createExam', authenticate, (request, response) => {
         question.save().catch((error) => console.log(error));
     });
 
-    exam.save().then(() =>{
-        response.send(exam);
-    }).catch((error) => response.status(400).send(error));
+    exam.save().then(() => response.send(exam), (error) => response.status(400).send(error));
 
 });
 
 router.get('/admin/exam/:id', authenticate, (request, response) => {
-    if (request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 1)
+        return response.status(401).send();
 
     var id = request.params.id;
     Exam.findById(id).populate('questions').exec((error, exam) => {
         if (error) 
-            response.status(400).send(error);
+            return response.status(400).send(error);
         response.send(exam);
     });
 });

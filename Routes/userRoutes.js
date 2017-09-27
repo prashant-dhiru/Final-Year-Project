@@ -15,37 +15,37 @@ router.post('/user/signup', (request, response) => {
         request.session.userId = student._id;
         request.session.userLevel = 1;
         response.send(student);
-    }).catch((error) => {
-        response.status(400).send(error);
-    });
+    }, (error) => response.status(400).send(error));
 });
 
 router.post('/user/login', (request, response) => {
     body = _.pick(request.body, ['email', 'password']);
+    
     Student.findByCredentials(body).then((student) => {
         console.log('/user/login');
         request.session.isAuthenticated = true;
         request.session.userId = student._id;
         request.session.userLevel = 1;
         response.send(student);
-    }).catch((error) => response.status(403).send(error));
+    }, (error) => response.status(403).send(error));
+
 }); // retest
 
 router.post('/user/logout', authenticate, (request, response) => {
-    if (!request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 0)
+        return response.status(401).send();
     
     request.session.destroy ((error) => {
         if (error)
-            response.status(406).send(error);
+            return response.status(406).send(error);
         response.status(200).send();
     });
 
 });
 
 router.get('/user/me', authenticate, (request, response) => {
-    if (!request.session.userLevel)
-        response.status(401).send();
+    if (request.session.userLevel == 0)
+        return response.status(401).send();
     response.send(request.student);
 });
 
