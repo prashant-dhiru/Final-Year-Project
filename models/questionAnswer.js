@@ -30,12 +30,11 @@ QuestionAnswerSchema.pre('save', function (next) {
     MCQuestion.findById(questionAnswer.question).then((question) => {
         if (question.correctAnswer == questionAnswer.answerSubmitted) {
             questionAnswer.isAnswerCorrect = true;
-            marksObtained = question.marksForCorrectAnswer;
+            questionAnswer.marksObtained = question.marksForCorrectAnswer;
         } else {
             questionAnswer.isAnswerCorrect = false;
-            marksObtained = -question.negativeMark;
+            questionAnswer.marksObtained = -question.negativeMark;
         }
-        console.log(questionAnswer);
         next();
     }, (error) => {
         console.log('Error Occured in questionAnswer: ', error);

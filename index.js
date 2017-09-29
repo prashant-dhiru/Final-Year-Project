@@ -17,6 +17,7 @@ app.use(cors({origin: 'http://localhost:4200'}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/Client/dist'));
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use( session ({
 	secret : process.env.SESSION_KEY,
 	resave: true,
