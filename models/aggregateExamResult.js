@@ -7,27 +7,30 @@ const AggregateExamResultSchema = new mongoose.Schema({
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     questionAnalysis: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AggregateExamQuestionAnalysis' }],
     cutOff: {
-        type: Number //achieveable
+        type: Number,
+        default: 0
     },
     studentsAttempted: {
-        type: Number, //achieveable
-        value: 0
+        type: Number,
+        default: 0
     },
     averageQuestionsAttempted: {
-        type: Number //achieveable
+        type: Number,
+        default: 0
     },
     averageTimeSpent: {
-        type: Number //achieveable
+        type: Number,
+        default: 0
     }
 });
 
-AggregateExamResultSchema.methods.calculateComparableData = function () {
+// AggregateExamResultSchema.methods.calculateComparableData = function () {
     
-    var aggregateExamResult = this;
+//     var aggregateExamResult = this;
     
     
     
-};
+// };
 
 
 // AggregateExamResultSchema.statics.calculateComparableData = function (examID) {

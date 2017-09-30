@@ -28,6 +28,8 @@ QuestionAnswerSchema.pre('save', function (next) {
     var questionAnswer = this;
 
     MCQuestion.findById(questionAnswer.question).then((question) => {
+        // console.log('Question in QuestionAnswer: ', question);
+
         if (question.correctAnswer == questionAnswer.answerSubmitted) {
             questionAnswer.isAnswerCorrect = true;
             questionAnswer.marksObtained = question.marksForCorrectAnswer;

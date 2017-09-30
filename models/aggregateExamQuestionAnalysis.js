@@ -6,19 +6,28 @@ const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     question: { type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' },
     cutOff: {
-        type: Number
+        type: Number,
+        default: 0
     },
     avreageTimeTakenByStudents: {
-        type: Number
+        type: Number,
+        default: 0
     },
     avreageTimeTakenByStudentsWhoGotThisQuestionRight: {
-        type: Number
+        type: Number,
+        default: 0
     },
     percentageOfStudentWhoAttempted: {
-        type: Number
+        type: Number,
+        default: 0
     },
     percentageOfStudentWhoAttemptedGotThisQuestionRight: {
-        type: Number
+        type: Number,
+        default: 0
+    },
+    studentsAttempted: {
+        type: Number,
+        default: 0
     }
 });
 
