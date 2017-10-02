@@ -76,10 +76,36 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
         // push references
         questionAnswers.forEach(questionAnswer => {
              examReturn.questionAnswers.push(questionAnswer._id);
+             examReturn.marksObtained += questionAnswer.marksObtained;
         });
         // save exam
-        examReturn.save().then(() => response.send('Exam Successfully submitted in Store'), (error) => response.status(400).send(error));
+        examReturn.save().then((examReturnDoc) => {
+           
+            // console.log(examReturnDoc);
+            /** */
+            // AggregateExamResult.findOne({exam: id}).then((aggregateExamResult) => {
+            //     if (aggregateExamResult.studentsAttempted) {
+            //         aggregateExamResult.cutoff = (aggregateExamResult.cutoff + examReturnDoc.marksObtained) / 2;
+            //         aggregateExamResult.averageQuestionsAttempted = (aggregateExamResult.averageQuestionsAttempted + answers.length) / 2;
+            //         aggregateExamResult.averageTimeSpent = (aggregateExamResult.averageTimeSpent + examReturnDoc.totalTimeTaken) / 2;
+            //     } else {
+            //         aggregateExamResult.cutoff = examReturnDoc.marksObtained;
+            //         aggregateExamResult.averageQuestionsAttempted = answers.length;
+            //         aggregateExamResult.averageTimeSpent = examReturnDoc.totalTimeTaken;
+            //     }
+            //     aggregateExamResult.studentsAttempted = aggregateExamResult.studentsAttempted + 1;
+
+            //     return aggregateExamResult.save().then((doc) => console.log(doc));
+            // }).catch((error) => console.log(error));
+            // /** */
+
+
+
+            // make this last line
+            response.send('Exam Successfully submitted in Store');
+        }, (error) => response.status(400).send(error));
     });
+    
     
 }); // route when student submits the exam
 

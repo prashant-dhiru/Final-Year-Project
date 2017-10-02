@@ -19,7 +19,8 @@ const ExamReturnSchema = new mongoose.Schema({
         type: Number
     },
     marksObtained: {
-        type: Number
+        type: Number,
+        default: 0
         // (can be positive or negative, total of all question's' marksObtained)
     }
 });
@@ -28,37 +29,10 @@ ExamReturnSchema.statics.numberOfStudentsWhoAttemptedAQuestion = function (quest
     var ExamReturn = this;
     
     return ExamReturn.find({}).where('questionAnswers').in([questionId]).exec(function (error, examReturns) {
-        if (err) return 0;
+        if (err) return -1;
         else return examReturns.length;
     }); 
 };
-
-ExamReturnSchema.pre('save', function (next) {
-    var examReturn = this;
-
-    examReturn.questionAnswers.forEach((questionAnswerArrayItem) => {
-        QuestionAnswer.findById(questionAnswerArrayItem).then((questionAnswer) => {
-                examReturn.marksObtained += questionAnswer.marksObtained;
-        }).catch((error) => {
-            console.log(error);
-            next();
-        });
-    });
-    next();
-
-}); //final
-
-// ExamReturnSchema.post('save', function (next) {
-//     var examReturn = this;
-
-//     AggregateExamResult.find({exam: examReturn.exam}).then((aggregateExamResult) => {
-//         if (aggregateExamResult) {
-            
-//         } else {
-//             // newer
-//         }
-//     }).catch(() => console.log('Error Occured in Saving'));
-// });
 
 const ExamReturn = mongoose.model('ExamReturn', ExamReturnSchema);
 module.exports = {ExamReturn};

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const {ExamReturn} = require('./examReturn');
+const {pluckAndReduce} = require('../middleware/methods');
 
 const AggregateExamResultSchema = new mongoose.Schema({
 
@@ -24,78 +25,47 @@ const AggregateExamResultSchema = new mongoose.Schema({
     }
 });
 
-// AggregateExamResultSchema.methods.calculateComparableData = function () {
-    
-//     var aggregateExamResult = this;
-    
-    
-    
-// };
+AggregateExamResultSchema.statics.calculateComparableData = function (examID) {
 
-
-// AggregateExamResultSchema.statics.calculateComparableData = function (examID) {
-//     var AggregateExamResult = this;
-
-//     return ExamReturn.find({exam: examID}).populate('questionAnswers').then((examReturns) => {
+    // model method
+    
+    ExamReturn.find({exam: examID}).then((examReturns) => {
         
-//         if (!examReturns)
-//             return null;
+        this.find({exam: examID}).then((aggregateExamResult) => {
 
-//         var cutOff;
-//         var studentsAttempted = examReturns.length;  //total student who attempted the exam
-//         var totalQuestionAttempted;
-
-//         examReturns.forEach ((examReturn) => {
-//             cutOff = cutOff + examReturn.marksObtained;
-//             totalQuestionAttempted = totalQuestionAttempted + examReturn.totalQuestionAttempted;
-//         });
-
-//         cutOff = cutOff / studentsAttempted;
-
-//         var aggregateExamResult = new AggregateExamResult({ exam: examID, cutOff, studentsAttempted, averageQuestionsAttempted });
-
-//         examReturns.forEach ((examReturn) => {
-//             examReturn.questionAnswers.forEach ((questionAnswer) => {
-//                 /* exam: question:  cutOff: avreageTimeTakenByStudents: 
-//     avreageTimeTakenByStudentsWhoGotThisQuestionRight: percentageOfStudentWhoAttempted: 
-//     percentageOfStudentWhoAttemptedGotThisQuestionRight: */
-
-//     /* question: exam: timeTaken: answerSubmitted: isAnswerCorrect: marksObtained: */
-
+            aggregateExamResult.cutOff = pluckAndReduce(examReturns, 'marksObtained');
+            aggregateExamResult.averageQuestionsAttempted = pluckAndReduce(examReturns, 'totalQuestionAttempted');
+            aggregateExamResult.averageTimeSpent = pluckAndReduce(examReturns, 'totalTimeTaken');
+            aggregateExamResult.studentsAttempted = examReturns.length;
             
-//                 var temp = {};
-//                 temp.exam = examID;
-//                 temp.cutOff = temp.cutOff + questionAnswer.marksObtained; // divide by no of student
-//                 temp.avreageTimeTakenByStudents = temp.avreageTimeTakenByStudents + questionAnswer.timeTaken;
+            return aggregateExamResult.save().then((doc) => {
+                console.log(doc); //<--------------------------------------------------------------------------
+                return new Promise.resolve(doc);
+            });
 
-//                 temp.percentageOfStudentWhoAttempted = examReturn.questionAnswers.length / ExamReturn.numberOfStudentsWhoAttemptedAQuestion(/*pass question id here*/) * 100;
+        }).catch((error) => new Promise.reject(error));
+    }).catch((error) => new Promise.reject(error));
+        
+};
 
-//                 if (questionAnswer.isAnswerCorrect) {
-//                     temp.avreageTimeTakenByStudentsWhoGotThisQuestionRight = temp.avreageTimeTakenByStudentsWhoGotThisQuestionRight + questionAnswer.timeTaken;
+AggregateExamResultSchema.methods.calculateComparableDataByDocument = function () {
+    
+    //document method
+    ExamReturn.find({exam: this.exam}).then((examReturns) => {
 
-//                     // percentageOfStudentWhoAttemptedGotThisQuestionRight = 
-//                 }
+        this.cutOff = pluckAndReduce(examReturns, 'marksObtained');
+        this.averageQuestionsAttempted = pluckAndReduce(examReturns, 'totalQuestionAttempted');
+        this.averageTimeSpent = pluckAndReduce(examReturns, 'totalTimeTaken');
+        this.studentsAttempted = examReturns.length;
+                    
+    }).catch((error) => new Promise.reject(error));
+        
+    this.save().then((doc) => {
+        console.log(doc); //<--------------------------------------------------------------------------
+        return new Promise.resolve(doc);
+    }).catch((error) => new Promise.reject(error));
 
-//             });
-//         });
-
-
-//             /*
-
-//     request.body.questions.forEach(function(element) {
-//         element.exam = exam._id;
-//         var question = new MCQuestion(element);
-//         exam.questions.push(question._id);
-//         question.save().catch((error) => console.log(error));
-//     }); */    
-//     }).catch((error) => {
-//         console.log(error);
-//         return null;
-//     });
-//     //return type must be the final analysed populated document
-// };
-
-
+};
 
 const AggregateExamResult = mongoose.model('AggregateExamResult', AggregateExamResultSchema);
 module.exports = {AggregateExamResult};
