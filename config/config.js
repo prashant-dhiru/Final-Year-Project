@@ -1,22 +1,25 @@
-const {key} = require('./key');
+//importing the keys from key file
+const keys = require('./key');
 
+//if prod or test, taking value from it, or if not, then development
 var env = process.env.NODE_ENV || 'development';
 
 var config = {
     test: {
         PORT: 3000,
-        db: 'FinalYearAppTest',
+        DB: 'FinalYearAppTest',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearAppTest',
-        SESSION_KEY: key
+        SESSION_KEY: keys.TestKey
     },
     development: {
         PORT: 3000,
-        db: 'FinalYearApp',
+        DB: 'FinalYearApp',
         MONGODB_URI: 'mongodb://localhost:27017/FinalYearApp',
-        SESSION_KEY: key
+        SESSION_KEY: keys.DevKey
     }
 }
 
+//implementing the config environment variable to be set as environment variables
 if (env === 'development' || env === 'test') {
     var envConfig = config[env];
 

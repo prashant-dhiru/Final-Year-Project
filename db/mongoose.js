@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise;
 //connecting to the database, as database uri set in Environment variable
 mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true}).then(() => {
     //success case
-    console.log('Successfully connected to database: ' + process.env.db);
+    console.log('Successfully connected to database: ' + process.env.DB);
     //error case
 }, (error) => console.log(error.message));
 

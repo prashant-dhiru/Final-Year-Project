@@ -7,10 +7,8 @@ const _ = require('lodash');
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
 
-//creating a student Schema, later to be converted to model
 const StudentSchema = new mongoose.Schema({
     
-    //giving student a name field, with three subfields (first, middle and last name)
     name: {
         firstName: {
             type: String,
@@ -31,8 +29,6 @@ const StudentSchema = new mongoose.Schema({
         }
     },
 
-    //giving student a contact field, which will store all its contacts, ways to reach the student
-    // primarly email, phone, and residential address
     contact: {
         phoneNumber: {
             type: String,
@@ -61,12 +57,14 @@ const StudentSchema = new mongoose.Schema({
         }
     },
 
-    //giving student a password field, to store its password
     password: {
         type: String,
         required: true,
-        minlength: 8, //unencrypted max pass length 64
+        minlength: 8 //unencrypted max pass length 64
     }
+
+    //'name.firstName', 'name.lastName', 'name.middleName', 'contact.phoneNumber', 'contact.email', 'contact.address', 'password', '_id'
+
     //Schema definiton finishes here
 });
 
@@ -123,10 +121,12 @@ StudentSchema.pre('save', function (next) {
     //if password isn't modified, don't ncrypt the password
     if (!this.isModified('password')) return next();
 
-    //doing 23 rounds of salting for making the function slower
-    bcrypt.genSalt(23, (error, salt) => {
+    //doing 10 rounds of salting for making the function slower
+    bcrypt.genSalt(10, (error, salt) => {
+
         //sticking wth good condition, no error checking
         bcrypt.hash(this.password, salt, (error, hash) => {
+            
             //sticking wth good condition, no error checking
             this.password = hash;
             next();
@@ -135,7 +135,5 @@ StudentSchema.pre('save', function (next) {
     //method ends here
 });
 
-//making model from Schema, with Student name
 const Student = mongoose.model('Student', StudentSchema);
-//exporting the Model
 module.exports = {Student};

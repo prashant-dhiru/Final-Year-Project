@@ -1,6 +1,9 @@
+//importing required packages installed by npm
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 const validator = require('validator');
+
+//for depricated Promise of mongoose
+mongoose.Promise = global.Promise;
 
 const ExamSchema = new mongoose.Schema({
     
@@ -26,6 +29,10 @@ const ExamSchema = new mongoose.Schema({
         maxlength: 50
     },
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' }]
+
+    //'name', 'description', 'allowedTime', 'subject', 'questions', '_id,
+
+    //Schema definiton finishes here
 });
 
 const Exam = mongoose.model('Exam', ExamSchema);

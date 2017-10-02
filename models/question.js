@@ -1,6 +1,9 @@
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+//importing required packages installed by npm
 const validator = require('validator');
+const mongoose = require('mongoose');
+
+//for depricated Promise of mongoose
+mongoose.Promise = global.Promise;
 
 const MultipleChoiceQuestionSchema = new mongoose.Schema({
     body: {
@@ -46,6 +49,8 @@ const MultipleChoiceQuestionSchema = new mongoose.Schema({
     },
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }
 
+    //'body', 'answerOptions', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', 'exam', '_id'
+    //schema definition finishes here
 });
 
 const MCQuestion = mongoose.model('MCQuestion', MultipleChoiceQuestionSchema);

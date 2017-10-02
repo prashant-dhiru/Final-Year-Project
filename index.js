@@ -1,3 +1,6 @@
+//importing configurations files
+require('./config/config');
+
 //importing required packages installed by npm
 const express = require('express');
 const path = require('path');
@@ -6,9 +9,6 @@ const cors = require('cors');
 const session = require('express-session');
 //passing the session as required by MongoStore
 const MongoStore = require('connect-mongo')(session);
-
-//importing configurations files
-require('./config/config');
 
 //creating router to use external routes
 const router = express.Router();

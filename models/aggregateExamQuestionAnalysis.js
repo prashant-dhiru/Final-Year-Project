@@ -1,11 +1,16 @@
+//importing required packages installed by npm
 const mongoose = require('mongoose');
+const _ = require('lodash');
+
+//for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
 
+//importing other models to be used in methods
 const {ExamReturn} = require('./examReturn');
 const {QuestionAnswer} = require('./questionAnswer');
 
-const {specialMinifier} = require('../middleware/methods');
-const _ = require('lodash');
+//importing functions from methods middleware
+const {pluckAndReduce} = require('../middleware/methods');
 
 const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
 
@@ -37,9 +42,18 @@ const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
     }
 });
 
-AggregateExamQuestionAnalysisSchema.statics.calculateComparableQuestionData = function (examId, questionIdArray) {
 
-    //model method
+/**
+ * @param {String} examId
+ * @param {String[]} questionIdArray
+ * @param {AggregateExamQuestionAnalysis} this
+ * @return {any} Instance of this Model
+ * Model Method
+ */
+//////////////////////////////////////////////////////////////////////////////////////////
+ /* Following Method has been deprecated and in replacement, follow method is provided*/
+//////////////////////////////////////////////////////////////////////////////////////////
+/*AggregateExamQuestionAnalysisSchema.statics.calculateComparableQuestionData = function (examId, questionIdArray) {
 
     questionIdArray.forEach((questionId) => {
         this.find({exam: examId, question: questionId}).then((aggregateExamQuestionAnalysis) => {
@@ -76,44 +90,89 @@ AggregateExamQuestionAnalysisSchema.statics.calculateComparableQuestionData = fu
 
     //remake this method on document method
 
-};
+};*/
+
+
+// //below function discarded
+// AggregateExamQuestionAnalysisSchema.statics.getComparableQuestionData = function (examId) {
+    
+//     return this.findOne({exam: examId}).exec((error, aggregateExamQuestionAnalysisDocs) => {
+    
+//         if (error) return Promise.reject(error);
+
+//         var finalDocArray = [];
+
+//         aggregateExamQuestionAnalysisDocs.forEach((element) => {
+
+//             element.calculateComparableQuestionDataByDocument().then((aggregateExamQuestionAnalysis) => {
+                
+//                 finalDocArray.push(aggregateExamQuestionAnalysis);
+                
+//             }).catch((error) => Promise.reject(error));
+
+//         });
+//         return Promise.resolve(finalDocArray);
+
+//     });
+
+//     //method finishes here
+// };
 
 
 
 
-
+/**
+ * @param {any} this
+ * @return {Promise} calculateComparableQuestionDataByDocument
+ * resolved with instance of this model if success, rejected with error if error
+ * Document Method
+ */
 AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDocument = function () {
     
     // this = aggregateExamQuestionAnalysis;
     //questionAnswers.length number of students who attempted this question
 
-    QuestionAnswer.find({exam: this.exam, question: this.question}).then((questionAnswers) => {
-        finalObj = specialMinifier(questionAnswers, ['timeTaken', 'marksObtained']);
+    //finding Submitted answers of this exam and question
+    return QuestionAnswer.find({exam: this.exam, question: this.question}).then((questionAnswers) => {
+        
+        //calculating values for these two keys
+        this.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
+        this.avreageTimeTakenByStudents =  pluckAndReduce(questionAnswers, 'timeTaken');
 
-        this.cutOff = finalObj.marksObtained;
-        this.avreageTimeTakenByStudents = finalObj.timeTaken;
+        //total students who attempted this question
+        this.studentsAttempted = questionAnswers.length;
 
-        ExamReturn.find({exam: this.exam}).count((error, totalStudentWhoAttemptedExam) => {
-            if (error) return new Promise.reject(error);
+        //further calculation requires total number of students who attempted the exam
+        //finding the total number of students wo attempted the exam
+        return ExamReturn.find({exam: this.exam}).count((error, totalStudentWhoAttemptedExam) => {
+            
+            //handling any potential errors
+            if (error) return Promise.reject(error);
 
-            this.studentsAttempted = questionAnswers.length;
+            //calculating percentages based keys here
+            this.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
+            
 
+            //last two value requires the average times taken by students who got this question right
+            //mapping queestions answers to find the Answer which are correct and array of time taken
             var correctAnswerTimes = questionAnswers.map((questionAnswer) => {
                 if (questionAnswer.isAnswerCorrect) return questionAnswer.timeTaken;
             });
 
             //correctanswerTimes.length number of students who attempted this question and got right
 
+            this.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
+
             this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
 
-            this.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
-
-            this.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
+            //saving the document, returning the document on success, returning error on error
+            return this.save().then((doc) => Promise.resolve(doc)).catch((error) => Promise.reject(error));
         });
 
-    }).catch((error) => new Promise.reject(error));
+        //handling any potential errors
+    }).catch((error) => Promise.reject(error));
 
-    this.save().then((doc) => new Promise.resolve(doc)).catch((error) => new Promise.reject(error));    
+    //method finishes here
 };
 
 

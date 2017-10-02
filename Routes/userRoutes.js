@@ -8,7 +8,7 @@ var router = express.Router();
 //importing middleware from middleware directory to authenticate students
 const {authenticate} = require('../middleware/authenticate');
 
-//importing tudent model from models directory
+//importing models from models directory
 const {Student} = require('../models/student');
 
 
@@ -24,7 +24,7 @@ router.post('/user/signup', (request, response) => {
         return response.status(405).send(`SomeOne Already logged in.`);
     
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
-    var body = _.pick(request.body, ['name.firstName', 'name.lastName', 'name.middleName', 'contact.phoneNumber', 'contact.email', 'rollNumber', 'branch', 'password']);
+    var body = _.pick(request.body, ['name.firstName', 'name.lastName', 'name.middleName', 'contact.phoneNumber', 'contact.email', 'contact.address', 'password']);
     
     //creating a new student from loasdh picked body here
     var student = new Student(body);
@@ -51,6 +51,11 @@ router.post('/user/signup', (request, response) => {
  * This is a public route i.e. unauthorised users can also access this
  */
 router.post('/user/login', (request, response) => {
+
+    //checking if someone is already logged in (student/admin)
+    if (request.session.isAuthenticated)
+        // if logged in, sending Method no allowed status code with message
+        return response.status(405).send(`SomeOne Already logged in.`);
 
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
     body = _.pick(request.body, ['email', 'password']);
@@ -87,10 +92,9 @@ router.post('/user/logout', authenticate, (request, response) => {
     //destroying the session, removing it from database
     request.session.destroy ((error) => {
         //if error occurs while destroying the database, error with Internal service error status code is send
-        if (error)
-            return response.status(500).send(error);
+        if (error) return response.status(500).send(error);
         
-        //on successful deletion of status code, response with OK status code is sent
+        //on successful deletion of session, response with OK status code is sent
         response.send('User Logged out');
     });
 
