@@ -1,0 +1,92 @@
+<div class="well bs-component">
+  <form class="form-horizontal" [formGroup]="questionItemForm" (ngSubmit)="onSubmit()">
+    <fieldset>
+      <legend>Input new Question</legend>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="question">Question:</label>
+        <div class="col-lg-10">
+          <textarea class="form-control" id="question" placeholder="Question" formControlName="body" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="questionItemForm.controls['answerOptions'].value.length">
+        <label class="control-label col-lg-2">Answer Options</label>
+        <div class="col-lg-10">
+          <ul class="list-group" formArrayName="answerOptions">
+            <div class="input-group" *ngFor="let option of questionItemForm.controls['answerOptions'].controls; let i = index">
+              <span class="input-group-addon">{{i+1}}:</span>
+              <input type="text" id="choice" class="form-control" placeholder="Question's Answer Option" formControlName="{{i}}" value="option">
+              <span class="input-group-btn">
+                <button class="btn btn-danger" (click)="onRemoveAnswerOption(i)">X</button>
+              </span> 
+            </div>
+          </ul>
+        </div>  
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="outoption">Add Answers:</label>
+        <div class="col-lg-10">
+          <div class="input-group">
+            <input type="text" id="outoption" class="form-control" placeholder="Question's Answer Option" minlength="1" maxlength="100" #option>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" (click)="onAddAnswerOption(option.value)">+</button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="correct">Correct Option:</label>
+        <div class="col-lg-10">
+          <select id="correct" formControlName="correctAnswer" class="form-control" title="Choose Correct Option">
+            <option *ngFor="let ioption of questionItemForm.controls['answerOptions'].controls" value="{{ioption.value}}">{{ioption.value}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="correctanswer">Marks:</label>
+        <div class="col-lg-10">
+          <input type="number" class="form-control" id="correctanswer" placeholder="Marks Given for Answer is Correct" formControlName="marksForCorrectAnswer">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="wronganswer">Nagative Mark:</label>
+        <div class="col-lg-10">
+          <div class="input-group">
+            <span class="input-group-addon">-</span>
+            <input type="number" class="form-control" id="wronganswer" placeholder="Marks Deducted for Answer is Incorrect" formControlName="negativeMark">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="difficulty">Question Difficulty:</label>
+        <div class="col-lg-10">
+            <select id="difficulty" formControlName="difficulty" class="form-control" title="Choose Difficulty">
+              <option value="1">1 (least Difficult)</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5 (most Difficult)</option>
+            </select>
+        </div>
+      </div>
+
+      <div class="form-group"> 
+        <div class=" col-lg-10 col-lg-offset-2">
+          <button type="submit" class="btn btn-primary" [disabled]="!questionItemForm.valid">Submit</button>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>
+
+  
+
+
+  
