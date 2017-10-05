@@ -9,52 +9,47 @@ mongoose.Promise = global.Promise;
 
 const StudentSchema = new mongoose.Schema({
     
-    name: {
-        firstName: {
-            type: String,
-            maxlength: 15,
-            required: true,
-            trim: true
-        },
-        middleName: {
-            type: String,
-            maxlength: 15,
-            trim: true
-        },
-        lastName: {
-            type: String,
-            maxlength: 15,
-            required: true,
-            trim: true
+    firstName: {
+        type: String,
+        maxlength: 15,
+        required: true,
+        trim: true
+    },
+    middleName: {
+        type: String,
+        maxlength: 15,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        maxlength: 15,
+        required: true,
+        trim: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 14,
+        validate: {
+            validator: value => validator.isMobilePhone(value, 'en-IN'),
+            message: '{VALUE} is not a Valid Phone Number.'
         }
     },
-
-    contact: {
-        phoneNumber: {
-            type: String,
-            required: true,
-            trim: true,
-            maxlength: 14,
-            validate: {
-                validator: value => validator.isMobilePhone(value, 'en-IN'),
-                message: '{VALUE} is not a Valid Phone Number.'
-            }
-        },
-        email: {
-            type: String,
-            required: true,
-            maxlength: 50,
-            trim: true,
-            unique: true,
-            validate: {
-                validator: value => validator.isEmail(value),
-                message: '{VALUE} is not a Valid Email.'
-            }
-        },
-        address: {
-            type: String,
-            maxlength: 500
+    email: {
+        type: String,
+        required: true,
+        maxlength: 50,
+        trim: true,
+        unique: true,
+        validate: {
+            validator: value => validator.isEmail(value),
+            message: '{VALUE} is not a Valid Email.'
         }
+    },
+    address: {
+        type: String,
+        maxlength: 500
     },
 
     password: {
@@ -63,7 +58,7 @@ const StudentSchema = new mongoose.Schema({
         minlength: 8 //unencrypted max pass length 64
     }
 
-    //'name.firstName', 'name.lastName', 'name.middleName', 'contact.phoneNumber', 'contact.email', 'contact.address', 'password', '_id'
+    //'firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'password', '_id'
 
     //Schema definiton finishes here
 });
@@ -78,7 +73,7 @@ StudentSchema.methods.toJSON = function () {
     var student = this.toObject();
   
     //this will return only id and email,not while student
-    return _.pick(student, ['_id', 'contact.email']);
+    return _.pick(student, ['_id', 'email']);
     //method finishes here
 }; 
 
@@ -91,7 +86,7 @@ StudentSchema.methods.toJSON = function () {
 StudentSchema.statics.findByCredentials = function (body) {
 
     //finding a student by matching email (unique)
-    return this.findOne({'contact.email': body.email}).then((student) => {
+    return this.findOne({'email': body.email}).then((student) => {
         
         // if no student found, reject request with message
         if (!student) return Promise.reject('No one found');

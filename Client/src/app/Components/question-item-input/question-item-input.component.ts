@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 
-import { QuestionItem } from '../../Classes/question-item';
-
-// const {lodash} = require('lodash');
+import { Question } from '../../Classes/question';
 
 @Component({
   selector: 'fyp-question-item-input',
@@ -11,9 +9,17 @@ import { QuestionItem } from '../../Classes/question-item';
 })
 export class QuestionItemInputComponent implements OnInit {
 
-  questionItemForm: FormGroup;
+  public questionItemForm: FormGroup;
 
-  constructor() {
+  @Output() questionSubmitted = new EventEmitter();
+
+  constructor() {}
+
+  ngOnInit() {
+    this.questionItemFormInit();
+  }
+
+  questionItemFormInit () {
     this.questionItemForm = new FormGroup({
       'body': new FormControl('', [
         Validators.required,
@@ -41,11 +47,8 @@ export class QuestionItemInputComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
   onSubmit() {
-    console.log(this.questionItemForm);
+    this.questionSubmitted.emit(this.questionItemForm.value);
   }
 
   onAddAnswerOption (optionText: String) {

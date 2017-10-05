@@ -158,6 +158,13 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
             
     });*/
 
+    AggregateExamResult.find({exam: id}).then((aggregateExamResult) => {
+        aggregateExamResult.calculateComparableDataByDocument(function (error, doc) {
+            if (error) return console.log('Internal error', error);
+            console.log(doc);
+        });
+    }).catch((error) => console.log(error));
+
     //saving all the answers to questions in the database in one function, but one by one
     QuestionAnswer.create(answers, (error, questionAnswers) => {
 

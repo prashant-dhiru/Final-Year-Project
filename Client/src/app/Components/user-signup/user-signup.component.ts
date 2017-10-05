@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { Response } from '@angular/http';
+
+import { UserService } from './../../Services/user/user.service';
 
 import { User } from '../../Classes/user';
+
+const validator = require('validator');
 
 @Component({
   selector: 'fyp-user-signup',
@@ -11,7 +17,24 @@ export class UserSignupComponent implements OnInit {
 
   loginForm: FormGroup;
 
-  constructor() {
+  constructor(public userService: UserService) {
+
+  }
+
+  ngOnInit() {
+    this.initForm();
+  }
+
+  onSubmit() {}
+
+  phoneNumberValidator (control: FormControl): {[s: string]: boolean} {
+    if (!validator.isMobilePhone(control.value, 'en-IN')) {
+      return {phoneNumberValidator: true};
+    }
+    return null;
+  }
+
+  initForm () {
     this.loginForm = new FormGroup({
       'firstName': new FormControl('', [
         Validators.maxLength(15),
@@ -24,7 +47,8 @@ export class UserSignupComponent implements OnInit {
       ]),
       'phoneNumber': new FormControl('', [
         Validators.required,
-        Validators.maxLength(14)
+        Validators.maxLength(14),
+        this.phoneNumberValidator
       ]),
       'email': new FormControl('', [
         Validators.required,
@@ -40,21 +64,34 @@ export class UserSignupComponent implements OnInit {
     });
   }
 
-/*contact: {
-    phoneNumber: {
-        validate: {
-            validator: value => validator.isMobilePhone(value, 'en-IN'),
-            message: '{VALUE} is not a Valid Phone Number.'
-        }
-    },
-    email: {
-        unique: true
-    }
-  }*/
+  emailUniqueValidator (control: FormControl): Promise<any> | Observable<any> {
 
-  ngOnInit() {
+    const promise = new Promise((resolve, reject) => {
+
+      this.userService.checkEmailUnique(control.value).subscribe((data: Response) => {
+        console.log('Data Value is: ', data);
+        resolve(null);
+  
+      }, (error) => reject(error));
+
+
+      // setTimeout(() => {
+      //     console.log('No this available');
+      //     reject(null);
+      // }, 1500);
+
+      // return reject({emailUniqueValidator: true});
+
+        // if (found: true) {
+        //   resolve({emailUniqueValidator: true}) //validation failed
+        // } else {
+        //     resolve(null);  
+
+    });
+
+    return promise;
+
   }
 
-  onSubmit() {}
 
 }

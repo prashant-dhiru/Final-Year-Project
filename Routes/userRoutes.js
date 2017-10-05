@@ -24,7 +24,7 @@ router.post('/user/signup', (request, response) => {
         return response.status(405).send(`SomeOne Already logged in.`);
     
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
-    var body = _.pick(request.body, ['name.firstName', 'name.lastName', 'name.middleName', 'contact.phoneNumber', 'contact.email', 'contact.address', 'password']);
+    var body = _.pick(request.body, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'password']);
     
     //creating a new student from loasdh picked body here
     var student = new Student(body);
@@ -76,7 +76,7 @@ router.post('/user/login', (request, response) => {
 
     //route completes here
 });
-/************************************************************************************************* */
+/****************************************************************************************** */
 
 /**************************************************
  * Route to logout a user (student)
@@ -119,6 +119,29 @@ router.get('/user/me', authenticate, (request, response) => {
 
 });
 /********************************************************************************************************** */
+
+/**
+ * Route to check if a email Already exists in database
+ * returning true if found in database, else returning false
+ * This is a public route, anyone can access this route
+ */
+router.post('/user/email', (request, response) => {
+
+    //searching through the database for any student with that email
+    Student.find({email: request.body.email}).then((student) => {
+        
+        // if any student found, returning true
+        if (student.length) return response.send({found: true});
+
+        //if no student with that email, returning false
+        response.send({found: false});
+
+        //handing any potential error and responsing with true (email found)
+    }, (error) => response.send({found: true}));
+
+    //route completes here
+});
+/****************************************************************************************** */
 
 //Exporting the router to be used in the main application file
 module.exports = router;
