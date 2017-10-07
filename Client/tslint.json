@@ -13,6 +13,10 @@
     "curly": true,
     "eofline": true,
     "forin": true,
+    "import-blacklist": [
+      true,
+      "rxjs"
+    ],
     "import-spacing": true,
     "indent": [
       true,
@@ -113,13 +117,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "FYP",
+      "fyp",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "FYP",
+      "fyp",
       "kebab-case"
     ],
     "use-input-property-decorator": true,
