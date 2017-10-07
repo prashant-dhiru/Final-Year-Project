@@ -9,12 +9,13 @@ const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
 //importing middleware from middleware directory to authenticate students
-const {authenticate} = require('../middleware/authenticate');
+const {userAuthenticate} = require('../middleware/userAuthenticate');
 
 //importing models from models directory
 const {ExamReturn} = require('../models/examReturn');
 const {QuestionAnswer} = require('../models/questionAnswer');
 const {Exam} = require('../models/exam');
+
 const {AggregateExamResult} = require('../models/aggregateExamResult');
 
 /***********************************************************
@@ -22,12 +23,7 @@ const {AggregateExamResult} = require('../models/aggregateExamResult');
  * when user is about to start exam, he fetches all exam details from here
  * this route is private, only authentiated users (students) can access this route
  */
-router.get('/exam/:id', authenticate, (request, response) => {
-
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empty response with unauthorised status code is send
-        return response.status(401).send();
+router.get('/exam/:id', userAuthenticate, (request, response) => {
     
     //fetching the examID from the request parameter
     var id = request.params.id;
@@ -47,7 +43,7 @@ router.get('/exam/:id', authenticate, (request, response) => {
         if (!exam) return response.status(404).send();
 
         //picking only required properties, leaving other properties
-        var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', '_id']);
+        var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
 
         //doing manual pickings for questions, no-inbuilt method for it
         var questions = exam.questions.map((question) => {
@@ -76,12 +72,7 @@ router.get('/exam/:id', authenticate, (request, response) => {
  * This route will return exams sorted in descending order date wise
  * This is a private route, only authenticated users can use this route
  */
-router.get('/exam', authenticate, (request, response) => {
-
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empty response with unauthorised status code is send
-        return response.status(401).send();
+router.get('/exam', userAuthenticate, (request, response) => {
 
     //finding all exams descending date order wise
     Exam.find({}).sort('-date').exec((error, exams) => {
@@ -93,7 +84,7 @@ router.get('/exam', authenticate, (request, response) => {
         if (!exams) return response.status(404).send();
 
         //sending the exam back to the client
-        response.send(exams);
+        response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
     });
     //route finishes here
 });
@@ -103,17 +94,12 @@ router.get('/exam', authenticate, (request, response) => {
  * This route will be used when user submits a exam
  * This route is private, only authenticated users can access this route
  */
-router.post('/exam/submit/:id', authenticate, (request, response) => {
-    
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empty response with unauthorised status code is send
-        return response.status(401).send();
+router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
 
     //fetching the examID from the request parameter
     var id = request.params.id;
 
-    /* Checking if the id is valid or not */
+    // Checking if the id is valid or not
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
@@ -123,16 +109,7 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
     // if (id !== request.body.id)
     //     return response.status(400).send('The ExamID in the address bar has been changed, exam could not be submitted');
     /* Optional Check Complete */
-
-    //creating new examReturn to save the user's response for the exam
-    var examReturn = new ExamReturn({
-        exam: id,
-        user: request.student._id,
-        totalTimeTaken: request.body.totalTimeTaken,
-        totalQuestionAttempted: request.body.totalQuestionAttempted,
-        totalQuestionNotAttempted: request.body.totalQuestionNotAttempted
-    });
-
+    
     // mapping users's input to be saved in database with correct informtion
     var answers = request.body.questionAnswers.map(questionAnswer => {
         return { 
@@ -141,6 +118,14 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
             timeTaken: questionAnswer.timeTaken,
             answerSubmitted: questionAnswer.answerSubmitted
         };
+    });
+
+    //creating new examReturn to save the user's response for the exam
+    var examReturn = new ExamReturn({
+        exam: id,
+        user: request.student._id,
+        totalTimeTaken: request.body.totalTimeTaken,
+        totalQuestionAttempted: answers.length
     });
 
     //read more about insermany method and use this method if possible
@@ -158,12 +143,12 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
             
     });*/
 
-    AggregateExamResult.find({exam: id}).then((aggregateExamResult) => {
-        aggregateExamResult.calculateComparableDataByDocument(function (error, doc) {
-            if (error) return console.log('Internal error', error);
-            console.log(doc);
-        });
-    }).catch((error) => console.log(error));
+    // AggregateExamResult.find({exam: id}).then((aggregateExamResult) => {
+    //     aggregateExamResult.calculateComparableDataByDocument(function (error, doc) {
+    //         if (error) return console.log('Internal error', error);
+    //         console.log(doc);
+    //     });
+    // }).catch((error) => console.log(error));
 
     //saving all the answers to questions in the database in one function, but one by one
     QuestionAnswer.create(answers, (error, questionAnswers) => {
@@ -179,11 +164,15 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
 
         // saving exam in database
         examReturn.save().then(() => {
+
+            //responsing back as exam successfully stored in database
             response.send('Exam Successfully submitted in Store');
-        }/*
-        Handing any potential errors, sending error to client with the Internal Server error status code
-        */, (error) => response.status(500).send(error));
+
+            //Handing any potential errors, sending error to client with the Internal Server error status code
+        }, (error) => response.status(500).send(error));
+
     });
+
     // route finished here
 });
 /********************************************************************************************************* */
@@ -192,12 +181,7 @@ router.post('/exam/submit/:id', authenticate, (request, response) => {
  * this route is used then user wishes to fetch results for an exam, passed as query parameter
  * this route is private, only authenticated users can use this route
  */
-router.get('/exam/result/:id', authenticate, (request, response) => {
-
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empty response with unauthorised status code is send
-        return response.status(401).send();
+router.get('/exam/result/:id', userAuthenticate, (request, response) => {
 
     //fetching the examID from the request parameter
     var id = request.params.id;

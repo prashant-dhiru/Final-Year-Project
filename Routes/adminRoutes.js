@@ -8,15 +8,16 @@ const router = express.Router();
 //requiring mngoose and pulling out ObjectId from it for validations
 const ObjectId = require('mongoose').Types.ObjectId;
 
-//importing middleware from middleware directory to authenticate students
-const {authenticate} = require('../middleware/authenticate');
+//importing middleware from middleware directory to authenticate admin
+const {adminAuthenticate} = require('../middleware/adminAuthenticate');
 
 //importing admin from config directory
 const admin = require('../config/admin');
 
 //importing models from models directory
 const {Exam} = require('../models/exam');
-const {MCQuestion} = require('../models/question');
+const {MCQuestion} = require('../models/mcqQuestion');
+
 const {AggregateExamResult} = require('../models/aggregateExamResult');
 const {AggregateExamQuestionAnalysis} = require('../models/aggregateExamQuestionAnalysis');
 
@@ -41,7 +42,7 @@ router.post('/admin/login', (request, response) => {
     request.session.userLevel = 0;
     
     //sending back empty response to client side
-    response.send();
+    response.send('Admin Login Successful');
     
     //route completes here
 });
@@ -51,10 +52,7 @@ router.post('/admin/login', (request, response) => {
  * Route to check if admin is authenticated, to be used during development only
  * This is a private route, only authenticated admin can use this route
  */
-router.get('/admin/me', authenticate, (request, response) => {
-    
-    // if authenticated user is student, sending empty response with Unauthorised status code
-    if (request.session.userLevel == 1) return response.status(401).send();
+router.get('/admin/me', adminAuthenticate, (request, response) => {
     
     //sending message to confirm that access is permitted
     response.send('You have access to admin panel');
@@ -67,10 +65,7 @@ router.get('/admin/me', authenticate, (request, response) => {
  * Route to logout the admin
  * This is a private route, only authenticated admin can use this route
  */
-router.post('/admin/logout', authenticate, (request, response) => {
-    
-    // if authenticated user is student, sending empty response with Unauthorised status code
-    if (request.session.userLevel == 1) return response.status(401).send();
+router.post('/admin/logout', adminAuthenticate, (request, response) => {
     
     //destroying the session, removing it from database
     request.session.destroy ((error) => {
@@ -78,7 +73,7 @@ router.post('/admin/logout', authenticate, (request, response) => {
         if (error) return response.status(500).send(error);
 
         //on successful deletion of session, response with OK status code is sent
-        response.send();
+        response.send('Logout Successful');
     });
     //route completes here
 });
@@ -88,10 +83,7 @@ router.post('/admin/logout', authenticate, (request, response) => {
  * Route to create an exam
  * This is a private route, only authenticated admin can access this route
  */
-router.post('/admin/createExam', authenticate, (request, response) => {
-
-    // if authenticated user is student, sending empty response with Unauthorised status code
-    if (request.session.userLevel == 1) return response.status(401).send();
+router.post('/admin/createExam', adminAuthenticate, (request, response) => {
 
     // picking all required keys here, leaving any extra key if sent by user
     var body = _.pick(request.body, ['name', 'description', 'allowedTime', 'subject']);
@@ -100,36 +92,36 @@ router.post('/admin/createExam', authenticate, (request, response) => {
     var exam = new Exam(body);
 
     /* Creating Demo Document here for Insertion */
-    var aggregateExamResult = new AggregateExamResult({exam: exam._id});
+    // var aggregateExamResult = new AggregateExamResult({exam: exam._id});
     /* Creation Complete */
 
     //creating a loop fo each question in the request.body
-    request.body.questions.forEach(function(element) {
+    // request.body.questions.forEach(function(element) {
         
-        //assigning exam id in each question 
-        element.exam = exam._id;
+    //     //assigning exam id in each question 
+    //     element.exam = exam._id;
         
-        //creating new question
-        var question = new MCQuestion(element);
+    //     //creating new question
+    //     var question = new MCQuestion(element);
         
-        /* Inserting Demo Documents here */
-        var aggregateExamQuestionAnalysis = new AggregateExamQuestionAnalysis({
-            exam: exam._id,
-            question: question._id
-        });
-        aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
-        aggregateExamQuestionAnalysis.save().catch((error) => console.log(error));
-        /* Demo Documents Insertion finished */
+    //     /* Inserting Demo Documents here */
+    //     var aggregateExamQuestionAnalysis = new AggregateExamQuestionAnalysis({
+    //         exam: exam._id,
+    //         question: question._id
+    //     });
+    //     aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
+    //     aggregateExamQuestionAnalysis.save().catch((error) => console.log(error));
+    //     /* Demo Documents Insertion finished */
 
-        //pushing question id in exam.questions array
-        exam.questions.push(question._id);
+    //     //pushing question id in exam.questions array
+    //     exam.questions.push(question._id);
         
-        //saving the question document in database
-        question.save().catch((error) => console.log(error));
-    });
+    //     //saving the question document in database
+    //     question.save().catch((error) => console.log(error));
+    // });
 
     /* Inserting Demo Documents here */
-    aggregateExamResult.save().catch((error) => console.log(error));
+    // aggregateExamResult.save().catch((error) => console.log(error));
     /* Demo Documents Insertion finished */
 
     //finally saving the exam into the database while handling any error
@@ -139,16 +131,60 @@ router.post('/admin/createExam', authenticate, (request, response) => {
 });
 /********************************************************************************************************* */
 
+/**
+ * Route to insert questions into an exam
+ * This route is private, only authenticated admin can use this route
+ */
+router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) => {
+    
+
+    //fetching the examID from the request parameter
+    var id = request.params.id;
+    
+    /* Checking if the id is valid or not */
+    if (!ObjectId.isValid(id))
+        //if invalid, responsing with text and Bad Request status code
+        return response.status(400).send('Invalid Exam ID');
+
+    //picking all required elements from request, leaving all other extra if any
+    body = _.pick(request.body, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty']);
+    
+    //creating new question
+    var question = new MCQuestion(body);
+
+    //searching for exam to push the id in
+    Exam.findById(id).exec((error, exam) => {
+
+        //if error occures, sending error with Internal Server Errorerror code and returning
+        if (error) return response.status(500).send(error)
+
+        //if there is no exam in database with the id, sending emty response back with Not Found status code
+        if (!exam) return response.status(404).send('No exam with such ID');
+
+        // saving the question document in database
+        question.save().then(() => {
+
+            //pushing question id in exam.questions array via the document function
+            exam.addQuestionRef(question._id);
+
+            response.send(question);
+
+        // Handling any potential error by sending error with Internal Server Errorerror code
+        }, (error) => response.status(500).send(error));
+
+    });
+
+    //route finishes here
+});
+/********************************************************************************************************** */
+
 /************************************************************
  * This route is used to check if the exam created is successfully saved in the database
  * All details of the exam are fetched in this route, any missing detail will be manually inspected by the response
  * This is a development only route, though it can be used in production
  * This route is private, only authenticated admin can access this route
  */
-router.get('/admin/exam/:id', authenticate, (request, response) => {
-    
-    // if authenticated user is student, sending empty response with Unauthorised status code
-    if (request.session.userLevel == 1) return response.status(401).send();
+router.get('/admin/exam/:id', adminAuthenticate, (request, response) => {
 
     //fetching the examID from the request parameter
     var id = request.params.id;

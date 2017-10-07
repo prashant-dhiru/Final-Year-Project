@@ -6,7 +6,7 @@ var express = require('express');
 var router = express.Router();
 
 //importing middleware from middleware directory to authenticate students
-const {authenticate} = require('../middleware/authenticate');
+const {userAuthenticate} = require('../middleware/userAuthenticate');
 
 //importing models from models directory
 const {Student} = require('../models/student');
@@ -24,7 +24,7 @@ router.post('/user/signup', (request, response) => {
         return response.status(405).send(`SomeOne Already logged in.`);
     
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
-    var body = _.pick(request.body, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'password']);
+    var body = _.pick(request.body, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'class', 'password']);
     
     //creating a new student from loasdh picked body here
     var student = new Student(body);
@@ -82,12 +82,7 @@ router.post('/user/login', (request, response) => {
  * Route to logout a user (student)
  * This is a private route, only authorised users can use this route.
  */
-router.post('/user/logout', authenticate, (request, response) => {
-
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empy response with unauthorised status code is send
-        return response.status(401).send();
+router.post('/user/logout', userAuthenticate, (request, response) => {
     
     //destroying the session, removing it from database
     request.session.destroy ((error) => {
@@ -100,25 +95,20 @@ router.post('/user/logout', authenticate, (request, response) => {
 
     //route completes here
 });
-/********************************************************************************************************* */
+/************************************************************************************************** */
 
 /**************************************************
- * Route to check if a user (student) is authenticated, to be used during development only
+ * Route to check if a user (student) is authenticated
  * This is a private route, only authenticated users can use this route
  */
-router.get('/user/me', authenticate, (request, response) => {
-    
-    //checking if the authenticated user is odinary user (student)
-    if (request.session.userLevel == 0)
-        //if the authorised user is admin, empy response with unauthorised status code is send
-        return response.status(401).send();
+router.get('/user/me', userAuthenticate, (request, response) => {
     
     //sending the student back as response with OK status code is sent
     response.send(request.student);
+    
     //route completes here
-
 });
-/********************************************************************************************************** */
+/************************************************************************************************** */
 
 /**
  * Route to check if a email Already exists in database
@@ -128,16 +118,15 @@ router.get('/user/me', authenticate, (request, response) => {
 router.post('/user/email', (request, response) => {
 
     //searching through the database for any student with that email
-    Student.find({email: request.body.email}).then((student) => {
-        
-        // if any student found, returning true
-        if (student.length) return response.send({found: true});
+    Student.find({email: request.body.email}).count((error, studentCount) => {
 
-        //if no student with that email, returning false
-        response.send({found: false});
+        //handing any potential error or if no student found, responsing with true (email found)
+        if (error || !studentCount) return response.send({found: true});
 
-        //handing any potential error and responsing with true (email found)
-    }, (error) => response.send({found: true}));
+        // returning true if student not found
+        response.send({found: true});
+
+    });
 
     //route completes here
 });

@@ -4,9 +4,8 @@ const mongoose = require('mongoose');
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
 
-//importing other models to be used in methods
-const {QuestionAnswer} = require('./questionAnswer');
-const {AggregateExamResult} = require('./aggregateExamResult');
+//importing other models from model directory to be used in methods
+const {Exam} = require('./exam');
 
 const ExamReturnSchema = new mongoose.Schema({
 
@@ -14,7 +13,9 @@ const ExamReturnSchema = new mongoose.Schema({
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
     totalTimeTaken: {
-        type: Number
+        type: Number,
+        minlength: 1,
+        maxlength: 3
     },
     totalQuestionAttempted: {
         type: Number
@@ -22,26 +23,64 @@ const ExamReturnSchema = new mongoose.Schema({
     totalQuestionNotAttempted: {
         type: Number
     },
+    percentageOfQuestionAttempted: {
+        type: Number
+    },
+    percentageOfQuestionNotAttempted: {
+        type: Number
+    },
     marksObtained: {
         type: Number,
         default: 0
-        // (can be positive or negative, total of all question's' marksObtained)
     }
 
-    //'questionAnswers', 'exam', 'user', 'totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted', 'marksObtained', '_id'
+    //'questionAnswers', 'exam', 'user', 'totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained', '_id'
 
     //Schema definiton finishes here
 });
 
-/* Decide If this function can be used */
-// ExamReturnSchema.statics.numberOfStudentsWhoAttemptedAQuestion = function (questionId) {
-//     var ExamReturn = this;
+/**
+ * @param {ExamReturn} this
+ * @return {Number} numberOfStudentsWhoAttemptedAQuestion
+ * Model Method
+ */
+ExamReturnSchema.statics.numberOfStudentsWhoAttemptedAQuestion = function (questionId) {
     
-//     return ExamReturn.find({}).where('questionAnswers').in([questionId]).exec(function (error, examReturns) {
-//         if (err) return -1;
-//         else return examReturns.length;
-//     }); 
-// };
+    //this function returns number of students who attempted a particular question irrespectively of exam and users
+    return this.find({}).where('questionAnswers').in([questionId]).count((error, number) => {
+        if (error) return -1;
+            return count;
+    });
+
+    //method ends here
+};
+
+/**
+ * @param {any} this
+ * document method
+ */
+ExamReturnSchema.pre('save', function (next) {
+
+    //finding the exam and selecting its questions value
+    Exam.findById(this.exam).select('questions').exec((error, questions) => {
+
+        //handing any potential error that may occured during exam searching and returning error with next
+        if(error) return next(error);
+
+        //using questions.questions.length because a nested object is returned
+
+        //calculating values and assigning them to document
+        this.totalQuestionNotAttempted = questions.questions.length - this.totalQuestionAttempted;
+        this.percentageOfQuestionAttempted = this.totalQuestionAttempted * 100 / questions.questions.length;
+        this.percentageOfQuestionNotAttempted = this.totalQuestionNotAttempted * 100 / questions.questions.length;
+        
+        //calling next to finish the method execution
+        next();
+    });
+
+    //method ends here
+});
+
 
 const ExamReturn = mongoose.model('ExamReturn', ExamReturnSchema);
 module.exports = {ExamReturn};

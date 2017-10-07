@@ -10,6 +10,7 @@ import { Question } from '../../Classes/question';
 export class QuestionItemInputComponent implements OnInit {
 
   public questionItemForm: FormGroup;
+  answerOptionCount = 0;
 
   @Output() questionSubmitted = new EventEmitter();
 
@@ -57,10 +58,12 @@ export class QuestionItemInputComponent implements OnInit {
       Validators.maxLength(100),
       Validators.required
     ]));
+    this.answerOptionCount++;
   }
 
   onRemoveAnswerOption (index: number) {
     (<FormArray>this.questionItemForm.controls.answerOptions).removeAt(index);
+    this.answerOptionCount--;
   }
 
 }

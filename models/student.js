@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const _ = require('lodash');
 
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
@@ -49,33 +48,40 @@ const StudentSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        maxlength: 500
+        maxlength: 500,
+        trim: true
     },
-
+    class: {
+        type: String,
+        maxlength: 50,
+        required: true,
+        trim: true,
+        uppercase: true
+    },
     password: {
         type: String,
         required: true,
         minlength: 8 //unencrypted max pass length 64
     }
 
-    //'firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'password', '_id'
+    //'firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'class', 'address', 'password', '_id'
 
     //Schema definiton finishes here
 });
 
-/**
- * @param {any} this 
- * @return {any}
- * document method
- * Overriding an existing function
- */
-StudentSchema.methods.toJSON = function () {
-    var student = this.toObject();
+// /**
+//  * @param {any} this 
+//  * @return {any}
+//  * document method
+//  * Overriding an existing function
+//  */
+// StudentSchema.methods.toJSON = function () {
+//     var student = this.toObject();
   
-    //this will return only id and email,not while student
-    return _.pick(student, ['_id', 'email']);
-    //method finishes here
-}; 
+//     //this will return only id and email,not while student
+//     return _.pick(student, ['_id', 'email']);
+//     //method finishes here
+// }; 
 
 /**
  * @param {any} body {email, password}
@@ -127,6 +133,9 @@ StudentSchema.pre('save', function (next) {
             next();
         });
     });
+
+    //converting the class property to uppercase
+    this.class = this.class.toUpperCase();
     //method ends here
 });
 

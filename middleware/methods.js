@@ -16,40 +16,6 @@ var pluckAndReduce = function (collection, factor) {
 };
 
 /**
- * 
- * @param {any[]} collection
- * @return {any[]} specialPAR
- */
-var specialPAR = function (collection) {
-    var arrangedObject = {};
-    
-    //this loop will sort the array of objects question
-    //in the form of an object with each question as key, and array of objects as its value
-    collection.forEach((element) => {
-        if (arrangedObject[element.question])
-            arrangedObject[element.question].push(element);
-        else
-            arrangedObject[element.question] = [element];
-    });
-    
-    var finalObj = {};
-    
-    //this loop will reduce array of objects into object for each key
-    //each object will have then two keys, as used in function
-    Object.keys(arrangedObject).forEach((questionArray) => {
-        var obj = {};
-        
-        obj.timeTaken = pluckAndReduce(arrangedObject[questionArray], 'timeTaken');
-        obj.marksObtained = pluckAndReduce(arrangedObject[questionArray], 'marksObtained');
-        
-        finalObj[questionArray] = obj;
-    });
-
-    //returning the object
-    return finalObj;
-};
-
-/**
  * @param {any[]} objArray 
  * @param {String[]} valueArray
  * @return {any} specialMinifier
@@ -64,6 +30,31 @@ var specialMinifier = function (objArray, valueArray) {
     });
     //returning the object
     return obj;
+};
+
+/**
+ * 
+ * @param {any[]} collection
+ * @param {String} baseOfReduction
+ * @param {String[]} valueArray
+ * @return {any[]} specialPAR
+ */
+var specialPAR = function (collection, baseOfReduction, valueArray) {
+    
+    //this method will sort the array of objects question
+    //in the form of an object with each question as key, and array of objects as its value
+    var arrangedObject = _.groupBy(collection, function(er) {return er[baseOfReduction]});
+    
+    var finalObj = {};
+    
+    //this loop will reduce array of objects into object for each key
+    //each object will have then two keys, as used in function
+    Object.keys(arrangedObject).forEach((questionArray) => {
+        finalObj[questionArray] = specialMinifier(arrangedObject[questionArray], valueArray);
+    });
+
+    //returning the object
+    return finalObj;
 };
 
 //exporting the methods here to be used in the routes

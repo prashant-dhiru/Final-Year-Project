@@ -1,13 +1,11 @@
 //importing required packages installed by npm
 const mongoose = require('mongoose');
-const validator = require('validator');
-const _ = require('lodash');
 
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
 
 //importing other models to be used in methods
-const {MCQuestion} = require('./question');
+const {MCQuestion} = require('./mcqQuestion');
 
 const QuestionAnswerSchema = new mongoose.Schema({
 
@@ -15,17 +13,23 @@ const QuestionAnswerSchema = new mongoose.Schema({
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     timeTaken: {
         type: Number,
-        required: true
+        required: true,
+        minlength: 1,
+        maxlength: 3
     },
     answerSubmitted: {
         type: String,
-        required: true
+        minlength: 1,
+        maxlength: 100,
+        required: true,
+        trim: true
     },
     isAnswerCorrect: {
         type: Boolean
     },
     marksObtained: {
-        type: Number
+        type: Number,
+        maxlength: 2
     }
 
     //'question', 'exam', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained', '_id'
@@ -55,7 +59,7 @@ QuestionAnswerSchema.pre('save', function (next) {
     }, (error) => next(error));
 
     //method finishes here
-}); //final
+});
 
 const QuestionAnswer = mongoose.model('QuestionAnswer', QuestionAnswerSchema);
 module.exports = {QuestionAnswer};
