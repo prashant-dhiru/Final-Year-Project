@@ -51,7 +51,7 @@ const StudentSchema = new mongoose.Schema({
         maxlength: 500,
         trim: true
     },
-    class: {
+    studentClass: {
         type: String,
         maxlength: 50,
         required: true,
@@ -64,7 +64,7 @@ const StudentSchema = new mongoose.Schema({
         minlength: 8 //unencrypted max pass length 64
     }
 
-    //'firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'class', 'address', 'password', '_id'
+    //'firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'studentClass', 'address', 'password', '_id'
 
     //Schema definiton finishes here
 });
@@ -135,7 +135,7 @@ StudentSchema.pre('save', function (next) {
     });
 
     //converting the class property to uppercase
-    this.class = this.class.toUpperCase();
+    this.studentClass = this.studentClass.toUpperCase();
     //method ends here
 });
 

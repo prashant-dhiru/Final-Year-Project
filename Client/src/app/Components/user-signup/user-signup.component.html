@@ -45,7 +45,14 @@
         <div class="col-lg-10">
           <textarea class="form-control" id="address" placeholder="Enter Address" formControlName="address" rows="3" maxlength="500"></textarea>
         </div>
-      </div>  
+      </div>
+      
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="sclass">Class:</label>
+        <div class="col-lg-10">
+          <input type="text" class="form-control" id="sclass" placeholder="Enter Class" formControlName="studentClass" required maxlength="50">
+        </div>
+      </div>
   
       <div class="form-group">
         <label class="control-label col-lg-2" for="passwd">Password:</label>
@@ -63,6 +70,7 @@
     
       <div class="form-group"> 
         <div class="col-lg-offset-2 col-lg-10">
+          <button type="reset" class="btn btn-default" (click)="loginForm.reset()">Clear</button>
           <button type="submit" class="btn btn-default btn-primary" [disabled]="!loginForm.valid">Submit</button>
         </div>
       </div>

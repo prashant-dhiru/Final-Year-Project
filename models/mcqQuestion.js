@@ -51,7 +51,7 @@ const MultipleChoiceQuestionSchema = new mongoose.Schema({
     // },
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }
 
-    //'body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree: ', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', 'exam', '_id'
+    //'body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', 'exam', '_id'
     //schema definition finishes here
 });
 

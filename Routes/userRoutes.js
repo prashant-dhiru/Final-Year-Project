@@ -24,7 +24,7 @@ router.post('/user/signup', (request, response) => {
         return response.status(405).send(`SomeOne Already logged in.`);
     
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
-    var body = _.pick(request.body, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'class', 'password']);
+    var body = _.pick(request.body, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'address', 'studentClass', 'password']);
     
     //creating a new student from loasdh picked body here
     var student = new Student(body);
@@ -82,7 +82,7 @@ router.post('/user/login', (request, response) => {
  * Route to logout a user (student)
  * This is a private route, only authorised users can use this route.
  */
-router.post('/user/logout', userAuthenticate, (request, response) => {
+router.delete('/user/logout', userAuthenticate, (request, response) => {
     
     //destroying the session, removing it from database
     request.session.destroy ((error) => {

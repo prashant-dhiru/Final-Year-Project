@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormArray, Validators, FormControl, NgForm } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Response } from '@angular/http';
 
-import { UserService } from './../../Services/user/user.service';
+import { UserService } from './../../Services/user.service';
 
 import { User } from '../../Classes/user';
 
@@ -17,18 +17,22 @@ export class UserSignupComponent implements OnInit {
 
   loginForm: FormGroup;
 
-  constructor(public userService: UserService) {
-
-  }
+  constructor(public userService: UserService) {}
 
   ngOnInit() {
     this.initForm();
   }
 
-  onSubmit() {}
+  onSubmit() {
+    this.userService.registerUser(this.loginForm.value).subscribe((user: Response) => {
+      console.log('Response is: ', user);
+      this.loginForm.reset({'phoneNumber': ''});
+    });
+  }
+  /////////////////////////////////////////////
 
   phoneNumberValidator (control: FormControl): {[s: string]: boolean} {
-    if (!validator.isMobilePhone(control.value, 'en-IN')) {
+    if (!validator.isMobilePhone((<string>control.value), 'en-IN')) {
       return {phoneNumberValidator: true};
     }
     return null;
@@ -56,6 +60,7 @@ export class UserSignupComponent implements OnInit {
         Validators.maxLength(50)
       ]),
       'address': new FormControl('', Validators.maxLength(500)),
+      'studentClass': new FormControl('', Validators.required),
       'password': new FormControl('', [
         Validators.required,
         Validators.minLength(8),
@@ -64,6 +69,7 @@ export class UserSignupComponent implements OnInit {
     });
   }
 
+  ///////////////////////////////////////////////
   emailUniqueValidator (control: FormControl): Promise<any> | Observable<any> {
 
     const promise = new Promise((resolve, reject) => {

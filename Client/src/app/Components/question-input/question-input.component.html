@@ -10,30 +10,52 @@
         </div>
       </div>
 
-      <div class="form-group" *ngIf="questionItemForm.controls['answerOptions'].value">
-        <label class="control-label col-lg-2">Answer Options</label>
-        <div class="col-lg-10">
-          <ul class="list-group" formArrayName="answerOptions">
-            <div class="input-group" *ngFor="let option of questionItemForm.controls['answerOptions'].controls; let i = index">
-              <span class="input-group-addon">{{i+1}}:</span>
-              <input type="text" id="choice" class="form-control" placeholder="Question's Answer Option" formControlName="{{i}}" value="option">
-              <span class="input-group-btn">
-                <button class="btn btn-danger" (click)="onRemoveAnswerOption(i)">X</button>
-              </span> 
+      <div class="row">
+        <div class="col-md-6">
+
+          <div class="form-group">
+            <label class="control-label col-lg-2" for="answerOptionOne">Option 1:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="answerOptionOne" placeholder="Input First Option" formControlName="answerOptionOne" #optionOne>
             </div>
-          </ul>
-        </div>  
+          </div>
+
+        </div>
+
+        <div class="col-md-6">
+            
+          <div class="form-group">
+            <label class="control-label col-lg-2" for="answerOptionTwo">Option 2:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="answerOptionTwo" placeholder="Input Second Option" formControlName="answerOptionTwo" #optionTwo>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="outoption">Add Answers:</label>
-        <div class="col-lg-10">
-          <div class="input-group">
-            <input type="text" id="outoption" class="form-control" placeholder="Question's Answer Option" minlength="1" maxlength="100" #option>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" (click)="onAddAnswerOption(option.value)">+</button>
-            </span>
+
+      <div class="row">
+        <div class="col-md-6">
+
+          <div class="form-group">
+            <label class="control-label col-lg-2" for="answerOptionThree">Option 3:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="answerOptionThree" placeholder="Input Thrid Option" formControlName="answerOptionThree" #optionThree>
+            </div>
           </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+          <div class="form-group">
+            <label class="control-label col-lg-2" for="answerOptionFour">Option 4:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="answerOptionFour" placeholder="Input Fourth Option" formControlName="answerOptionFour" #optionFour>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -41,7 +63,10 @@
         <label class="control-label col-lg-2" for="correct">Correct Option:</label>
         <div class="col-lg-10">
           <select id="correct" formControlName="correctAnswer" class="form-control" title="Choose Correct Option">
-            <option *ngFor="let ioption of questionItemForm.controls['answerOptions'].controls" value="{{ioption.value}}">{{ioption.value}}</option>
+            <option *ngIf="optionOne.value" value="{{optionOne.value}}">{{optionOne.value}}</option>
+            <option *ngIf="optionTwo.value" value="{{optionTwo.value}}">{{optionTwo.value}}</option>
+            <option *ngIf="optionThree.value" value="{{optionThree.value}}">{{optionThree.value}}</option>
+            <option *ngIf="optionFour.value" value="{{optionFour.value}}">{{optionFour.value}}</option>
           </select>
         </div>
       </div>
@@ -85,9 +110,4 @@
 
     </fieldset>
   </form>
-</div>
-
-  
-
-
-  
+</div> 
