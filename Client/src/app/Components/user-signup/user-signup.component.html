@@ -1,4 +1,4 @@
-<div class="well bs-component">
+<div class="bs-component">
   <form class="form-horizontal" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <fieldset>
 
@@ -70,7 +70,7 @@
     
       <div class="form-group"> 
         <div class="col-lg-offset-2 col-lg-10">
-          <button type="reset" class="btn btn-default" (click)="loginForm.reset()">Clear</button>
+          <button type="reset" class="btn btn-default" (click)="loginForm.reset({'phoneNumber': ''})">Clear</button>
           <button type="submit" class="btn btn-default btn-primary" [disabled]="!loginForm.valid">Submit</button>
         </div>
       </div>
@@ -78,13 +78,3 @@
     </fieldset>
   </form>
 </div>
-
-
-    
-
-
-
-
-
-
-
