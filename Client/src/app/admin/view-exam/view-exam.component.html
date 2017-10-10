@@ -1,0 +1,49 @@
+<div class="container">
+<div class="bs-component">
+  <form class="form-horizontal">
+    <fieldset>
+      <legend>Create Exam</legend>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="name">Exam Name:</label>
+        <div class="col-lg-10">
+          <input readonly type="text" id="name" class="form-control" value="{{exam?.name}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="description">Exam Description:</label>
+        <div class="col-lg-10">
+          <input type="text" id="description" placeholder="Exam Description" class="form-control" value="{{exam?.description}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="allowedTime">Allowed Time:</label>
+        <div class="col-lg-10">
+          <div class="input-group">
+            <input type="text" id="allowedTime" class="form-control" value="{{exam?.allowedTime}}" readonly>
+            <span class="input-group-addon">in Minutes</span>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-2" for="subject">Subject:</label>
+        <div class="col-lg-10">
+          <input type="text" id="subject" readonly class="form-control" value="{{exam?.subject}}">
+        </div>
+      </div>
+
+      <hr>
+      <legend>Questions</legend>
+
+      <ul class="list-group" *ngFor="let question of exam.questions; let questionId = index">
+        <fyp-question-item-list [question]="question" [questionId]="questionId" id="quesitem"></fyp-question-item-list>
+      </ul>
+
+    </fieldset>
+  </form>
+</div>
+</div>

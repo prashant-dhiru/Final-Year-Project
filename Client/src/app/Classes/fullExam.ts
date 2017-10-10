@@ -1,10 +1,11 @@
 import { Question } from './question';
 
-export class Exam {
+export class FullExam {
     constructor (
         public name: string,
+        public description: string,
         public allowedTime: number,
         public subject: string,
-        public description?: string
+        public questions: Question[]
     ) {}
 }

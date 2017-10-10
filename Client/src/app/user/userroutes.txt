@@ -1,0 +1,5 @@
+signup
+login
+logout
+me
+email (checking)

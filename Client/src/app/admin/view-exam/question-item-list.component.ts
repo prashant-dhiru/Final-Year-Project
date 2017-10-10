@@ -14,6 +14,7 @@ export class QuestionItemListComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log(this.questionId);
   }
 
 }

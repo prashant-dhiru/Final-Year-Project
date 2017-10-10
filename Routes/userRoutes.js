@@ -123,8 +123,8 @@ router.post('/user/email', (request, response) => {
         //handing any potential error or if no student found, responsing with true (email found)
         if (error || !studentCount) return response.send({found: true});
 
-        // returning true if student not found
-        response.send({found: true});
+        // returning false if student not found
+        response.send({found: false});
 
     });
 

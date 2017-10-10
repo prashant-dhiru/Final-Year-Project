@@ -42,7 +42,7 @@ router.post('/admin/login', (request, response) => {
     request.session.userLevel = 0;
     
     //sending back empty response to client side
-    response.send('Admin Login Successful');
+    response.send('hello from system');
     
     //route completes here
 });
@@ -65,7 +65,7 @@ router.get('/admin/me', adminAuthenticate, (request, response) => {
  * Route to logout the admin
  * This is a private route, only authenticated admin can use this route
  */
-router.post('/admin/logout', adminAuthenticate, (request, response) => {
+router.delete('/admin/logout', adminAuthenticate, (request, response) => {
     
     //destroying the session, removing it from database
     request.session.destroy ((error) => {
