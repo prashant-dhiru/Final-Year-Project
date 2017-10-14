@@ -102,10 +102,13 @@ StudentSchema.statics.findByCredentials = function (body) {
 
             //comparing passwords with passed password
             bcrypt.compare(body.password, student.password, (error, response) => {
-                //if any error in matching password, reject with error
-                if (error) reject(error);
-                //else return the student found
-                else resolve(student);
+                
+                //if any response resolve with student
+                if (response) resolve(student);
+                
+                //if no response, 
+                else reject(error);
+
             });
         });
     })/*Handling any potential error that may occur during finding student

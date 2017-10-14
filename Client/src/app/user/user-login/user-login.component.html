@@ -9,48 +9,44 @@
             <h2>Login</h2>
             <hr>
           </div>
-          
-          <div class="row">
   
-            <div class="form-group">
-              <label class="sr-only" for="email">Email:</label>
-              <div [ngClass]="{'has-error': (!userLoginForm.controls.email.valid && userLoginForm.controls.email.touched), 'has-success': (userLoginForm.controls.email.valid && userLoginForm.controls.email.touched)}">
-                <input type="email" class="form-control" id="email" placeholder="Enter Email" formControlName="email" required />
-              </div>
+          <div class="form-group">
+            <label class="sr-only" for="email">Email:</label>
+            <div [ngClass]="{'has-error': (!userLoginForm.controls.email.valid && userLoginForm.controls.email.touched), 'has-success': (userLoginForm.controls.email.valid && userLoginForm.controls.email.touched)}">
+              <input type="email" class="form-control" id="email" placeholder="Enter Email" formControlName="email" required />
             </div>
-  
-            <div class="form-group">
-              <label class="sr-only" for="password">Password:</label>
-              <div [ngClass]="{'has-error': (!userLoginForm.controls.password.valid && userLoginForm.controls.password.touched), 'has-success': (userLoginForm.controls.password.valid && userLoginForm.controls.password.touched)}">
-                <input type="password" class="form-control" id="password" placeholder="Password" formControlName="password" required maxlength="64" minlength="8">
-              </div>
-            </div>
+          </div>
 
-            <div class="form-group">
-                <p class="lead">Not Registered? <a>Register Here</a></p>
+          <div class="form-group">
+            <label class="sr-only" for="password">Password:</label>
+            <div [ngClass]="{'has-error': (!userLoginForm.controls.password.valid && userLoginForm.controls.password.touched), 'has-success': (userLoginForm.controls.password.valid && userLoginForm.controls.password.touched)}">
+              <input type="password" class="form-control" id="password" placeholder="Password" formControlName="password" required maxlength="64" minlength="8">
             </div>
-  
-            <div class="form-group"> 
-              <button type="submit" class="btn btn-default btn-success btn-flat btn-block" [disabled]="!userLoginForm.valid">Submit</button>
-            </div>
+          </div>
 
-            <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 1">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <p>
-                <strong>Oh snap!</strong>
-                We couldnot login you up! Did you checked your password?
-              </p>
-            </div>
+          <div class="form-group">
+              <p class="lead">Not Registered? <a [routerLink]="['/user/signup']">Register Here</a></p>
+          </div>
 
-            <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 2">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <p>
-                <strong>Oh snap!</strong>
-                You seem to be already logged in. Try refreshing your browser!
-              </p>
-            </div>
-            
-          </div>  
+          <div class="form-group"> 
+            <button type="submit" class="btn btn-default btn-success btn-flat btn-block" [disabled]="!userLoginForm.valid">Submit</button>
+          </div>
+
+          <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 1">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <p>
+              <strong>Oh snap!</strong>
+              We couldnot login you up! Did you checked your password?
+            </p>
+          </div>
+
+          <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 2">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <p>
+              <strong>Oh snap!</strong>
+              You seem to be already logged in. Checkout Exams <a [routerLink]="['/exam']">Here</a>!!
+            </p>
+          </div>
             
         </fieldset>
   

@@ -11,6 +11,7 @@ export class UserService {
 
   checkEmailUnique (email: string) {
     return this.http.post('http://localhost:3000/user/email', {email});
+    
   }
 
   registerUser (user: User) {
@@ -22,7 +23,7 @@ export class UserService {
   }
 
   logoutuser () {
-    return this.http.delete('http://localhost:3000/user/login');
+    return this.http.delete('http://localhost:3000/user/logout');
   }
 
   getUser () {

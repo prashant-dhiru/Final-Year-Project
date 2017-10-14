@@ -133,18 +133,18 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
     //questionAnswers.length number of students who attempted this question
 
     //finding Submitted answers of this exam and question
-    return QuestionAnswer.find({exam: this.exam, question: this.question}).then((questionAnswers) => {
+    return QuestionAnswer.find({exam: this.exam, question: this.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
         
         //calculating values for these two keys
         this.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
-        this.avreageTimeTakenByStudents =  pluckAndReduce(questionAnswers, 'timeTaken');
+        this.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
 
         //total students who attempted this question
         this.studentsAttempted = questionAnswers.length;
 
         //further calculation requires total number of students who attempted the exam
         //finding the total number of students wo attempted the exam
-        return ExamReturn.find({exam: this.exam}).count((error, totalStudentWhoAttemptedExam) => {
+        return ExamReturn.find({exam: this.exam}).count(function (error, totalStudentWhoAttemptedExam) {
             
             //handling any potential errors
             if (error) return Promise.reject(error);
@@ -152,7 +152,6 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
             //calculating percentages based keys here
             this.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
             
-
             //last two value requires the average times taken by students who got this question right
             //mapping queestions answers to find the Answer which are correct and array of time taken
             var correctAnswerTimes = questionAnswers.map((questionAnswer) => {
@@ -166,11 +165,11 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
             this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
 
             //saving the document, returning the document on success, returning error on error
-            return this.save().then((doc) => Promise.resolve(doc)).catch((error) => Promise.reject(error));
+            return this.save(); //.then(() => Promise.resolve(this), (error) => Promise.reject(error));
         });
 
         //handling any potential errors
-    }).catch((error) => Promise.reject(error));
+    }, (error) => Promise.reject(error));
 
     //method finishes here
 };

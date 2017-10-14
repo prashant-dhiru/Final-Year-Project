@@ -71,8 +71,8 @@ router.post('/user/login', (request, response) => {
         //sending back the user to the client side
         response.send(student);
     }, /*
-        Handing any potential error that may occur during saving the user into the database with Service unavailable status code
-    */(error) => response.status(503).send(error));
+        Handing any potential error that may occur during saving the user into the database with Bad Request status code
+    */(error) => response.status(400).send(error));
 
     //route completes here
 });

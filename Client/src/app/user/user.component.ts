@@ -6,16 +6,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserComponent implements OnInit {
 
-  isUserLoggedIn: boolean;
-
   constructor() {}
 
   ngOnInit() {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      this.isUserLoggedIn = true;
-    } else {
-      this.isUserLoggedIn = false;
-    }
   }
 
 }

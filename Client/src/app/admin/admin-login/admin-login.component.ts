@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'fyp-admin-login',
@@ -7,9 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminLoginComponent implements OnInit {
 
-  constructor() { }
+  adminLoginForm: FormGroup;
+
+  constructor() {}
 
   ngOnInit() {
+    this.initAdminLoginForm();
+  }
+
+  initAdminLoginForm () {
+    this.adminLoginForm = new FormGroup({
+      'password': new FormControl()
+    });
+  }
+
+  onSubmit () {
+    console.log(this.adminLoginForm.value);
   }
 
 }

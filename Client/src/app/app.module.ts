@@ -9,6 +9,8 @@ import { AdminService } from './admin/admin.service';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
+import { NavbarComponent } from './navbar/navbar.component';
+
 import { ExamInputComponent } from './admin/exam-input/exam-input.component';
 import { QuestionItemListComponent } from './admin/view-exam/question-item-list.component';
 import { QuestionInputComponent } from './admin/question-input/question-input.component';
@@ -18,13 +20,14 @@ import { ViewExamComponent } from './admin/view-exam/view-exam.component';
 import { UserComponent } from './user/user.component';
 import { UserSignupComponent } from './user/user-signup/user-signup.component';
 
-import { USER_ROUTES } from './user/user-routing.module';
-
-import { NavbarComponent } from './Components/navbar/navbar.component';
-import { RouteNotFoundComponent } from './Components/route-not-found/route-not-found.component';
-import { ExamComponent } from './Components/exam/exam.component';
+import { RouteNotFoundComponent } from './route-not-found/route-not-found.component';
+import { ExamComponent } from './exam/exam.component';
 import { UserLoginComponent } from './user/user-login/user-login.component';
 import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+
+import { IsAuthenticatedService } from './Shared/is-authenticated.service';
+import { UserMeComponent } from './user/user-me/user-me.component';
+import { DummyComponent } from './Playground/dummy/dummy.component';
 
 
 
@@ -44,7 +47,9 @@ declare let require: any;
     AdminComponent,
     ViewExamComponent,
     UserLoginComponent,
-    AdminLoginComponent
+    AdminLoginComponent,
+    UserMeComponent,
+    DummyComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +60,8 @@ declare let require: any;
   ],
   providers: [
     UserService,
-    AdminService
+    AdminService,
+    IsAuthenticatedService
   ],
   bootstrap: [AppComponent]
 })

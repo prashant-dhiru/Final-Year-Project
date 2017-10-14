@@ -11,13 +11,11 @@ import { AdminService } from './admin.service';
 export class AdminComponent implements OnInit {
 
   adminLoginForm: FormGroup;
-  isLoggedIn = false;
+  isAdminAuthenticated = false; // isAdminAuthenticated
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit() {
-
-    
     this.initadminLoginForm();
   }
 
@@ -37,12 +35,18 @@ export class AdminComponent implements OnInit {
         // document.cookie.
         window.sessionStorage.setItem('isAuthenticated', 'true');
         window.sessionStorage.setItem('userLevel', '0');
-        this.isLoggedIn = true;
+        this.isAdminAuthenticated = true;
       } else {
-        this.isLoggedIn = false;
+        this.isAdminAuthenticated = false;
         // 405 for someone already logged in
         // 400 for password incorrect
       }
+    });
+  }
+
+  logoutAdmin () {
+    this.adminService.logoutAdmin().subscribe((response: Response) => {
+
     });
   }
 

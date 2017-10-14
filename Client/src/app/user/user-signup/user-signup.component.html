@@ -6,11 +6,11 @@
 
       <div class="form-group">
         <label class="control-label col-lg-2" for="firstname">Name:</label>
-        <div class="col-lg-10">
+        <div class="col-lg-10"  [ngClass]="{'has-error': (loginForm.controls.firstName.dirty && !loginForm.controls.firstName.valid), 'has-success': loginForm.controls.firstName.valid}">
           <input type="text" class="form-control" id="firstName" placeholder="First Name" formControlName="firstName" required maxlength="15">
-          <!-- <div *ngIf="!loginForm.controls.firstName.valid && loginForm.controls.firstName.touched">
-            First Name must be Provided
-          </div> -->
+          <ul class="help-block list-group">
+            <li *ngIf="(loginForm.controls.firstName.errors?.required && loginForm.controls.firstName.dirty)" class="list-group-item">First Name is Required</li>
+          </ul>
         </div>
       </div>
 
@@ -21,22 +21,32 @@
       </div>
 
       <div class="form-group">
-        <div class="col-lg-10 col-lg-offset-2">
+        <div class="col-lg-10 col-lg-offset-2" [ngClass]="{'has-error': (loginForm.controls.lastName.dirty && !loginForm.controls.lastName.valid), 'has-success': loginForm.controls.lastName.valid}">
           <input type="text" class="form-control" placeholder="Last Name" formControlName="lastName" required maxlength="15">
+          <ul class="help-block">
+            <li *ngIf="(loginForm.controls.lastName.errors?.required && loginForm.controls.lastName.dirty)" class="list-group-item">Last Name is Required</li>
+          </ul>
         </div>
       </div>
 
       <div class="form-group">
         <label class="control-label col-lg-2" for="email">Email:</label>
-        <div class="col-lg-10">
+        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.email.dirty && !loginForm.controls.email.valid), 'has-success': loginForm.controls.email.valid}">
           <input type="email" class="form-control" id="email" placeholder="Enter Email" formControlName="email" required maxlength="50">
+          <ul class="help-block list-group">
+            <li *ngIf="(loginForm.controls.email.errors?.email && loginForm.controls.email.dirty)" class="list-group-item">Invalid Email</li>
+            <li *ngIf="(loginForm.controls.email.errors?.emailUniqueValidator && loginForm.controls.email.dirty)" class="list-group-item">This Email is already Registered with us</li>
+          </ul>
         </div>
       </div>
 
       <div class="form-group">
         <label class="control-label col-lg-2" for="phoneno">Contact Number:</label>
-        <div class="col-lg-10">
+        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.phoneNumber.dirty && !loginForm.controls.phoneNumber.valid), 'has-success': loginForm.controls.phoneNumber.valid }">
           <input type="text" class="form-control" id="phoneno" placeholder="Enter Phone No." formControlName="phoneNumber" required maxlength="14">
+          <ul class="help-block list-group">
+            <li *ngIf="(loginForm.controls.phoneNumber.errors?.phoneNumberValidator && loginForm.controls.phoneNumber.dirty)" class="list-group-item">Invalid Phone Number</li>
+          </ul>
         </div>
       </div>
 
@@ -49,22 +59,34 @@
       
       <div class="form-group">
         <label class="control-label col-lg-2" for="sclass">Class:</label>
-        <div class="col-lg-10">
+        <div class="col-lg-10"  [ngClass]="{'has-error': (loginForm.controls.studentClass.dirty && !loginForm.controls.studentClass.valid), 'has-success': loginForm.controls.studentClass.valid }">
           <input type="text" class="form-control" id="sclass" placeholder="Enter Class" formControlName="studentClass" required maxlength="50">
+          <ul class="help-block list-group">
+            <li *ngIf="(loginForm.controls.studentClass.errors?.required && loginForm.controls.studentClass.dirty)" class="list-group-item">Class is required</li>
+          </ul>
         </div>
       </div>
   
       <div class="form-group">
         <label class="control-label col-lg-2" for="passwd">Password:</label>
-        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.password.dirty && (!loginForm.controls.password.valid || loginForm.errors)), 'has-success': (loginForm.controls.password.valid && !loginForm.errors)}">
+        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.password.dirty && loginForm.controls.confirm.dirty && !(loginForm.controls.password.valid && loginForm.valid)), 'has-success': (loginForm.controls.password.valid && !loginForm.errors?.matchingPasswords)}">
           <input type="password" class="form-control" id="passwd" placeholder="Enter Password" formControlName="password" required minlength="8" maxlength="64">
         </div>
       </div>
 
       <div class="form-group">
         <label class="control-label col-lg-2" for="cnfmpasswd">Confirm Password:</label>
-        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.confirm.dirty && (!loginForm.controls.confirm.valid || loginForm.errors)), 'has-success': (loginForm.controls.confirm.valid && !loginForm.errors)}">
+        <div class="col-lg-10" [ngClass]="{'has-error': (loginForm.controls.password.dirty && loginForm.controls.confirm.dirty && !(loginForm.controls.confirm.valid && loginForm.valid)), 'has-success': (loginForm.controls.confirm.valid && !loginForm.errors?.matchingPasswords)}">
           <input type="password" class="form-control" id="cnfmpasswd" placeholder="Re-Enter Password" required minlength="8" maxlength="64" formControlName="confirm">
+          <ul class="help-block list-group">
+            <li *ngIf="(loginForm.errors?.matchingPasswords && loginForm.controls.confirm.dirty && loginForm.controls.password.dirty)" class="list-group-item">Passwords Doesnot Match</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-lg-offset-2">
+          <p class="lead">Already Registered? <a [routerLink]="['../login']">Login Here</a></p>
         </div>
       </div>
     
@@ -73,6 +95,26 @@
           <button type="button" class="btn btn-default" (click)="loginForm.reset({'phoneNumber': ''})">Clear</button>
           <button type="submit" class="btn btn-default btn-primary" [disabled]="!loginForm.valid">Submit</button>
         </div>
+      </div>
+
+      <div class="alert alert-dismissible alert-success" *ngIf="isRegistrationFailure == 0">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <div class="lead">
+          <strong>Bingo!</strong> You are registered with us. This is your unique registration ID: {{student?._id}} You might save this somewhere, as you can be identified uniquely by this. Click <a [routerLink]="['/exam']" class="alert-link">here</a> to view all exams.
+        </div>
+      </div>
+
+      <div class="alert alert-dismissible alert-warning" *ngIf="isRegistrationFailure == 1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p class="lead"><strong>Oh snap!</strong> We couldnot sign you up! What in the world could possibly go wrong?</p>
+      </div>
+
+      <div class="alert alert-dismissible alert-warning" *ngIf="isRegistrationFailure == 2">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>
+          <strong>Oh snap!</strong>
+          You seem to be already logged in. Checkout Exams <a [routerLink]="['/exam']">Here</a>!!
+        </p>
       </div>
     
     </fieldset>

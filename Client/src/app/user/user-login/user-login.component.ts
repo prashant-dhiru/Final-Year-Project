@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
@@ -9,7 +9,7 @@ import { UserService } from '../user.service';
   selector: 'fyp-user-login',
   templateUrl: './user-login.component.html'
 })
-export class UserLoginComponent implements OnInit, OnDestroy {
+export class UserLoginComponent implements OnInit {
 
   userLoginForm: FormGroup;
   subscription: Subscription;
@@ -21,18 +21,19 @@ export class UserLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initUserLoginForm();
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      // user already logged in
-      this.isLoginFailure = 2;
-      return;
-    }
+    // optional: place a guard in this component to check if the user is already logged in to prevent him from using this component
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  isUserAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated')) {
+      if (window.sessionStorage.getItem('userLevel') === '1') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
     }
-    
   }
 
   initUserLoginForm () {
@@ -51,22 +52,22 @@ export class UserLoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit () {
-    if (this.isLoginFailure) {
-      return;
+    if (this.isUserAuthenticated()) {
+      return this.isLoginFailure = 2;
     }
     this.subscription = this.userService.loginUser(this.userLoginForm.value).subscribe((response: Response) => {
-      if ( response.status === 200 ) {
-        window.sessionStorage.setItem('isAuthenticated', 'true');
-        window.sessionStorage.setItem('userLevel', '1');
-        // redirect to exam component
-        const responseBody = response.json();
-      } else if ( response.status === 503 ) {
+      window.sessionStorage.setItem('isAuthenticated', 'true');
+      window.sessionStorage.setItem('userLevel', '1');
+      // redirect to exam component
+    }, (error: any) => {
+      if ( error.status === 405 ) {
         this.isLoginFailure = 2;
-        // 503 someone already logged in
       } else {
-        // 405 internl eror or invalid credentials
+        // 400
         this.isLoginFailure = 1;
       }
+    }, () => {
+      this.subscription.unsubscribe();
     });
   }
 

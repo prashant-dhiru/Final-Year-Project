@@ -25,9 +25,11 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/Client/dist'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use( session ({
+	name: 'connect.sid',
+	httponly: true,
 	secret : process.env.SESSION_KEY,
-	resave: true,
-	saveUninitialized: false,
+	resave: false,
+	saveUninitialized: true,
 	store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 

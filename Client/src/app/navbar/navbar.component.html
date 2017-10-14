@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand">
-        <img itemprop="logo" itemscope="itemscope" src="LANSystem.png">
+        <img itemprop="logo" itemscope="itemscope" src="LANSystem.ico">
         <span>LAN Exam</span>
       </a>
     </div>
@@ -22,17 +22,16 @@
         <li><a [routerLink]="['/admin']" routerLinkActive="active">Admin</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Link</a></li>
-        <li class="dropdown">
+        <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()">Logout</a></li>
+        <li class="dropdown" *ngIf="!isUserAuthenticated()">
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User<span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a >Action</a></li>
-            <li><a>Another action</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a>Separated link</a></li>
+            <li><a [routerLink]="['/user/login']">Login</a></li>
+            <li><a [routerLink]="['/user/signup']">Register</a></li>
           </ul>
         </li>
       </ul>
     </div><!-- /.navbar-collapse -->
+    
   </div><!-- /.container-fluid -->
 </nav>
