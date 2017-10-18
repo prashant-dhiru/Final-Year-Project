@@ -118,6 +118,28 @@ const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
 //     //method finishes here
 // };
 
+AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (examId) {
+
+    // this = schema
+
+    return this.find({exam: examId}).exec((error, aggregateExamQuestionAnalysisDocs) => {
+
+        returnableDocs = [];
+        
+        if (error) return console.log('Error occured at AggregateExamQuestionAnalysisSchema.statics.createComparableData : ', error);
+
+        if (!aggregateExamQuestionAnalysisDocs) return console.log('Error occured at AggregateExamQuestionAnalysisSchema.statics.createComparableData : No Document Seeding Has been done');
+
+        aggregateExamQuestionAnalysisDocs.forEach(function(aggregateExamQuestionAnalysis, index) {
+            
+            aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then((aggregateExamQuestionAnalysis) => {
+                returnableDocs.push(aggregateExamQuestionAnalysis);
+            }).catch((error) => console.log(index, ' for Error in then call', error));
+        
+        });
+
+    });
+}
 
 
 
@@ -132,25 +154,31 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
     // this = aggregateExamQuestionAnalysis;
     //questionAnswers.length number of students who attempted this question
 
+    // console.log('This reference: ', this);
+    aggregateExamQuestionAnalysis = this;
+
     //finding Submitted answers of this exam and question
-    return QuestionAnswer.find({exam: this.exam, question: this.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
+    return QuestionAnswer.find({exam: aggregateExamQuestionAnalysis.exam, question: aggregateExamQuestionAnalysis.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
         
+        if (questionAnswers.length === 0) return Promise.reject();
+
         //calculating values for these two keys
-        this.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
-        this.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
+        aggregateExamQuestionAnalysis.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
+        aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
 
         //total students who attempted this question
-        this.studentsAttempted = questionAnswers.length;
+        aggregateExamQuestionAnalysis.studentsAttempted = questionAnswers.length;
 
         //further calculation requires total number of students who attempted the exam
         //finding the total number of students wo attempted the exam
-        return ExamReturn.find({exam: this.exam}).count(function (error, totalStudentWhoAttemptedExam) {
-            
+        return ExamReturn.find({exam: aggregateExamQuestionAnalysis.exam}).count(function (error, totalStudentWhoAttemptedExam) {
+
             //handling any potential errors
             if (error) return Promise.reject(error);
+            if (totalStudentWhoAttemptedExam === 0) return Promise.reject();
 
             //calculating percentages based keys here
-            this.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
+            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
             
             //last two value requires the average times taken by students who got this question right
             //mapping queestions answers to find the Answer which are correct and array of time taken
@@ -160,12 +188,12 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
 
             //correctanswerTimes.length number of students who attempted this question and got right
 
-            this.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
+            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
 
-            this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
+            aggregateExamQuestionAnalysis.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
 
-            //saving the document, returning the document on success, returning error on error
-            return this.save(); //.then(() => Promise.resolve(this), (error) => Promise.reject(error));
+            //saving the document, returning the promise
+            return aggregateExamQuestionAnalysis.save();
         });
 
         //handling any potential errors

@@ -42,7 +42,7 @@ router.post('/admin/login', (request, response) => {
     request.session.userLevel = 0;
     
     //sending back empty response to client side
-    response.send('hello from system');
+    response.send();
     
     //route completes here
 });
@@ -92,41 +92,16 @@ router.post('/admin/createExam', adminAuthenticate, (request, response) => {
     var exam = new Exam(body);
 
     /* Creating Demo Document here for Insertion */
-    // var aggregateExamResult = new AggregateExamResult({exam: exam._id});
-    /* Creation Complete */
-
-    //creating a loop fo each question in the request.body
-    // request.body.questions.forEach(function(element) {
-        
-    //     //assigning exam id in each question 
-    //     element.exam = exam._id;
-        
-    //     //creating new question
-    //     var question = new MCQuestion(element);
-        
-    //     /* Inserting Demo Documents here */
-    //     var aggregateExamQuestionAnalysis = new AggregateExamQuestionAnalysis({
-    //         exam: exam._id,
-    //         question: question._id
-    //     });
-    //     aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
-    //     aggregateExamQuestionAnalysis.save().catch((error) => console.log(error));
-    //     /* Demo Documents Insertion finished */
-
-    //     //pushing question id in exam.questions array
-    //     exam.questions.push(question._id);
-        
-    //     //saving the question document in database
-    //     question.save().catch((error) => console.log(error));
-    // });
-
-    /* Inserting Demo Documents here */
-    // aggregateExamResult.save().catch((error) => console.log(error));
+    var aggregateExamResult = new AggregateExamResult({exam: exam._id});
+    
+    /* saving into database */
+    aggregateExamResult.save().catch((error) => console.log(error));
     /* Demo Documents Insertion finished */
 
     //finally saving the exam into the database while handling any error
     // if any error, sending the error back with Internal Service Error
     exam.save().then(() => response.send(exam), (error) => response.status(500).send(error));
+    
     //route finishes here
 });
 /********************************************************************************************************* */
@@ -153,13 +128,30 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
     var question = new MCQuestion(body);
 
     //searching for exam to push the id in
-    Exam.findById(id).exec((error, exam) => {
+    Exam.findById(id).select('_id').exec((error, exam) => {
 
         //if error occures, sending error with Internal Server Errorerror code and returning
         if (error) return response.status(500).send(error)
 
         //if there is no exam in database with the id, sending emty response back with Not Found status code
         if (!exam) return response.status(404).send('No exam with such ID');
+
+
+        /* Inserting Demo Documents here */
+        var aggregateExamQuestionAnalysis = new AggregateExamQuestionAnalysis({
+            exam: exam._id,
+            question: question._id
+        });
+
+        AggregateExamResult.findOne({exam: exam._id}).exec((error, aggregateExamResult) => {
+            
+            aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
+            aggregateExamResult.save().catch((error) => console.error('Error occured in saving reference', error));
+
+        });
+        
+        aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));
+        /* Demo Documents Insertion finished */
 
         // saving the question document in database
         question.save().then(() => {
@@ -209,6 +201,28 @@ router.get('/admin/exam/:id', adminAuthenticate, (request, response) => {
     //route completes here
 });
 /********************************************************************************************************* */
+
+/****************************************************************
+ * This route is used to check if the question store already has a question
+ * This route is to be used to fulfill the unique attribute of question body
+ * This is a private route, only authenticated admin can access this route
+ */
+router.post('/admin/question', (request, response) => {
+
+    //searching question store for a similar question in the store, and counting the number of similar questions
+    MCQuestion.findOne({body: request.body.questionBody}).count((error, questionCount) => {
+        
+        // if error occured while searching or there is a question,
+        // sending qestion found to be true
+        if (error || (questionCount > 0)) return response.send({found: true});
+
+        // if no similar question found, sending question found to be false
+        response.send({found: false});     
+
+    });
+    //route completes here
+});
+/******************************************************************************************************** */
 
 //Exporting the router to be used in the main application file
 module.exports = router;

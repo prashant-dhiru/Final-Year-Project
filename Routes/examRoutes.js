@@ -9,6 +9,7 @@ const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
 //importing middleware from middleware directory to authenticate students
+const {authenticate} = require('../middleware/authenticate');
 const {userAuthenticate} = require('../middleware/userAuthenticate');
 
 //importing models from models directory
@@ -17,6 +18,7 @@ const {QuestionAnswer} = require('../models/questionAnswer');
 const {Exam} = require('../models/exam');
 
 const {AggregateExamResult} = require('../models/aggregateExamResult');
+const { AggregateExamQuestionAnalysis } = require('../models/aggregateExamQuestionAnalysis');
 
 /***********************************************************
  * This route is used to get full details about an exam
@@ -49,7 +51,10 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
         var questions = exam.questions.map((question) => {
             return {
                 body: question.body,
-                answerOptions: question.answerOptions,
+                answerOptionOne: question.answerOptionOne,
+                answerOptionTwo: question.answerOptionTwo,
+                answerOptionThree: question.answerOptionThree,
+                answerOptionFour: question.answerOptionFour,
                 marksForCorrectAnswer: question.marksForCorrectAnswer,
                 negativeMark: question.negativeMark,
                 difficulty: question.difficulty,
@@ -72,7 +77,7 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
  * This route will return exams sorted in descending order date wise
  * This is a private route, only authenticated users can use this route
  */
-router.get('/exam', userAuthenticate, (request, response) => {
+router.get('/exam', authenticate, (request, response) => {
 
     //finding all exams descending date order wise
     Exam.find({}).sort('-date').exec((error, exams) => {
@@ -181,7 +186,7 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
  * this route is used then user wishes to fetch results for an exam, passed as query parameter
  * this route is private, only authenticated users can use this route
  */
-router.get('/exam/result/:id', userAuthenticate, (request, response) => {
+router.get('/exam/result/:id', authenticate, (request, response) => {
 
     //fetching the examID from the request parameter
     var id = request.params.id;
@@ -192,15 +197,37 @@ router.get('/exam/result/:id', userAuthenticate, (request, response) => {
         return response.status(400).send('Invalid Exam ID');
     
     
-    ExamReturn.find({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
-        if (error) return response.status(503).send(error); //Service Unavailable
-        AggregateExamResult.find({exam: id}).populate('questionAnalysis').exec((error, aggregateExamResult) => {
-            if (error) return response.status(503).send(error); //Service Unavailable
+    // ExamReturn.find({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
+    //     if (error) return response.status(503).send(error); //Service Unavailable
+    //     AggregateExamResult.find({exam: id}).populate('questionAnalysis').exec((error, aggregateExamResult) => {
+    //         if (error) return response.status(503).send(error); //Service Unavailable
 
-            //here is all the data needed to be sent to the client
+    //         //here is all the data needed to be sent to the client
 
+    //     });
+    // });
+
+    // AggregateExamQuestionAnalysis.find({}).then((docs) => {
+    //     response.send(docs);
+    // });
+
+    // following functions are tested and running
+
+    AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
+
+        aggregateExamResult.questionAnalysis.forEach((questionId, index, array) => {
+            AggregateExamQuestionAnalysis.find({exam: id, question: questionId}).exec((error, aggregateExamQuestionAnalysis) => {
+                aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then(() => {
+                    console.log(aggregateExamQuestionAnalysis);
+                }).catch((error) => console.error(error));
+            });
+            if (index === array.length-1) {
+                //last iteration
+            }
         });
-    });
+
+    }, (error) => response.status(400).send(error));
+
 
     //route finished here
 });

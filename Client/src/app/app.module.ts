@@ -28,6 +28,8 @@ import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
 import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 import { UserMeComponent } from './user/user-me/user-me.component';
 import { DummyComponent } from './Playground/dummy/dummy.component';
+import { AdminMeComponent } from './admin/admin-me/admin-me.component';
+import { DisplayExamComponent } from './admin/view-exam/display-exam.component';
 
 
 
@@ -49,7 +51,9 @@ declare let require: any;
     UserLoginComponent,
     AdminLoginComponent,
     UserMeComponent,
-    DummyComponent
+    DummyComponent,
+    AdminMeComponent,
+    DisplayExamComponent
   ],
   imports: [
     BrowserModule,

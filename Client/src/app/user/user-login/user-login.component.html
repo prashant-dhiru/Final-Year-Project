@@ -33,7 +33,7 @@
           </div>
 
           <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 1">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <button type="button" class="close" data-dismiss="alert" (click)="resetIsLoginFailure()">&times;</button>
             <p>
               <strong>Oh snap!</strong>
               We couldnot login you up! Did you checked your password?
@@ -41,7 +41,7 @@
           </div>
 
           <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 2">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <button type="button" class="close" data-dismiss="alert" (click)="resetIsLoginFailure()">&times;</button>
             <p>
               <strong>Oh snap!</strong>
               You seem to be already logged in. Checkout Exams <a [routerLink]="['/exam']">Here</a>!!

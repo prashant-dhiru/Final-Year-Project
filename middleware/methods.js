@@ -24,8 +24,8 @@ var specialMinifier = function (objArray, valueArray) {
     var obj = {};
     //looping through each value in valueArray passed
     valueArray.forEach((valueKey) => {
-        //using pluckandreduce method to reduce the array of object to the loops' value and assigning it as
-        //object key value
+        //using pluckandreduce method to reduce the array of object to the loops' value
+        // and assigning it as object key value
         obj[valueKey] = pluckAndReduce(objArray, valueKey);
     });
     //returning the object

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormControl, NgForm } from '@angular/forms';
+import { FormGroup, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 
@@ -67,34 +67,23 @@ export class UserSignupComponent implements OnInit {
   }
 
   ///////////////////////////////////////////////
-  emailUniqueValidator (control: FormControl): Promise<any> | Observable<any> {
-    
-    if (!this) {
-      console.log('No this available');
-      return Promise.reject('sjwejce');
-    }
+  emailUniqueValidator (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> {
 
-    const promise = new Promise(function (resolve, reject) {
-
+    return new Promise((resolve, reject) => {
       this.userService.checkEmailUnique(control.value).subscribe((response: Response) => {
-
-        if (response.status !== 200) {
-          return reject('Server Error');
-        }
-        const responseBody = response.json();
-
-        if (responseBody.found === true) {
-          reject('Email Found');
-        } else {
-          resolve(null);
-        }
-
-      }, (error) => reject(error));
-
+        response.json().found ? reject({emailUniqueValidator: true}) : resolve(null);
+      }, (error: any) => reject({emailUniqueValidator: true}));
     });
 
-    return promise;
+    // this.userService.checkEmailUnique(control.value).subscribe((response: Response) => {
+    //   return (response.json().found ? {emailUniqueValidator: true} : null);
+    // });
 
+    // return new Promise(resolve => {
+    //   this.userService.checkEmailUnique(control.value).map(response => {
+    //     response.json().found ? resolve({emailUniqueValidator: true}) : resolve(null);
+    //   });
+    // });
   }
 
   matchingPasswords (password, confirm) {
@@ -127,6 +116,8 @@ export class UserSignupComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.maxLength(50)
+      ], [
+        this.emailUniqueValidator.bind(this)
       ]),
       'address': new FormControl('', Validators.maxLength(500)),
       'studentClass': new FormControl('', [
@@ -144,6 +135,10 @@ export class UserSignupComponent implements OnInit {
         Validators.maxLength(64)
       ])
     }, this.matchingPasswords('password', 'confirm'));
+  }
+
+  resetIsRegistrationFailure () {
+    this.isRegistrationFailure = -1;
   }
 
 

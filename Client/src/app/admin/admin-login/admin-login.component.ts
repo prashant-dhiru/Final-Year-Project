@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Rx';
+import { Response } from '@angular/http';
+
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'fyp-admin-login',
@@ -8,9 +12,11 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class AdminLoginComponent implements OnInit {
 
+  subscription: Subscription;
   adminLoginForm: FormGroup;
+  isLoginFailure = 0;
 
-  constructor() {}
+  constructor(private adminService: AdminService) {}
 
   ngOnInit() {
     this.initAdminLoginForm();
@@ -23,7 +29,40 @@ export class AdminLoginComponent implements OnInit {
   }
 
   onSubmit () {
-    console.log(this.adminLoginForm.value);
+    if (this.isAdminAuthenticated()) {
+      return this.isLoginFailure = 2;
+    }
+    this.subscription = this.adminService.loginAdmin(this.adminLoginForm.controls['password'].value).subscribe((response: Response) => {
+      window.sessionStorage.setItem('isAuthenticated', 'true');
+      window.sessionStorage.setItem('userLevel', '0');
+    }, (error: any) => {
+      if (error.status === 405) {
+        this.isLoginFailure = 2;
+      } else {
+        this.isLoginFailure = 1;
+      }
+      this.adminLoginForm.reset();
+      // 405 logged in
+      // 400 unauthorised access
+    }, () => {
+      this.subscription.unsubscribe();
+    });
+  }
+
+  isAdminAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated')) {
+      if (window.sessionStorage.getItem('userLevel') === '0') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  resetIsLoginFailure () {
+    this.isLoginFailure = 0;
   }
 
 }

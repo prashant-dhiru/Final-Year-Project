@@ -36,7 +36,6 @@ export class NavbarComponent implements OnInit {
     this.subscription = this.userService.logoutuser().subscribe((response: Response) => {
       window.sessionStorage.setItem('isAuthenticated', 'false');
       window.sessionStorage.setItem('userLevel', '-1');
-      // redirect to login page
     }, (error: any) => {
       console.error('Unable to Logout the User');
     }, () => {

@@ -1,49 +1,28 @@
-<div class="container">
 <div class="bs-component">
-  <form class="form-horizontal">
     <fieldset>
-      <legend>Create Exam</legend>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="name">Exam Name:</label>
-        <div class="col-lg-10">
-          <input readonly type="text" id="name" class="form-control" value="{{exam?.name}}">
+        <div class="row">
+            <div class="col-sm-9">
+                <form class="form-inline" [formGroup]="examViewForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label class="control-label sr-only" for="examId">Exam ID:</label>
+                        <input type="text" class="form-control" id="examId" minlength="24" maxlength="24" required placeholder="Enter Exam ID" formControlName="examID" size="24" [ngClass]="{'has-error': (examViewForm.controls.examID.dirty && !examViewForm.controls.examID.valid), 'has-success': examViewForm.controls.examID.valid}">
+                        <div class="help-block">
+                            <span *ngIf="(examViewForm.controls.examID.errors && examViewForm.controls.examID.dirty)">Your Inputted Exam-ID is incorrect, It should be a valid hexadecimal string of length of 24 characters</span>
+                        </div>
+                        
+                    </div>
+                
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" [disabled]="!examViewForm.valid">Submit</button>
+                    </div>
+                
+                </form>
+            </div>
+            <div class="col-sm-3">
+                <a class="btn btn-primary pull-left" [routerLink]="['exam/:id/insertque']">Input Questions Into Exam</a>
+            </div>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="description">Exam Description:</label>
-        <div class="col-lg-10">
-          <input type="text" id="description" placeholder="Exam Description" class="form-control" value="{{exam?.description}}" readonly>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="allowedTime">Allowed Time:</label>
-        <div class="col-lg-10">
-          <div class="input-group">
-            <input type="text" id="allowedTime" class="form-control" value="{{exam?.allowedTime}}" readonly>
-            <span class="input-group-addon">in Minutes</span>
-          </div>
-          
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="subject">Subject:</label>
-        <div class="col-lg-10">
-          <input type="text" id="subject" readonly class="form-control" value="{{exam?.subject}}">
-        </div>
-      </div>
-
-      <hr>
-      <legend>Questions</legend>
-
-      <ul class="list-group" *ngFor="let question of exam.questions; let questionId = index">
-        <fyp-question-item-list [question]="question" [questionId]="questionId" id="quesitem"></fyp-question-item-list>
-      </ul>
-
     </fieldset>
-  </form>
-</div>
+    <hr>
+    <fyp-display-exam></fyp-display-exam>
 </div>

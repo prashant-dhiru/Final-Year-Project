@@ -20,7 +20,10 @@ const {mongoose} = require('./db/mongoose');
 const app = express();
 
 //usin application middlewares
-app.use(cors({origin: 'http://localhost:4200'}));
+app.use(cors({
+	origin: 'http://localhost:4200',
+	credentials: true
+}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/Client/dist'));
 app.use(bodyParser.urlencoded({ extended: false }));

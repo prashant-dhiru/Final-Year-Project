@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import 'rxjs';
+import { Http, Response } from '@angular/http';
+import {Observable} from 'rxjs/Rx';
 
 import {User} from '../Classes/user';
 
@@ -9,25 +9,24 @@ export class UserService {
 
   constructor(private http: Http) {}
 
-  checkEmailUnique (email: string) {
-    return this.http.post('http://localhost:3000/user/email', {email});
-    
+  checkEmailUnique (email: string): Observable<Response> {
+    return this.http.post('http://localhost:3000/user/email', {email}, { withCredentials: true });
   }
 
-  registerUser (user: User) {
-    return this.http.post('http://localhost:3000/user/signup', user);
+  registerUser (user: User): Observable<Response> {
+    return this.http.post('http://localhost:3000/user/signup', user, { withCredentials: true });
   }
 
-  loginUser (body: any) {
-    return this.http.post('http://localhost:3000/user/login', body);
+  loginUser (body: any): Observable<Response> {
+    return this.http.post('http://localhost:3000/user/login', body, { withCredentials: true });
   }
 
-  logoutuser () {
-    return this.http.delete('http://localhost:3000/user/logout');
+  logoutuser (): Observable<Response> {
+    return this.http.delete('http://localhost:3000/user/logout', { withCredentials: true });
   }
 
-  getUser () {
-    return this.http.get('http://localhost:3000/user/me');
+  getUser (): Observable<Response> {
+    return this.http.get('http://localhost:3000/user/me', { withCredentials: true });
   }
 
 }

@@ -98,19 +98,19 @@
       </div>
 
       <div class="alert alert-dismissible alert-success" *ngIf="isRegistrationFailure == 0">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" (click)="resetIsRegistrationFailure()">&times;</button>
         <div class="lead">
           <strong>Bingo!</strong> You are registered with us. This is your unique registration ID: {{student?._id}} You might save this somewhere, as you can be identified uniquely by this. Click <a [routerLink]="['/exam']" class="alert-link">here</a> to view all exams.
         </div>
       </div>
 
       <div class="alert alert-dismissible alert-warning" *ngIf="isRegistrationFailure == 1">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" (click)="resetIsRegistrationFailure()">&times;</button>
         <p class="lead"><strong>Oh snap!</strong> We couldnot sign you up! What in the world could possibly go wrong?</p>
       </div>
 
       <div class="alert alert-dismissible alert-warning" *ngIf="isRegistrationFailure == 2">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" (click)="resetIsRegistrationFailure()">&times;</button>
         <p>
           <strong>Oh snap!</strong>
           You seem to be already logged in. Checkout Exams <a [routerLink]="['/exam']">Here</a>!!

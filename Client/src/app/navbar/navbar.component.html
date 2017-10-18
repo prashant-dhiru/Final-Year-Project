@@ -22,7 +22,7 @@
         <li><a [routerLink]="['/admin']" routerLinkActive="active">Admin</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()">Logout</a></li>
+        <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()" [routerLink]="['/user/me']">Logout</a></li>
         <li class="dropdown" *ngIf="!isUserAuthenticated()">
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User<span class="caret"></span></a>
           <ul class="dropdown-menu">

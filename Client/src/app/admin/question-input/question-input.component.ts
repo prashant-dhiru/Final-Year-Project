@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
+import { Response } from '@angular/http';
+import { Subscription, Observable } from 'rxjs/Rx';
+import { ActivatedRoute } from '@angular/router';
 
-import { Question } from '../../Classes/question';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'fyp-question-input',
@@ -10,10 +13,15 @@ import { Question } from '../../Classes/question';
 })
 export class QuestionInputComponent implements OnInit {
 
-  public questionItemForm: FormGroup;
+  isSubmissionFailed = -1;
+  questionItemForm: FormGroup;
+  subscription: Subscription;
+  id: string;
 
-  constructor() {}
-  
+  constructor(private adminService: AdminService, private activatedRoute: ActivatedRoute) {
+    this.id = this.activatedRoute.snapshot.params['id'];
+  }
+
   ngOnInit() {
     this.questionItemFormInit();
   }
@@ -25,6 +33,8 @@ export class QuestionInputComponent implements OnInit {
         Validators.minLength(10),
         Validators.maxLength(1000)
         /*body: {unique: true}*/
+      ], [
+        // this.questionUniqueValidator.bind(this)
       ]),
       'answerOptionOne': new FormControl('', [
         Validators.minLength(1),
@@ -68,10 +78,71 @@ export class QuestionInputComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.questionItemForm.value);
+    if (this.isAdminAuthenticated()) {
+      return this.isSubmissionFailed = 1;
+    }
+    this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value).subscribe((response: Response) => {
+      this.isSubmissionFailed = 0;
+    }, (error: any) => {
+      if (error.status === 401) {
+        // 401 unauthorised
+      } else if (error.status === 400) {
+        // 400 invalid exam id
+      } else if (error.status === 404) {
+        // 404 exam with such id not present
+      } else {
+        // 500 internal server error while searching for exam
+        // also contain unique voilation, if any
+      }
+    }, () => {
+      this.subscription.unsubscribe();
+    });
   }
 
+  isAdminAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated') === 'true') {
+      if (window.sessionStorage.getItem('userLevel') === '0') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  resetIsSubmissionFailed () {
+    this.isSubmissionFailed = -1;
+  }
+
+  questionUniqueValidator (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> {
+
+    // return this.adminService.checkQuestionUnique(control.value).map((response) => {});
+    return new Promise(resolve => {
+      this.adminService.checkQuestionUnique(control.value).map(response => {
+        const body = response.json();
+        if (body.found === false) {
+          resolve(null);
+        } else {
+          resolve({questionUniqueValidator: false});
+        }
+      });
+    });
+    // const promise = new Promise(function (resolve, reject) {
+      // this.subscription = this.adminService.checkQuestionUnique(control.value).subscribe((response: Response) => {
+
+      // }, (error: any) => {
+      //   if (error.status === 401) {
+      //     return Promise.reject({questionUniqueValidator: true});
+      //   } else {
+      //     return Promise.reject(error);
+      //   }
+      // }, () => {
+        
+      //   this.subscription.unsubscribe();
+      // });
+    // });
+    // return promise;
+
+  }
 }
-
-
-

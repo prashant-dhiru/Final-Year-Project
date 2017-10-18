@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Response } from '@angular/http';
+import { Subscription } from 'rxjs/Rx';
 
 import { AdminService } from './admin.service';
 
@@ -10,43 +11,36 @@ import { AdminService } from './admin.service';
 })
 export class AdminComponent implements OnInit {
 
-  adminLoginForm: FormGroup;
-  isAdminAuthenticated = false; // isAdminAuthenticated
+  subscription: Subscription;
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit() {
-    this.initadminLoginForm();
   }
 
-  initadminLoginForm () {
-    this.adminLoginForm = new FormGroup({
-      'password': new FormControl()
-    });
-  }
-
-  onSubmit () {
-    if (window.sessionStorage.getItem('isAuthenticated') === 'true' ) {
-      // someone already logged in
-      return;
-    }
-    this.adminService.loginAdmin(this.adminLoginForm.value.password).subscribe((response: Response) => {
-      if (response.status === 200) {
-        // document.cookie.
-        window.sessionStorage.setItem('isAuthenticated', 'true');
-        window.sessionStorage.setItem('userLevel', '0');
-        this.isAdminAuthenticated = true;
+  isAdminAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated')) {
+      if (window.sessionStorage.getItem('userLevel') === '0') {
+        return true;
       } else {
-        this.isAdminAuthenticated = false;
-        // 405 for someone already logged in
-        // 400 for password incorrect
+        return false;
       }
-    });
+    } else {
+      return false;
+    }
   }
 
   logoutAdmin () {
-    this.adminService.logoutAdmin().subscribe((response: Response) => {
-
+    if (!this.isAdminAuthenticated()) {
+      return;
+    }
+    this.subscription = this.adminService.logoutAdmin().subscribe((response: Response) => {
+      window.sessionStorage.setItem('isAuthenticated', 'false');
+      window.sessionStorage.setItem('userLevel', '-1');
+    }, (error: any) => {
+      console.error('Logging Out Procedure Failed');
+    }, () => {
+      this.subscription.unsubscribe();
     });
   }
 

@@ -121,7 +121,7 @@ router.post('/user/email', (request, response) => {
     Student.find({email: request.body.email}).count((error, studentCount) => {
 
         //handing any potential error or if no student found, responsing with true (email found)
-        if (error || !studentCount) return response.send({found: true});
+        if (error || (studentCount > 0)) return response.send({found: true});
 
         // returning false if student not found
         response.send({found: false});

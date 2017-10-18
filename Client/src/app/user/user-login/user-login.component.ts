@@ -13,11 +13,9 @@ export class UserLoginComponent implements OnInit {
 
   userLoginForm: FormGroup;
   subscription: Subscription;
-  isLoginFailure: number;
+  isLoginFailure = 0;
 
-  constructor(private userService: UserService) {
-    this.isLoginFailure = 0;
-  }
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
     this.initUserLoginForm();
@@ -69,6 +67,10 @@ export class UserLoginComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
+  }
+
+  resetIsLoginFailure () {
+    this.isLoginFailure = 0;
   }
 
 }

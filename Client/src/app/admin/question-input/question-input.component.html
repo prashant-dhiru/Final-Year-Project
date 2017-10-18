@@ -1,4 +1,4 @@
-<div class="well bs-component">
+<div class="bs-component">
   <form class="form-horizontal" [formGroup]="questionItemForm" (ngSubmit)="onSubmit()">
     <fieldset>
       <legend>Input new Question</legend>
@@ -110,4 +110,33 @@
 
     </fieldset>
   </form>
+
+  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 1">
+    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
+    <p>You seem to be unauthenticated from the server. Login <a [routerLink]="['/admin']">here</a>!!</p>
+  </div>
+
+  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 2">
+    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
+    <p>
+      <strong>Oh No!</strong>
+      The Object ID you inputted seems to be incorrect. Input a correct Object ID for Exam!!
+    </p>
+  </div>
+
+  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 3">
+    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
+    <p>
+      <strong>Oops!</strong>
+      The store has no exam with the id {{id}}. Try giving the ID an check!!
+    </p>
+  </div>
+
+  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 4">
+    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
+    <p>
+      <strong>Oh snap!</strong>
+      There seems to be a technical problem with the server, or the connection. Please Try Again later
+    </p>
+  </div>
 </div> 

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Response } from '@angular/http';
+import { Subscription } from 'rxjs/Rx';
 
 import { Question } from '../../Classes/question';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'fyp-exam-input',
@@ -10,9 +13,10 @@ import { Question } from '../../Classes/question';
 export class ExamInputComponent implements OnInit {
   
   examForm: FormGroup;
-  isSubmitted = false;
+  submissionError = 0;
+  subscription: Subscription;
 
-  constructor() { }
+  constructor(private adminService: AdminService) { }
 
   ngOnInit() {
     this.examFormInit();
@@ -40,8 +44,38 @@ export class ExamInputComponent implements OnInit {
   }
 
   onSubmit () {
-    this.isSubmitted = true;
-    // redirect to exam:id
+    if (this.isAdminAuthenticated()) {
+      return this.submissionError = 1;
+    }
+    this.subscription = this.adminService.createExam(this.examForm.value).subscribe((response: Response) => {
+      this.submissionError = 0;
+      // redirect to view exam component with examid
+    }, (error: any) => {
+      if (error.status === 401) {
+        this.submissionError = 1;
+      } else {
+        this.submissionError = 2;
+      }
+      // 401 unauthenticated
+      // 500 internal server error
+    }, () => {
+      this.subscription.unsubscribe();
+    });
   }
 
+  isAdminAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated') === 'true') {
+      if (window.sessionStorage.getItem('userLevel') === '0') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  resetSubmissionError () {
+    this.submissionError = 0;
+  }
 }

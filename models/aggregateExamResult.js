@@ -34,19 +34,30 @@ const AggregateExamResultSchema = new mongoose.Schema({
     //Schema definiton finishes here
 });
 
-// Backup 
+/**
+ * @param {ObjectId} examId
+ * @param {AggregateExamResult} this
+ * @return {Promise} getComparableData
+ * resolved with the document if success, rejected with error if error
+ * Model Method
+ */
 AggregateExamResultSchema.statics.getComparableData = function (examId) {
 
+    // returning the promise returned after calculating the comparable data
     return this.findOne({exam: examId}).exec((error, aggregateExamResult) => {        
+        
+        // if error occured while fnding the document, returning error
         if (error) return Promise.reject(error);
+        
+        // if no document found, it means no document seeding has been done, rejecting request
         if (!aggregateExamResult) return Promise.reject('No Document Seeding Has been done');
 
+        //returning the promise returned by the calculator function, success or error
         return aggregateExamResult.calculateComparableDataByDocument();
     });
 
-//method finishes here
+    //method finishes here
 };
-
 
 /**
  * @param {any} this
@@ -56,25 +67,23 @@ AggregateExamResultSchema.statics.getComparableData = function (examId) {
  */
 AggregateExamResultSchema.methods.calculateComparableDataByDocument = function () {
 
-    // returning a promise, resolving the promise with document if success, rejecting the promise with error if error
-    return new Promise(function (resolve, reject) {
+    // assigning the this value into a variable to peform saving
+    aggregateExamResult = this;
 
-        //finding the exam return data here by the exam
-        return ExamReturn.find({exam: this.exam}).select('totalTimeTaken totalQuestionAttempted marksObtained').then(function (examReturns) {
-            
-            //setting values for the AggregateExamResult documents
-            this.cutOff = pluckAndReduce(examReturns, 'marksObtained');
-            this.averageQuestionsAttempted = pluckAndReduce(examReturns, 'totalQuestionAttempted');
-            this.averageTimeSpent = pluckAndReduce(examReturns, 'totalTimeTaken');
-            this.studentsAttempted = examReturns.length;
-        
-            //saving the updated doc into the database and returning the saved doc if successfully saved, else returning error
-            return this.save().then(() => resolve(this), (error) => reject(error));
-        
-            /* Catching any potential error that may occur during finding examdata */
-        }, (error) => reject(error)); 
-            
-    });
+    //finding the exam return data here by the exam
+    return ExamReturn.find({exam: aggregateExamResult.exam}).select('totalTimeTaken totalQuestionAttempted marksObtained -_id').then((examReturns) => {
+
+        //setting values for the AggregateExamResult documents
+        aggregateExamResult.cutOff = pluckAndReduce(examReturns, 'marksObtained');
+        aggregateExamResult.averageQuestionsAttempted = pluckAndReduce(examReturns, 'totalQuestionAttempted');
+        aggregateExamResult.averageTimeSpent = pluckAndReduce(examReturns, 'totalTimeTaken');
+        aggregateExamResult.studentsAttempted = examReturns.length;
+    
+        //saving the updated doc into the database and returning the promise
+        return aggregateExamResult.save();
+    
+        /* Catching any potential error that may occur during finding examdata */
+    }, (error) => Promise.reject(error)); 
     
     //method finishes here
 };
