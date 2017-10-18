@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { AdminService } from '../admin.service';
 
@@ -16,7 +17,7 @@ export class AdminLoginComponent implements OnInit {
   adminLoginForm: FormGroup;
   isLoginFailure = 0;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private router: Router) {}
 
   ngOnInit() {
     this.initAdminLoginForm();
@@ -35,6 +36,7 @@ export class AdminLoginComponent implements OnInit {
     this.subscription = this.adminService.loginAdmin(this.adminLoginForm.controls['password'].value).subscribe((response: Response) => {
       window.sessionStorage.setItem('isAuthenticated', 'true');
       window.sessionStorage.setItem('userLevel', '0');
+      this.router.navigate(['/admin/create-exam']);
     }, (error: any) => {
       if (error.status === 405) {
         this.isLoginFailure = 2;

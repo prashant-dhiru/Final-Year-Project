@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { UserService } from '../user/user.service';
 
@@ -12,7 +13,7 @@ export class NavbarComponent implements OnInit {
 
   subscription: Subscription;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -36,6 +37,7 @@ export class NavbarComponent implements OnInit {
     this.subscription = this.userService.logoutuser().subscribe((response: Response) => {
       window.sessionStorage.setItem('isAuthenticated', 'false');
       window.sessionStorage.setItem('userLevel', '-1');
+      this.router.navigate(['/user/login']);
     }, (error: any) => {
       console.error('Unable to Logout the User');
     }, () => {

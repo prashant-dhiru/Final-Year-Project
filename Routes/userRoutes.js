@@ -132,5 +132,25 @@ router.post('/user/email', (request, response) => {
 });
 /****************************************************************************************** */
 
+/**
+ * Route to check if someone is authenticated, and if there, what is the user level
+ * This route doesnot finds who is authenticated, only concern is if someone is authenticated or not
+ * This is a public Route, i.e. unauthenticated users can also use this route
+ */
+router.get('/authstatus', (request, response) => {
+
+    // checking if someone is aothenticated, and if no one is authenticated, responding back
+    if (!request.session.isAuthenticated) return response.send({authStatus: 2});
+
+    // checking if authenticated user is admin, and if not, responding back
+    if (request.session.userLevel === 0) return response.send({authStatus: 0});
+
+    // if here, authenticated user is student, responding back
+    if (request.session.userLevel === 1) return response.send({authStatus: 1});
+
+    // route completes here
+});
+/********************************************************************************************** */
+
 //Exporting the router to be used in the main application file
 module.exports = router;

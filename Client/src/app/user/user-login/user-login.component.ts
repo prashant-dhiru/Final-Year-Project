@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { UserService } from '../user.service';
 
@@ -15,11 +16,10 @@ export class UserLoginComponent implements OnInit {
   subscription: Subscription;
   isLoginFailure = 0;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit() {
     this.initUserLoginForm();
-    // optional: place a guard in this component to check if the user is already logged in to prevent him from using this component
   }
 
   isUserAuthenticated () {
@@ -56,7 +56,7 @@ export class UserLoginComponent implements OnInit {
     this.subscription = this.userService.loginUser(this.userLoginForm.value).subscribe((response: Response) => {
       window.sessionStorage.setItem('isAuthenticated', 'true');
       window.sessionStorage.setItem('userLevel', '1');
-      // redirect to exam component
+      this.router.navigate(['/exam']);
     }, (error: any) => {
       if ( error.status === 405 ) {
         this.isLoginFailure = 2;

@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Response } from '@angular/http';
+import { Subscription } from 'rxjs/Rx';
 
-import { IsAuthenticatedService } from './Shared/is-authenticated.service';
+import { UserService } from './user/user.service';
 
 @Component({
   selector: 'fyp-root',
@@ -9,11 +11,29 @@ import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  constructor(private isAuthenticatedService: IsAuthenticatedService) {}
+  subscription: Subscription;
+
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
-    window.sessionStorage.setItem('isAuthenticated', 'false');
-    window.sessionStorage.setItem('userLevel', '-1');
+    this.subscription = this.userService.getAuthStatus().subscribe((response: Response) => {
+      const body = response.json();
+      if (body.authStatus === 0) {
+        window.sessionStorage.setItem('isAuthenticated', 'true');
+        window.sessionStorage.setItem('userLevel', '0');
+      } else if (body.authStatus === 1) {
+        window.sessionStorage.setItem('isAuthenticated', 'true');
+        window.sessionStorage.setItem('userLevel', '1');
+      } else {
+        window.sessionStorage.setItem('isAuthenticated', 'false');
+        window.sessionStorage.setItem('userLevel', '-1');
+      }
+    }, (error: any) => {
+      window.sessionStorage.setItem('isAuthenticated', 'false');
+      window.sessionStorage.setItem('userLevel', '-1');
+    }, () => {
+      this.subscription.unsubscribe();
+    });
   }
 
   ngOnDestroy () {

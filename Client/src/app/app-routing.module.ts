@@ -9,12 +9,10 @@ import { ExamComponent } from './exam/exam.component';
 import { AdminComponent } from './admin/admin.component';
 import { UserComponent } from './user/user.component';
 
-import { ExamGuard } from './exam/exam.guard';
-
 const routes: Routes = [
   { path: '', children: [] },
   { path: 'user', component: UserComponent, children: USER_ROUTES },
-  { path: 'exam', component: ExamComponent, canActivate: [ExamGuard] },
+  { path: 'exam', component: ExamComponent },
   { path: 'admin', component: AdminComponent, children: ADMIN_ROUTES },
   { path: '**', component: RouteNotFoundComponent }
 ];

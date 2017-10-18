@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { UserService } from '../user.service';
 
@@ -20,7 +21,7 @@ export class UserSignupComponent implements OnInit {
   isRegistrationFailure = -1;
   student: any;
 
-  constructor(public userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit() {
     this.initForm();
@@ -48,6 +49,7 @@ export class UserSignupComponent implements OnInit {
       this.loginForm.reset({'phoneNumber': ''});
       window.sessionStorage.setItem('isAuthenticated', 'true');
       window.sessionStorage.setItem('userLevel', '1');
+      this.router.navigate(['/exam']);
     }, (error: any) => {
       if (error.status === 405) {
         this.isRegistrationFailure = 2;
@@ -74,10 +76,6 @@ export class UserSignupComponent implements OnInit {
         response.json().found ? reject({emailUniqueValidator: true}) : resolve(null);
       }, (error: any) => reject({emailUniqueValidator: true}));
     });
-
-    // this.userService.checkEmailUnique(control.value).subscribe((response: Response) => {
-    //   return (response.json().found ? {emailUniqueValidator: true} : null);
-    // });
 
     // return new Promise(resolve => {
     //   this.userService.checkEmailUnique(control.value).map(response => {
@@ -117,7 +115,7 @@ export class UserSignupComponent implements OnInit {
         Validators.email,
         Validators.maxLength(50)
       ], [
-        this.emailUniqueValidator.bind(this)
+        // this.emailUniqueValidator.bind(this)
       ]),
       'address': new FormControl('', Validators.maxLength(500)),
       'studentClass': new FormControl('', [

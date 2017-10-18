@@ -29,4 +29,8 @@ export class UserService {
     return this.http.get('http://localhost:3000/user/me', { withCredentials: true });
   }
 
+  getAuthStatus (): Observable<Response> {
+    return this.http.get('http://localhost:3000/authstatus', { withCredentials: true });
+  }
+
 }
