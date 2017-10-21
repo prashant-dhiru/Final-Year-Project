@@ -128,7 +128,7 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
     var question = new MCQuestion(body);
 
     //searching for exam to push the id in
-    Exam.findById(id).select('_id').exec((error, exam) => {
+    Exam.findById(id).select('_id questions name').exec((error, exam) => {
 
         //if error occures, sending error with Internal Server Errorerror code and returning
         if (error) return response.status(500).send(error)
@@ -143,11 +143,11 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
             question: question._id
         });
 
-        AggregateExamResult.findOne({exam: exam._id}).exec((error, aggregateExamResult) => {
+        AggregateExamResult.findOne({exam: exam._id}).select('questionAnalysis').exec((error, aggregateExamResult) => {
             
             aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
             aggregateExamResult.save().catch((error) => console.error('Error occured in saving reference', error));
-
+        
         });
         
         aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));

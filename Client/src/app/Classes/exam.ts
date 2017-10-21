@@ -5,6 +5,8 @@ export class Exam {
         public name: string,
         public allowedTime: number,
         public subject: string,
-        public description?: string
+        public description?: string,
+        public _id?: string,
+        public __v?: number
     ) {}
 }

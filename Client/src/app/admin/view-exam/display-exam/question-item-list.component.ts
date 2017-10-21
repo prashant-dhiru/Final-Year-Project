@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { Question } from '../../Classes/question';
+import { Question } from '../../../Classes/question';
 
 @Component({
   selector: 'fyp-question-item-list',

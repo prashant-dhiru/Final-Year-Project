@@ -7,7 +7,7 @@ export class FullExam {
         public subject: string,
         public questions: Question[],
         public _id?: string,
-        public _v?: number,
+        public __v?: number,
         public description?: string
     ) {}
 }

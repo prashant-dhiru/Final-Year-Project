@@ -215,16 +215,83 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
 
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
-        aggregateExamResult.questionAnalysis.forEach((questionId, index, array) => {
-            AggregateExamQuestionAnalysis.find({exam: id, question: questionId}).exec((error, aggregateExamQuestionAnalysis) => {
-                aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then(() => {
-                    console.log(aggregateExamQuestionAnalysis);
-                }).catch((error) => console.error(error));
+        aggregateExamResult.questionAnalysis.forEach((quesID) => {
+            AggregateExamQuestionAnalysis.findById(quesID).then((aaaaa) => {
+                aaaaa.calculateComparableQuestionDataByDocument();
             });
-            if (index === array.length-1) {
-                //last iteration
-            }
         });
+
+        // var arr = AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis);
+        // //this must return an array of promises
+        // // .then((successValues) => {
+
+        // // }, (error) => {
+        // //     console.log(error);
+        // // });
+        // response.send(arr);
+        // // Promise.all(AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis)).then((values) => {
+        //     console.log('The Document values are: ');
+        //     console.log(values);
+        //     response.send(values);
+        // }).catch((error) => {
+        //     console.log('Error values are: ');
+        //     console.log(error);
+        // });
+
+        // console.log(AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis));
+        // .then((values) => {
+        //     console.log('The Document values are: ');
+        //     console.log(values);
+        //     response.send(values);
+        // }).catch((error) => {
+        //     console.log('Error values are: ');
+        //     console.log(error);
+        // });
+
+
+
+        // var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
+        //     return AggregateExamQuestionAnalysis.createComparableData()
+        //     findById(questionId).then((aggregateExamQuestionAnalysis) => aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument());
+        // });
+        
+
+        // var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
+        //     return AggregateExamQuestionAnalysis.findById(questionId).then((aggregateExamQuestionAnalysis) => aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument());
+        // });
+
+        // Promise.all(analysed).then((values) => {
+        //     console.log(values);
+        // });
+
+        // response.send(analysed);
+        
+
+        /**
+         * var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
+            
+            return AggregateExamQuestionAnalysis.findById(questionId).then((aggregateExamQuestionAnalysis) => {
+                return aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument();
+            }).then((aggregateExamQuestionAnalysis) => {
+                console.log('Outer result: ', aggregateExamQuestionAnalysis);
+                return aggregateExamQuestionAnalysis;
+            }).catch((error) => {
+                console.error('Error in outer function: ', error);
+            });
+        });
+         */
+
+
+        // aggregateExamResult.questionAnalysis.forEach((questionId, index, array) => {
+        //     AggregateExamQuestionAnalysis.find({exam: id, question: questionId}).exec((error, aggregateExamQuestionAnalysis) => {
+        //         aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then(() => {
+        //             console.log(aggregateExamQuestionAnalysis);
+        //         }).catch((error) => console.error(error));
+        //     });
+        //     if (index === array.length-1) {
+        //         //last iteration
+        //     }
+        // });
 
     }, (error) => response.status(400).send(error));
 

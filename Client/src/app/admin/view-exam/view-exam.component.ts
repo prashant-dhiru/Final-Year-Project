@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'fyp-view-exam',
@@ -7,10 +8,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class ViewExamComponent implements OnInit {
 
-  isSubmissionFailure = -1;
+  viewComponent = 0;
+
   examViewForm: FormGroup;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.initExamViewForm();
@@ -27,27 +29,14 @@ export class ViewExamComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.isAdminAuthenticated()) {
-      return this.isSubmissionFailure = 1;
-    }
-    // redirect user to route with appropriate exam ID in place
+  onInputQuestionsIntoExam () {
+    this.router.navigate(['exam', this.examViewForm.controls.examID.value, 'insertque']);
+    this.viewComponent = 1;
   }
 
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated') === 'true') {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  resetIsSubmissionFailure () {
-    this.isSubmissionFailure = -1;
+  onViewExam () {
+    this.router.navigate(['exam', this.examViewForm.controls.examID.value]);
+    this.viewComponent = 2;
   }
 
 }

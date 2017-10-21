@@ -1,0 +1,8 @@
+<h1>Exam: {{exam.name}}</h1>
+<div formArrayName="questionAnswers">
+
+    <div *ngFor="let question of exam.questions; let i of index">
+        <fyp-exam-question-item [questionId]="i" [question]="question" (answerSubmitted)="onSubmitAnswer($event)" formControlName="{{i}}"></fyp-exam-question-item>
+    </div>
+
+</div>

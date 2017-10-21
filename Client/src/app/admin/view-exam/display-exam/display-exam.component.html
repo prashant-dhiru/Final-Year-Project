@@ -1,8 +1,15 @@
 <div class="bs-component">
     <form class="form-horizontal" *ngIf="submissionError == 0">
-      <fieldset disabled>
+      <fieldset disabled="disabled">
         <legend>Create Exam</legend>
   
+        <div class="form-group">
+          <label class="control-label col-lg-2" for="_id">Exam ID:</label>
+          <div class="col-lg-10">
+            <input type="text" id="_id" class="form-control" value="{{exam?._id}}">
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="control-label col-lg-2" for="name">Exam Name:</label>
           <div class="col-lg-10">

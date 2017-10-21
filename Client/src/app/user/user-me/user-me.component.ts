@@ -12,7 +12,7 @@ import { UserService } from '../user.service';
 export class UserMeComponent implements OnInit {
 
   subscription: Subscription;
-  syncStatus = 0;
+  syncStatus = -1;
 
   constructor(private userService: UserService) { }
 
@@ -35,10 +35,15 @@ export class UserMeComponent implements OnInit {
           this.syncStatus = 3;
           // neiter synchronised from server, nor from here
         }
-      } // else {
+      } else {
+        if (userauthenticated) {
+          this.syncStatus = 0;
+        } else {
+          this.syncStatus = 3;
+        }
         // 501
         // couldnot get from server, here is truth
-      // }
+      }
     }, () => {
       this.subscription.unsubscribe();
     });

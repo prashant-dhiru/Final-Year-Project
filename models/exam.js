@@ -60,9 +60,8 @@ ExamSchema.pre('save', function (next) {
  * document method
  */
 ExamSchema.methods.addQuestionRef = function (id) {
-
-    //pushing the id into the questions array
-    this.questions.push(id);
+    
+    this.questions.push(id);    
 
     //returning this while saving it
     return this.save();

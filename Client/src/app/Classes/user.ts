@@ -8,6 +8,8 @@ export class User {
         public password: string,
         public studentClass: string,
         public middleName?: string,
-        public address?: string
+        public address?: string,
+        public _id?: string,
+        public __v?: number
     ) {}
 }

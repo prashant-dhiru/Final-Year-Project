@@ -118,7 +118,53 @@ const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
 //     //method finishes here
 // };
 
-AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (examId) {
+AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (IdArray) {
+
+    // this = schema
+    
+    var somearr = IdArray.map((questionId) => {
+        return this.findById(questionId).then((aggregateExamQuestionAnalysis) => {
+            var prom = aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument();
+            // prom.then((doc) => {
+            //     console.log('to check if the function is returning value appropriately');
+            //     console.log('Success', doc);
+            // }, (error) => {
+            //     console.log('to check if the function is returning value appropriately');
+            //     console.log('Error', error);
+            // });
+            return prom;
+        });
+    });
+
+    // somearr[0].then((doc) => console.log('Doc 0 is: ', doc), (error) => console.log('error 0 is: ',error));
+    // somearr[1].then((doc) => console.log('Doc 1 is: ', doc), (error) => console.log('error 1 is: ',error));
+    // console.log(somearr);
+    // return Promise.all(somearr);
+    return somearr;
+    
+
+    // return this.find({exam: examId}).exec((error, aggregateExamQuestionAnalysisDocs) => {
+
+    //     returnableDocs = [];
+        
+    //     if (error) return console.log('Error occured at AggregateExamQuestionAnalysisSchema.statics.createComparableData : ', error);
+
+    //     if (!aggregateExamQuestionAnalysisDocs) return console.log('Error occured at AggregateExamQuestionAnalysisSchema.statics.createComparableData : No Document Seeding Has been done');
+
+    //     aggregateExamQuestionAnalysisDocs.forEach(function(aggregateExamQuestionAnalysis, index) {
+            
+    //         aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then((aggregateExamQuestionAnalysis) => {
+    //             returnableDocs.push(aggregateExamQuestionAnalysis);
+    //         }).catch((error) => console.log(index, ' for Error in then call', error));
+        
+    //     });
+
+    // });
+}
+
+
+/**
+ * AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (examId) {
 
     // this = schema
 
@@ -140,7 +186,7 @@ AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (exa
 
     });
 }
-
+ */
 
 
 /**
@@ -149,7 +195,7 @@ AggregateExamQuestionAnalysisSchema.statics.createComparableData = function (exa
  * resolved with instance of this model if success, rejected with error if error
  * Document Method
  */
-AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDocument = function () {
+/* AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDocument = function () {
     
     // this = aggregateExamQuestionAnalysis;
     //questionAnswers.length number of students who attempted this question
@@ -159,8 +205,14 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
 
     //finding Submitted answers of this exam and question
     return QuestionAnswer.find({exam: aggregateExamQuestionAnalysis.exam, question: aggregateExamQuestionAnalysis.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
+
+        // questionAnswers from different users for a same question
         
-        if (questionAnswers.length === 0) return Promise.reject();
+        if (questionAnswers.length === 0){
+            console.log('retruning here step 1');
+            console.log('Checkinh what is being returned', aggregateExamQuestionAnalysis);
+            return Promise.resolve(aggregateExamQuestionAnalysis);
+        } 
 
         //calculating values for these two keys
         aggregateExamQuestionAnalysis.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
@@ -175,7 +227,12 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
 
             //handling any potential errors
             if (error) return Promise.reject(error);
-            if (totalStudentWhoAttemptedExam === 0) return Promise.reject();
+
+            if (totalStudentWhoAttemptedExam === 0) {
+                console.log('retruning here step 2');
+                
+                return Promise.resolve(aggregateExamQuestionAnalysis);
+            } 
 
             //calculating percentages based keys here
             aggregateExamQuestionAnalysis.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
@@ -193,15 +250,118 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
             aggregateExamQuestionAnalysis.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
 
             //saving the document, returning the promise
-            return aggregateExamQuestionAnalysis.save();
+            return aggregateExamQuestionAnalysis.save()
+            .then((doc) => {
+                console.log('The document is: ', doc);
+                return Promise.resolve(doc);
+            }, (error) => {
+                console.log('Error in method: ', error)
+                return Promise.reject(error);
+            });
         });
 
         //handling any potential errors
     }, (error) => Promise.reject(error));
 
     //method finishes here
-};
+}; */
 
+
+AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDocument = function () {
+    
+    aggregateExamQuestionAnalysis = this;
+    
+    ExamReturn.find({exam: aggregateExamQuestionAnalysis.exam}).count(function (error, totalStudentWhoAttemptedExam) {
+        // total students who attempted exam is being fetched correctly
+        if (totalStudentWhoAttemptedExam <= 0) {
+            return;
+            // no students have attempted this exam
+        }
+        
+        QuestionAnswer.find({exam: aggregateExamQuestionAnalysis.exam, question: aggregateExamQuestionAnalysis.question}).then(function (questionAnswers) {
+
+            console.log('questionAnswers', questionAnswers);
+
+            var correctAnswerTimes = questionAnswers.map((questionAnswer) => {
+                if (questionAnswer.isAnswerCorrect) return questionAnswer.timeTaken;
+            });
+
+            console.log('correctAnswerTimes', correctAnswerTimes);
+
+        });
+
+    });
+    
+   /* 
+    // this = aggregateExamQuestionAnalysis;
+    //questionAnswers.length number of students who attempted this question
+
+    // console.log('This reference: ', this);
+    aggregateExamQuestionAnalysis = this;
+
+    //finding Submitted answers of this exam and question
+    return QuestionAnswer.find({exam: aggregateExamQuestionAnalysis.exam, question: aggregateExamQuestionAnalysis.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
+
+        // questionAnswers from different users for a same question
+        
+        if (questionAnswers.length === 0){
+            console.log('retruning here step 1');
+            console.log('Checkinh what is being returned', aggregateExamQuestionAnalysis);
+            return Promise.resolve(aggregateExamQuestionAnalysis);
+        } 
+
+        //calculating values for these two keys
+        aggregateExamQuestionAnalysis.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
+        
+        aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
+
+        //total students who attempted this question
+        aggregateExamQuestionAnalysis.studentsAttempted = questionAnswers.length;
+
+        //further calculation requires total number of students who attempted the exam
+        //finding the total number of students wo attempted the exam
+        return ExamReturn.find({exam: aggregateExamQuestionAnalysis.exam}).count(function (error, totalStudentWhoAttemptedExam) {
+
+            //handling any potential errors
+            if (error) return Promise.reject(error);
+
+            if (totalStudentWhoAttemptedExam === 0) {
+                console.log('retruning here step 2');
+                
+                return Promise.resolve(aggregateExamQuestionAnalysis);
+            } 
+
+            //calculating percentages based keys here
+            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
+            
+            //last two value requires the average times taken by students who got this question right
+            //mapping queestions answers to find the Answer which are correct and array of time taken
+            var correctAnswerTimes = questionAnswers.map((questionAnswer) => {
+                if (questionAnswer.isAnswerCorrect) return questionAnswer.timeTaken;
+            });
+
+            //correctanswerTimes.length number of students who attempted this question and got right
+
+            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
+
+            aggregateExamQuestionAnalysis.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
+
+            //saving the document, returning the promise
+            return aggregateExamQuestionAnalysis.save()
+            .then((doc) => {
+                console.log('The document is: ', doc);
+                return Promise.resolve(doc);
+            }, (error) => {
+                console.log('Error in method: ', error)
+                return Promise.reject(error);
+            });
+        });
+
+        //handling any potential errors
+    }, (error) => Promise.reject(error));
+*/
+    //method finishes here
+};
 
 const AggregateExamQuestionAnalysis = mongoose.model('AggregateExamQuestionAnalysis', AggregateExamQuestionAnalysisSchema);
 module.exports = {AggregateExamQuestionAnalysis};

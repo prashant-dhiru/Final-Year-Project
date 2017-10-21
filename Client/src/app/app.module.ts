@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 
 import { UserService } from './user/user.service';
 import { AdminService } from './admin/admin.service';
+import { ExamService } from './exam/exam.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -12,7 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 
 import { ExamInputComponent } from './admin/exam-input/exam-input.component';
-import { QuestionItemListComponent } from './admin/view-exam/question-item-list.component';
+import { QuestionItemListComponent } from './admin/view-exam/display-exam/question-item-list.component';
 import { QuestionInputComponent } from './admin/question-input/question-input.component';
 import { AdminComponent } from './admin/admin.component';
 import { ViewExamComponent } from './admin/view-exam/view-exam.component';
@@ -29,7 +30,10 @@ import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 import { UserMeComponent } from './user/user-me/user-me.component';
 import { DummyComponent } from './Playground/dummy/dummy.component';
 import { AdminMeComponent } from './admin/admin-me/admin-me.component';
-import { DisplayExamComponent } from './admin/view-exam/display-exam.component';
+import { DisplayExamComponent } from './admin/view-exam/display-exam/display-exam.component';
+import { ExamAttempComponent } from './exam/exam-attemp/exam-attemp.component';
+import { ExamQuestionItemComponent } from './exam/exam-attemp/exam-question-item/exam-question-item.component';
+import { ExamQuickResultComponent } from './exam/exam-attemp/exam-quick-result.component';
 
 
 
@@ -53,7 +57,10 @@ declare let require: any;
     UserMeComponent,
     DummyComponent,
     AdminMeComponent,
-    DisplayExamComponent
+    DisplayExamComponent,
+    ExamAttempComponent,
+    ExamQuestionItemComponent,
+    ExamQuickResultComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +72,8 @@ declare let require: any;
   providers: [
     UserService,
     AdminService,
-    IsAuthenticatedService
+    IsAuthenticatedService,
+    ExamService
   ],
   bootstrap: [AppComponent]
 })

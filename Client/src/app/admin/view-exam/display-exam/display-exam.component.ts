@@ -3,8 +3,8 @@ import { Subscription } from 'rxjs/Rx';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
-import { AdminService } from '../admin.service';
-import { FullExam } from '../../Classes/fullExam';
+import { AdminService } from '../../admin.service';
+import { FullExam } from '../../../Classes/fullExam';
 
 @Component({
   selector: 'fyp-display-exam',

@@ -10,6 +10,7 @@ export const ADMIN_ROUTES: Routes = [
   { path: '', component: AdminLoginComponent },
   { path: 'me', component: AdminMeComponent },
   { path: 'create-exam', component: ExamInputComponent },
-  { path: 'exam/:id/insertque', component: QuestionInputComponent },
-  { path: 'exam', component: ViewExamComponent }
+  { path: 'exam', component: ViewExamComponent },
+  { path: 'exam/:id/insertque', component: ViewExamComponent },
+  { path: 'exam/:id', component: ViewExamComponent }
 ];
