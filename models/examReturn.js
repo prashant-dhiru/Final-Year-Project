@@ -13,9 +13,7 @@ const ExamReturnSchema = new mongoose.Schema({
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
     totalTimeTaken: {
-        type: Number,
-        minlength: 1,
-        maxlength: 3
+        type: Number
     },
     totalQuestionAttempted: {
         type: Number

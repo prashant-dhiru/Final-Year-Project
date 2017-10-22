@@ -1,0 +1,89 @@
+<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 1">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
+</div>
+
+<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 2">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
+</div>
+
+<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 3">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p class="lead"><strong>Oh snap!</strong> We couldNot Fetch the Exam List, what could possibly go wrong?</p>
+</div>
+
+<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 4">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
+</div>
+
+<div class="row" *ngIf="isexamFetchingFailure == 0">
+  <div class="col-xs-12">
+    <div class="list-group">
+      
+      <a class="list-group-item clearfix" *ngFor="let exam of examList; let i = index" >
+
+        <fieldset>
+          <dl class="row">
+
+            <dt class="col-xs-2">{{exam._id}}</dt>
+            <dt class="col-xs-3">{{exam.name}}</dt>
+            <dt class="col-xs-3">{{exam.subject}}</dt>
+            <div class="col-xs-2">
+              <button class="btn btn-primary btn-block" type="button" data-toggle="modal" data-target="#myModal">Give Exam</button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
+                  <div class="modal-dialog" role="document">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Confirm Exam Details</h4>
+                      </div>
+                      
+                      <div class="modal-body">
+                        <dl class="row">
+                          <dt class="col-sm-3">Exam Name</dt>
+                          <dd class="col-sm-9">{{exam.name}}</dd>
+                        
+                          <dt class="col-sm-3">Description</dt>
+                          <dd class="col-sm-9">{{exam.description}}</dd>
+
+                          <dt class="col-sm-3">Allowed Time</dt>
+                          <dd class="col-sm-9">{{exam.allowedTime}} (in Minutes)</dd>
+
+                          <dt class="col-sm-3">Subject</dt>
+                          <dd class="col-sm-9">{{exam.subject}}</dd>
+                        
+                          <dt class="col-sm-3">Exam ID</dt>
+                          <dd class="col-sm-9">{{exam._id}}</dd>
+
+                          <dt class="col-sm-3">Created At</dt>
+                          <dd class="col-sm-9">{{exam.createdAt}}</dd>
+                        </dl>
+                      </div>
+                      
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="redirecttoExam(exam._id)">Continue to Exam</button>
+                      </div>
+                    
+                    </div>
+                    
+                  </div>
+                </div>
+
+            </div>
+            <div class="col-xs-2">
+              <button class="btn btn-primary btn-block" type="button" (click)="redirectToResult(exam._id)">View Result</button>
+            </div>
+          </dl>
+        </fieldset>
+      </a>
+    </div>
+  </div>
+</div>

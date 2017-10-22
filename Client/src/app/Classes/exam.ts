@@ -7,6 +7,7 @@ export class Exam {
         public subject: string,
         public description?: string,
         public _id?: string,
-        public __v?: number
+        public __v?: number,
+        public questions?: Question[],
     ) {}
 }

@@ -33,7 +33,9 @@ import { AdminMeComponent } from './admin/admin-me/admin-me.component';
 import { DisplayExamComponent } from './admin/view-exam/display-exam/display-exam.component';
 import { ExamAttempComponent } from './exam/exam-attemp/exam-attemp.component';
 import { ExamQuestionItemComponent } from './exam/exam-attemp/exam-question-item/exam-question-item.component';
-import { ExamQuickResultComponent } from './exam/exam-attemp/exam-quick-result.component';
+import { ExamQuickResultComponent } from './exam/exam-quick-result/exam-quick-result.component';
+import { ExamResultComponent } from './exam/exam-result/exam-result.component';
+import { ExamListComponent } from './exam/exam-list/exam-list.component';
 
 
 
@@ -60,7 +62,9 @@ declare let require: any;
     DisplayExamComponent,
     ExamAttempComponent,
     ExamQuestionItemComponent,
-    ExamQuickResultComponent
+    ExamQuickResultComponent,
+    ExamResultComponent,
+    ExamListComponent
   ],
   imports: [
     BrowserModule,

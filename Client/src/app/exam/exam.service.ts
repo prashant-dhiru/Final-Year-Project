@@ -19,4 +19,8 @@ export class ExamService {
     return this.http.post('http://localhost:3000/exam/submit/' + id, exam, { withCredentials: true });
   }
 
+  getExamQuickResult (id: string): Observable<Response> {
+    return this.http.get('http://localhost:3000/exam/quick/' + id, { withCredentials: true });
+  }
+
 }

@@ -58,7 +58,7 @@ router.post('/user/login', (request, response) => {
         return response.status(405).send(`SomeOne Already logged in.`);
 
     //picking all necessary values here, leaving other extra if any sent from client, by lodash's pick method
-    body = _.pick(request.body, ['email', 'password']);
+    body = request.body;//_.pick(request.body, ['email', 'password']);
     
     //calling findByCredentials method defined on Student model as model method, will return wither student in sucess case, or error in error case
     Student.findByCredentials(body).then((student) => {

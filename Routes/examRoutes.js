@@ -96,6 +96,40 @@ router.get('/exam', authenticate, (request, response) => {
 /******************************************************************************************************** */
 
 /**
+ * This route is used to get exam's quick results or exam returns
+ * This is a private route, only authenticated users can access this route
+ */
+router.get('/exam/quick/:id', userAuthenticate, (request, response) => {
+
+    //fetching the examID from the request parameter
+    var id = request.params.id;
+    
+    /* Checking if the id is valid or not */
+    if (!ObjectId.isValid(id))
+        //if invalid, responsing with text and Bad Request status code
+        return response.status(400).send('Invalid Exam ID');
+
+    //finding the examreturn data from database and fetching all question answers too with it
+    ExamReturn.findOne({exam: id, user: request.student._id}).populate('questionAnswers').exec((error, examReturn) => {
+
+        // handling any potential error that may occur
+        // sending error with Internal Server error status code
+        if (error) return response.status(500).send(error);
+
+        // if no exam return, it means that exam was not able to get saved in the database successfully
+        // responding with Not Found status code
+        if (!examReturn) return response.status(404).send();
+
+        // sending the examreturn data back to the client
+        response.send(examReturn);
+
+    });
+    
+    //route finished here
+});
+/******************************************************************************************************** */
+
+/**
  * This route will be used when user submits a exam
  * This route is private, only authenticated users can access this route
  */

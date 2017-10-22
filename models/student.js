@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const _ = require('lodash');
 
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;

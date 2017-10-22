@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { AdminService } from '../../admin.service';
-import { FullExam } from '../../../Classes/fullExam';
+import { Exam } from '../../../Classes/exam';
 
 @Component({
   selector: 'fyp-display-exam',
@@ -66,7 +66,7 @@ export class DisplayExamComponent implements OnInit {
       }
     ]
   }; */
-  exam: FullExam;
+  exam: Exam;
 
   constructor(private adminService: AdminService, private activatedRoute: ActivatedRoute) {
     this.id = this.activatedRoute.snapshot.params['id'];
