@@ -136,28 +136,30 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
         //if there is no exam in database with the id, sending emty response back with Not Found status code
         if (!exam) return response.status(404).send('No exam with such ID');
 
-
-        /* Inserting Demo Documents here */
+        // Creating Demo Documents here to insert into database for analysis
         var aggregateExamQuestionAnalysis = new AggregateExamQuestionAnalysis({
             exam: exam._id,
             question: question._id
         });
-
-        AggregateExamResult.findOne({exam: exam._id}).select('questionAnalysis').exec((error, aggregateExamResult) => {
-            
-            aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
-            aggregateExamResult.save().catch((error) => console.error('Error occured in saving reference', error));
-        
-        });
-        
-        aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));
-        /* Demo Documents Insertion finished */
 
         // saving the question document in database
         question.save().then(() => {
 
             //pushing question id in exam.questions array via the document function
             exam.addQuestionRef(question._id);
+
+            // fetching the exam analysis document to push question analysis reference into that
+            AggregateExamResult.findOne({exam: id}).select('questionAnalysis').exec((error, aggregateExamResult) => {
+                
+                if (error) return console.error('Error occured in fetching exam reference');
+
+                aggregateExamResult.questionAnalysis.push(aggregateExamQuestionAnalysis._id);
+                aggregateExamResult.save().catch((error) => console.error('Error occured in saving reference', error));
+            
+            });
+            
+            // Demo Documents Inserted into database
+            aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));
 
             response.send(question);
 

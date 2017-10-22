@@ -62,14 +62,14 @@ ExamReturnSchema.statics.numberOfStudentsWhoAttemptedAQuestion = function (quest
 ExamReturnSchema.pre('save', function (next) {
 
     //finding the exam and selecting its questions value
-    Exam.findById(this.exam).select('questions').exec((error, questions) => {
-
+    Exam.findById(this.exam).select('questions -_id').exec((error, questions) => {
+        
         //handing any potential error that may occured during exam searching and returning error with next
-        if(error) return next(error);
+        if (error) return next(error);
 
         //using questions.questions.length because a nested object is returned
 
-        //calculating values and assigning them to document
+        // calculating values and assigning them to document
         this.totalQuestionNotAttempted = questions.questions.length - this.totalQuestionAttempted;
         this.percentageOfQuestionAttempted = this.totalQuestionAttempted * 100 / questions.questions.length;
         this.percentageOfQuestionNotAttempted = this.totalQuestionNotAttempted * 100 / questions.questions.length;

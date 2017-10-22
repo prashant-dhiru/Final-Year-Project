@@ -148,6 +148,9 @@ router.get('/authstatus', (request, response) => {
     // if here, authenticated user is student, responding back
     if (request.session.userLevel === 1) return response.send({authStatus: 1});
 
+    // if no condition is fulfilled (impossible), sending empty body Internal server error status code
+    response.status(500).send();
+
     // route completes here
 });
 /********************************************************************************************** */

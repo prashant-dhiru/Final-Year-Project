@@ -44,11 +44,7 @@ export class ExamAttempComponent implements OnInit {
   }
 
   onAddQuestion (question: Question, index: number) {
-    (<FormArray>this.examForm.controls.questionAnswers).push(new FormGroup({
-      'question': new FormControl(question._id),
-      'answerSubmitted': new FormControl(),
-      'questionId': new FormControl(index)
-    }));
+    (<FormArray>this.examForm.controls.questionAnswers).push(new FormControl());
   }
 
   getExam () {
@@ -69,9 +65,9 @@ export class ExamAttempComponent implements OnInit {
     });
   }
 
-  initExam () {
-    // render the exam markup
-  }
+  // initExam () {
+  //   // render the exam markup
+  // }
 
   tickerFunc () {
     this.timeNow++;
@@ -85,35 +81,30 @@ export class ExamAttempComponent implements OnInit {
     this.lastSprintTime = this.timeNow;
   }
 
-  onLap () {
-    // var lapval = this.timeNow - this.lastSprintTime;
+  onLap (): number {
+    return this.timeNow - this.lastSprintTime;
   }
 
-  onSubmitAnswer (questionInformation: any) {
-    questionInformation.answerSubmitted = this.examForm.controls.questionAnswers[questionInformation.questionId].answerSubmitted.value;
+  submitAnswer(questionId: string, questionIndex: number) {
 
-    //lapping
-    questionInformation.timeTaken = this.timeNow - this.lastSprintTime;
-    
+    const someval = {
+      question: questionId,
+      timeTaken: this.onLap(),
+      answerSubmitted: this.examForm.controls.questionAnswers[questionIndex].value
+    };
+ 
     // sprinting value becuase it is needed to spring value on every lap
+    // sprinting has to be done after lap
     this.onSprint();
 
-    // lap and store lap value here
+    //store this object wherever needed
+    console.log(someval);
+    
   }
 
   finExam () {
     // stopping the timer
     this.timerSubscription.unsubscribe();
   }
-
-/**
- * "questionAnswers": [
-        {
-            "question": "59e5a4ef69b1a21f448c60f9",
-            "timeTaken": 150,
-            "answerSubmitted": "op 2"
-        }
-    ]
- */
 
 }

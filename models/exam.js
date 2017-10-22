@@ -31,8 +31,7 @@ const ExamSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now,
-        expires: 604800
+        default: Date.now
     },
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MCQuestion' }]
 

@@ -88,7 +88,7 @@ router.get('/exam', authenticate, (request, response) => {
         //if there is no exam in database, sending emty response back with Not Found status code
         if (!exams) return response.status(404).send();
 
-        //sending the exam back to the client
+        //sending the exam back to the client while picking only essential parts from the exams to prevnt data-misuse
         response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
     });
     //route finishes here
@@ -109,13 +109,7 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
     
-    /* Optional Check, implement at Client Side */
-    // check if exam id can be sent with the examReturn data from client as id
-    // if (id !== request.body.id)
-    //     return response.status(400).send('The ExamID in the address bar has been changed, exam could not be submitted');
-    /* Optional Check Complete */
-    
-    // mapping users's input to be saved in database with correct informtion
+    // mapping users's input to be saved in database with correct information
     var answers = request.body.questionAnswers.map(questionAnswer => {
         return { 
             exam: id,
@@ -133,38 +127,45 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
         totalQuestionAttempted: answers.length
     });
 
-    //read more about insermany method and use this method if possible
-    /*QuestionAnswer.insertmany(answers, (error, questionAnswers) => {
-        if (err) return response.status(400).send(err);
-
-        questionAnswers.forEach(questionAnswer => {
-            examReturn.questionAnswers.push(questionAnswer._id);
-            examReturn.marksObtained += questionAnswer.marksObtained;
-        });
-        
-        examReturn.save().then((examReturnDoc) => {
-            response.send('Exam Successfully submitted in Store');
-        }, (error) => response.status(400).send(error));
-            
-    });*/
-
-    // AggregateExamResult.find({exam: id}).then((aggregateExamResult) => {
-    //     aggregateExamResult.calculateComparableDataByDocument(function (error, doc) {
-    //         if (error) return console.log('Internal error', error);
-    //         console.log(doc);
-    //     });
-    // }).catch((error) => console.log(error));
-
     //saving all the answers to questions in the database in one function, but one by one
     QuestionAnswer.create(answers, (error, questionAnswers) => {
 
         //if error occurs, sending back error with Internal Server error status code
         if (error) return response.status(500).send(error);
 
-        // calculating the total marks obtained for the exam and pushing each answer id into examRetrun object
+        
         questionAnswers.forEach(questionAnswer => {
-             examReturn.questionAnswers.push(questionAnswer._id);
-             examReturn.marksObtained += questionAnswer.marksObtained;
+
+            // calculating the total marks obtained for the exam and pushing each answer id into examRetrun object
+            examReturn.questionAnswers.push(questionAnswer._id);
+            examReturn.marksObtained += questionAnswer.marksObtained;
+
+            // finding question analysis documents one by one (question wise) to create make analysis and update the document with latest analysis
+            AggregateExamQuestionAnalysis.findOne({exam: id, question: questionAnswer.question}).exec((error, aggregateExamQuestionAnalysis) => {
+                
+                // if error occures or the document seeding is not done properly, returning, as the documnets are seeded with zeroes
+                if (error) return;
+                if (!aggregateExamQuestionAnalysis) return;
+                
+                // if no student has submitted the exam yet, the scores of the student is the base information
+                if (aggregateExamQuestionAnalysis.studentsAttempted == 0) {
+                    
+                    aggregateExamQuestionAnalysis.cutOff = questionAnswer.marksObtained;
+                    aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = questionAnswer.timeTaken;
+
+                    // if students have appeared, finding the average and storing it
+                } else {
+                    aggregateExamQuestionAnalysis.cutOff = (aggregateExamQuestionAnalysis.cutOff + questionAnswer.marksObtained) / 2;
+                    aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = (aggregateExamQuestionAnalysis.avreageTimeTakenByStudents + questionAnswer.timeTaken) / 2;
+                }
+
+                //incrementing the number of students that have appeared the question
+                aggregateExamQuestionAnalysis.studentsAttempted++;
+
+                // saving back the document into the datase while handling any potential error
+                aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));
+
+            });
         });
 
         // saving exam in database
@@ -195,103 +196,34 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
-    
-    
-    // ExamReturn.find({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
-    //     if (error) return response.status(503).send(error); //Service Unavailable
-    //     AggregateExamResult.find({exam: id}).populate('questionAnalysis').exec((error, aggregateExamResult) => {
-    //         if (error) return response.status(503).send(error); //Service Unavailable
-
-    //         //here is all the data needed to be sent to the client
-
-    //     });
-    // });
-
-    // AggregateExamQuestionAnalysis.find({}).then((docs) => {
-    //     response.send(docs);
-    // });
 
     // following functions are tested and running
 
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
-        aggregateExamResult.questionAnalysis.forEach((quesID) => {
-            AggregateExamQuestionAnalysis.findById(quesID).then((aaaaa) => {
-                aaaaa.calculateComparableQuestionDataByDocument();
+        AggregateExamQuestionAnalysis.find({exam: id}).select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id').then((aggregateExamQuestionAnalysis) => {
+
+            ExamReturn.findOne({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
+
+                if (error) return response.status(500).send(error);
+
+                examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
+
+                examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
+
+                questionResult = examReturn.questionAnswers.map((doc) => {
+                    return _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']);
+                });
+
+                response.send({
+                    examAnalysis,
+                    questionsAnalysis: aggregateExamQuestionAnalysis,
+                    examResult,
+                    questionResult
+                });
             });
-        });
 
-        // var arr = AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis);
-        // //this must return an array of promises
-        // // .then((successValues) => {
-
-        // // }, (error) => {
-        // //     console.log(error);
-        // // });
-        // response.send(arr);
-        // // Promise.all(AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis)).then((values) => {
-        //     console.log('The Document values are: ');
-        //     console.log(values);
-        //     response.send(values);
-        // }).catch((error) => {
-        //     console.log('Error values are: ');
-        //     console.log(error);
-        // });
-
-        // console.log(AggregateExamQuestionAnalysis.createComparableData(aggregateExamResult.questionAnalysis));
-        // .then((values) => {
-        //     console.log('The Document values are: ');
-        //     console.log(values);
-        //     response.send(values);
-        // }).catch((error) => {
-        //     console.log('Error values are: ');
-        //     console.log(error);
-        // });
-
-
-
-        // var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
-        //     return AggregateExamQuestionAnalysis.createComparableData()
-        //     findById(questionId).then((aggregateExamQuestionAnalysis) => aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument());
-        // });
-        
-
-        // var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
-        //     return AggregateExamQuestionAnalysis.findById(questionId).then((aggregateExamQuestionAnalysis) => aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument());
-        // });
-
-        // Promise.all(analysed).then((values) => {
-        //     console.log(values);
-        // });
-
-        // response.send(analysed);
-        
-
-        /**
-         * var analysed = aggregateExamResult.questionAnalysis.map((questionId) => {
-            
-            return AggregateExamQuestionAnalysis.findById(questionId).then((aggregateExamQuestionAnalysis) => {
-                return aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument();
-            }).then((aggregateExamQuestionAnalysis) => {
-                console.log('Outer result: ', aggregateExamQuestionAnalysis);
-                return aggregateExamQuestionAnalysis;
-            }).catch((error) => {
-                console.error('Error in outer function: ', error);
-            });
-        });
-         */
-
-
-        // aggregateExamResult.questionAnalysis.forEach((questionId, index, array) => {
-        //     AggregateExamQuestionAnalysis.find({exam: id, question: questionId}).exec((error, aggregateExamQuestionAnalysis) => {
-        //         aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then(() => {
-        //             console.log(aggregateExamQuestionAnalysis);
-        //         }).catch((error) => console.error(error));
-        //     });
-        //     if (index === array.length-1) {
-        //         //last iteration
-        //     }
-        // });
+        }, (error) => response.status(500).send(error));
 
     }, (error) => response.status(400).send(error));
 

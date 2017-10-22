@@ -4,6 +4,7 @@ const keys = require('./key');
 //if prod or test, taking value from it, or if not, then development
 var env = process.env.NODE_ENV || 'development';
 
+//creating a config variable that contains configurations for development and test environments
 var config = {
     test: {
         PORT: 3000,

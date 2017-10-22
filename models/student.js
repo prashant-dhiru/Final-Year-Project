@@ -69,19 +69,19 @@ const StudentSchema = new mongoose.Schema({
     //Schema definiton finishes here
 });
 
-// /**
-//  * @param {any} this 
-//  * @return {any}
-//  * document method
-//  * Overriding an existing function
-//  */
-// StudentSchema.methods.toJSON = function () {
-//     var student = this.toObject();
+/**
+ * @param {any} this 
+ * @return {any}
+ * document method
+ * Overriding an existing function
+ */
+StudentSchema.methods.toJSON = function () {
+    var student = this.toObject();
   
-//     //this will return only id and email,not while student
-//     return _.pick(student, ['_id', 'email']);
-//     //method finishes here
-// }; 
+    //this will return all except password and __v, not whole student
+    return _.pick(student, ['firstName', 'lastName', 'middleName', 'phoneNumber', 'email', 'studentClass', 'address', '_id']);
+    //method finishes here
+}; 
 
 /**
  * @param {any} body {email, password}
