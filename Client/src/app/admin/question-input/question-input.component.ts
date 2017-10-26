@@ -81,7 +81,7 @@ export class QuestionInputComponent implements OnInit {
     if (this.isAdminAuthenticated()) {
       return this.isSubmissionFailed = 1;
     }
-    this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value).subscribe((response: Response) => {
+    this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value, this.id).subscribe((response: Response) => {
       this.isSubmissionFailed = 0;
     }, (error: any) => {
       if (error.status === 401) {

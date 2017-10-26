@@ -17,6 +17,9 @@ import { QuestionItemListComponent } from './admin/view-exam/display-exam/questi
 import { QuestionInputComponent } from './admin/question-input/question-input.component';
 import { AdminComponent } from './admin/admin.component';
 import { ViewExamComponent } from './admin/view-exam/view-exam.component';
+import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+import { AdminMeComponent } from './admin/admin-me/admin-me.component';
+import { DisplayExamComponent } from './admin/view-exam/display-exam/display-exam.component';
 
 import { UserComponent } from './user/user.component';
 import { UserSignupComponent } from './user/user-signup/user-signup.component';
@@ -24,13 +27,13 @@ import { UserSignupComponent } from './user/user-signup/user-signup.component';
 import { RouteNotFoundComponent } from './route-not-found/route-not-found.component';
 import { ExamComponent } from './exam/exam.component';
 import { UserLoginComponent } from './user/user-login/user-login.component';
-import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
+
 
 import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 import { UserMeComponent } from './user/user-me/user-me.component';
 import { DummyComponent } from './Playground/dummy/dummy.component';
-import { AdminMeComponent } from './admin/admin-me/admin-me.component';
-import { DisplayExamComponent } from './admin/view-exam/display-exam/display-exam.component';
+
+
 import { ExamAttempComponent } from './exam/exam-attemp/exam-attemp.component';
 import { ExamQuestionItemComponent } from './exam/exam-attemp/exam-question-item/exam-question-item.component';
 import { ExamQuickResultComponent } from './exam/exam-quick-result/exam-quick-result.component';

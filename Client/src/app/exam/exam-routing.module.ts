@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { ExamComponent } from './exam.component';
 import { ExamAttempComponent } from './exam-attemp/exam-attemp.component';
-import { ExamQuickResultComponent } from './exam-attemp/exam-quick-result.component';
+import { ExamQuickResultComponent } from './exam-quick-result/exam-quick-result.component';
 import { ExamResultComponent } from './exam-result/exam-result.component';
 import { ExamListComponent } from './exam-list/exam-list.component';
 

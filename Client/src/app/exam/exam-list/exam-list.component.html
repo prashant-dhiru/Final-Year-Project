@@ -1,21 +1,28 @@
-<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 1">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 1">
+  <div class="panel-heading">
+    <h3 class="panel-title">Unauthorised</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
+  </div>
 </div>
 
-<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 2">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 2">
+  <div class="panel-heading">
+    <h3 class="panel-title">Internal server error</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
+  </div>
 </div>
 
-<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 3">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <p class="lead"><strong>Oh snap!</strong> We couldNot Fetch the Exam List, what could possibly go wrong?</p>
-</div>
-
-<div class="alert alert-dismissible alert-warning" *ngIf="isexamFetchingFailure == 4">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 3">
+  <div class="panel-heading">
+    <h3 class="panel-title">No Exams Found</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
+  </div>
 </div>
 
 <div class="row" *ngIf="isexamFetchingFailure == 0">

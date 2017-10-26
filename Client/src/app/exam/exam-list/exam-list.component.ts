@@ -30,14 +30,11 @@ export class ExamListComponent implements OnInit {
       if (error.status === 401) {
         this.isexamFetchingFailure = 1;
         // 401 unauthorised
-      } else if (error.status === 501) {
+      } else if (error.status === 501 || error.status === 500) {
         this.isexamFetchingFailure = 2;
         // 501 internal server eror unable to fetch user
-      } else if (error.status === 500) {
-        this.isexamFetchingFailure = 3;
-        // 500  eror while fetching exam
       } else {
-        this.isexamFetchingFailure = 4;
+        this.isexamFetchingFailure = 3;
         // 404 no exam found
       }
     }, () => {

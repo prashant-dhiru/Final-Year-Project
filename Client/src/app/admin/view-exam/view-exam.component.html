@@ -1,26 +1,51 @@
-<div class="bs-component">
-    <fieldset>
-        <form class="form-inline" [formGroup]="examViewForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 1">
+  <div class="panel-heading">
+    <h3 class="panel-title">Unauthorised</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
+  </div>
+</div>
 
-                <label class="control-label sr-only" for="examId">Exam ID:</label>
-                
-                <input #id type="text" class="form-control" id="examId" minlength="24" maxlength="24" (input)="0" required placeholder="Enter Exam ID" formControlName="examID" size="40" [ngClass]="{'has-error': (examViewForm.controls.examID.dirty && !examViewForm.controls.examID.valid), 'has-success': examViewForm.controls.examID.valid}" data-toggle="tooltip" data-placement="bottom" title="The Inputted Exam-ID should be a valid hexadecimal string of length of 24 characters">
-                
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 2">
+  <div class="panel-heading">
+    <h3 class="panel-title">Internal server error</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
+  </div>
+</div>
+
+<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 3">
+  <div class="panel-heading">
+    <h3 class="panel-title">No Exams Found</h3>
+  </div>
+  <div class="panel-body">
+    <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
+  </div>
+</div>
+
+<div class="row" *ngIf="isexamFetchingFailure == 0">
+  <div class="col-xs-12">
+    <div class="list-group">
+      
+      <a class="list-group-item clearfix" *ngFor="let exam of examList; let i = index" >
+
+        <fieldset>
+          <dl class="row">
+
+            <dt class="col-xs-2">{{exam._id}}</dt>
+            <dt class="col-xs-3">{{exam.name}}</dt>
+            <dt class="col-xs-3">{{exam.subject}}</dt>
+            <div class="col-xs-2">
+              <button class="btn btn-primary btn-block" type="button" (click)="redirectToViewExam(exam._id)">View Exam</button>  
             </div>
-        
-            <div class="form-group"> 
-                <button type="button" class="btn btn-primary" [disabled]="!examViewForm.valid" (click)="onViewExam()">View Exam</button>
-                <button type="button" class="btn btn-primary" [disabled]="!examViewForm.valid" (click)="onInputQuestionsIntoExam()">Input Questions Into Exam</button>
+            <div class="col-xs-2">
+              <button class="btn btn-primary btn-block" type="button" (click)="redirectToInsertQuestion(exam._id)">Insert Question</button>
             </div>
-        
-        </form>
-    </fieldset>
-    <hr>
-    <div *ngIf="viewComponent == 1">
-        <fyp-question-input></fyp-question-input>
+          </dl>
+        </fieldset>
+      </a>
     </div>
-    <div *ngIf="viewComponent == 2">
-        <fyp-display-exam></fyp-display-exam>
-    </div>
+  </div>
 </div>

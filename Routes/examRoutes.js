@@ -235,26 +235,41 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
 
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
-        AggregateExamQuestionAnalysis.find({exam: id}).select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id').then((aggregateExamQuestionAnalysis) => {
+        AggregateExamQuestionAnalysis.find({exam: id}).sort('question').select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id').then((aggregateExamQuestionAnalysis) => {
 
             ExamReturn.findOne({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
 
                 if (error) return response.status(500).send(error);
 
-                examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
+                Exam.findById(id).populate('questions').exec((error, exam) => {
 
-                examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
+                    if (error) return response.status(500).send(error);
+                    
+                    examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
+    
+                    examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
+    
+                    questionResult = examReturn.questionAnswers.map((doc) => {
+                        return _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']);
+                    });
 
-                questionResult = examReturn.questionAnswers.map((doc) => {
-                    return _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']);
+                    questions = exam.questions.map((question) => {
+                        return _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', '_id']);
+                    });
+
+                    exam = _.pick(exam, ['name', 'description', 'allowedTime', 'subject']);
+
+                    response.send({
+                        examAnalysis,
+                        questionsAnalysis: aggregateExamQuestionAnalysis,
+                        examResult,
+                        questionResult,
+                        exam,
+                        questions
+                    });
+
                 });
-
-                response.send({
-                    examAnalysis,
-                    questionsAnalysis: aggregateExamQuestionAnalysis,
-                    examResult,
-                    questionResult
-                });
+                
             });
 
         }, (error) => response.status(500).send(error));
