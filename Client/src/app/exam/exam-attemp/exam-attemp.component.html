@@ -1,75 +1,145 @@
-<!-- <h1>Exam: {{exam?.name}}</h1>
-<div formArrayName="questionAnswers">
+<!--
+<div *ngFor="let question of exam.questions; let questionId = index">
 
-    <div *ngFor="let question of exam?.questions; let questionId = index">
+    <div class="well bs-component">
+        <fieldset>
 
-
-            <div class="well bs-component">
-                <fieldset>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            question body here
-                        </div>
-                    </div>
-                    <div class="row">
-                
-                        <div class="col-sm-5 col-sm-offset-1">
-                            
-                            <div class="radio">
-                                <label>
-                                    instead of gender in formControlName as all names for a group should be equal
-                                    <input type="radio"
-                                    formControlName="{{questionId}}"
-                                    [value]="question?.answerOptionOne">
-                                    {{question?.answerOptionOne}}
-                                </label>
-                            </div>
-                
-                            <div class="radio">
-                                <label>
-                                    <input type="radio"
-                                    formControlName="{{questionId}}"
-                                    [value]="question?.answerOptionTwo">
-                                    {{question?.answerOptionTwo}}
-                                </label>
-                            </div>
-                
-                        </div>
-                        <div class="col-sm-5 col-sm-offset-1">
-                            <div class="row">
-                    
-                                <div class="radio">
-                                    <label>
-                                        instead of gender in formControlName as all names for a group should be equal
-                                        <input type="radio"
-                                        formControlName="{{questionId}}"
-                                        [value]="question?.answerOptionThree">
-                                        {{question?.answerOptionThree}}
-                                    </label>
-                                </div>
-                    
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio"
-                                        formControlName="{{questionId}}"
-                                        [value]="question?.answerOptionFour">
-                                        {{question?.answerOptionFour}}
-                                    </label>
-                                </div>
-                    
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-4 col-xs-offset-8 col-sm-3 col-sm-offset-9 col-md-2 col-md-offset-10">
-                            <button [disabled]="!examForm.controls?.questionAnswers[questionId].value" class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)">
-                                Submit Answer
-                            </button>
-                        </div>
-                    </div>
-                </fieldset>
+            <div class="row">
+                <div class="col-xs-12"><p>{{question?.body}}</p></div>
             </div>
 
+            <div class="row">                
+
+                <div class="col-sm-5 col-sm-offset-1">
+                    
+                    <div class="radio">
+                        <label>
+                            <input type="radio" [value]="question?.answerOptionOne" id="question._id">
+                            {{question?.answerOptionOne}}
+                        </label>
+                    </div>
+        
+                    <div class="radio">
+                        <label>
+                            <input type="radio" [value]="question?.answerOptionTwo" id="question._id">
+                            {{question?.answerOptionTwo}}
+                        </label>
+                    </div>
+        
+                </div>
+                <div class="col-sm-5 col-sm-offset-1">
+                    <div class="row">
+            
+                        <div class="radio">
+                            <label>
+                                <input type="radio" [value]="question?.answerOptionThree" id="question._id">
+                                {{question?.answerOptionThree}}
+                            </label>
+                        </div>
+            
+                        <div class="radio">
+                            <label>
+                                <input type="radio" 
+                                [value]="question?.answerOptionFour" id="question._id">
+                                {{question?.answerOptionFour}}
+                            </label>
+                        </div>
+            
+                    </div>
+                </div>
+
+            
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-xs-offset-8 col-sm-3 col-sm-offset-9 col-md-2 col-md-offset-10">
+                    <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+        </fieldset>
     </div>
 
-</div> -->
+</div>
+-->
+
+
+
+
+
+<h1>Exam: {{exam?.name}}</h1>
+<h3>{{timeNow}}</h3>
+<form [formGroup]="examForm">
+    <div formArrayName="questionAnswers">
+        
+        <div *ngFor="let question of exam?.questions; let questionId = index">
+    
+    
+                <div class="well bs-component">
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {{question?.body}}
+                            </div>
+                        </div>
+                        <div class="row">
+                    
+                            <div class="col-sm-5 col-sm-offset-1">
+                                
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                        formControlName="{{questionId}}"
+                                        [value]="question?.answerOptionOne">
+                                        {{question?.answerOptionOne}}
+                                    </label>
+                                </div>
+                    
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                        formControlName="{{questionId}}"
+                                        [value]="question?.answerOptionTwo">
+                                        {{question?.answerOptionTwo}}
+                                    </label>
+                                </div>
+                    
+                            </div>
+                            <div class="col-sm-5 col-sm-offset-1">
+                                <div class="row">
+                        
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionThree">
+                                            {{question?.answerOptionThree}}
+                                        </label>
+                                    </div>
+                        
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionFour">
+                                            {{question?.answerOptionFour}}
+                                        </label>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-8 col-sm-3 col-sm-offset-9 col-md-2 col-md-offset-10">
+                                <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)">
+                                    Submit Answer
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+    
+        </div>
+    
+    </div>
+</form>
