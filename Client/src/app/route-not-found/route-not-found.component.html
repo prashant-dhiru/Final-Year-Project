@@ -1,3 +1,21 @@
-<p>
-  route-not-found works!
-</p>
+<div class="row">
+  <div class="col-sm-7">
+    <div class="rnfBody">
+      <a [routerLink]="['/']">
+        <h3>LAN Exam</h3>
+      </a>
+      <p>
+        <b>404.</b> 
+        <ins>That’s an error.</ins>
+      </p>
+      <p>The requested URL 
+        <code>{{url}}</code> 
+        was not found on this server.  
+        <ins>That’s all we know.</ins>
+      </p>
+    </div>        
+  </div>
+  <div class="col-sm-5" class="rnfImg">
+    <img src="https://www.google.com/images/errors/robot.png" alt="Error">
+  </div>
+</div>

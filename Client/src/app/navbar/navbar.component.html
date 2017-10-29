@@ -8,9 +8,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand">
-        <img itemprop="logo" itemscope="itemscope" src="LANSystem.ico">
-        <span>LAN Exam</span>
+      <a id="logoAnchor" class="navbar-brand" itemprop="url" [routerLink]="['/']">
+        LAN Exam
       </a>
     </div>
 
@@ -22,9 +21,9 @@
         <li><a [routerLink]="['/admin']" routerLinkActive="active">Admin</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()" [routerLink]="['/user/me']"><span class="glyphicon glyphicon-log-in"></span>  Logout</a></li>
-        <li><a [routerLink]="['/user/login']" *ngIf="!isUserAuthenticated()"><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>
-        <li *ngIf="!isUserAuthenticated()"><a [routerLink]="['/user/signup']"><span class="glyphicon glyphicon-user"></span>  Register</a></li>
+        <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()" [routerLink]="['user', 'me']"><span class="glyphicon glyphicon-log-in"></span>  Logout</a></li>
+        <li><a [routerLink]="['user', 'login']" *ngIf="!isUserAuthenticated()"><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>
+        <li *ngIf="!isUserAuthenticated()"><a [routerLink]="['user', 'signup']"><span class="glyphicon glyphicon-user"></span>  Register</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
     

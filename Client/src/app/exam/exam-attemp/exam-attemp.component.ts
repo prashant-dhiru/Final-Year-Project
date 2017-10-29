@@ -20,14 +20,9 @@ export class ExamAttempComponent implements OnInit {
   lastSprintTime = 0;
   timer: Observable<any> = Observable.timer(0, 1000);
   timerSubscription: Subscription;
-
-  // exam: Exam;
   subscription: Subscription;
-
-  examData = {
-    questionAnswers: []
-  };
   id: string;
+  // exam: Exam;
 
   exam = {
     name: 'SAMPLE EXAM 1',
@@ -93,6 +88,12 @@ export class ExamAttempComponent implements OnInit {
         _id: '59eb1e110d185f115854b29c'
       }
     ]
+  };
+
+  examData = {
+    questionAnswers: [],
+    totalTimeTaken: this.timeNow,
+    exam: this.exam._id
   };
 
   constructor(private examService: ExamService, private activatedRoute: ActivatedRoute, private router: Router) {
@@ -177,9 +178,28 @@ export class ExamAttempComponent implements OnInit {
     return this.timeNow - this.lastSprintTime;
   }
 
-  finExam () {
+  finishExam () {
     // stopping the timer
     this.timerSubscription.unsubscribe();
+    this.examData.totalTimeTaken = this.timeNow;
+    this.examData.exam = this.exam._id;
+
+    this.subscription = this.examService.submitExam(this.id, this.examData).subscribe((response: Response) => {
+      this.router.navigate(['exam', 'result', this.id]);
+    }, (error: any) => {
+      console.log(error);
+      if (error.status === 401) {
+        // 401 unauthenticated
+      } else if (error.status === 501) {
+        // 501 error whil fetching student detail
+      } else if (error.status === 400) {
+        // 400 invalid id
+      } else {
+        // 500 internal server error
+      }
+    }, () => {
+      this.subscription.unsubscribe();
+    });
   }
 
 }
