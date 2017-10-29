@@ -109,6 +109,14 @@ router.get('/exam/quick/:id', userAuthenticate, (request, response) => {
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
 
+    console.log(request.body);
+
+    console.log('fetched exam id is: ', request.body.exam);
+
+    // check if exam id can be sent with the examReturn data from client as id
+    if (id !== request.body.exam)
+        return response.status(400).send('The ExamID in the address bar has been changed, exam could not be submitted');
+
     //finding the examreturn data from database and fetching all question answers too with it
     ExamReturn.findOne({exam: id, user: request.student._id}).populate('questionAnswers').exec((error, examReturn) => {
 
@@ -195,6 +203,10 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
 
                 //incrementing the number of students that have appeared the question
                 aggregateExamQuestionAnalysis.studentsAttempted++;
+
+                // avreageTimeTakenByStudentsWhoGotThisQuestionRight: Number,
+                // percentageOfStudentWhoAttempted: Number
+                // percentageOfStudentWhoAttemptedGotThisQuestionRight: Number
 
                 // saving back the document into the datase while handling any potential error
                 aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));

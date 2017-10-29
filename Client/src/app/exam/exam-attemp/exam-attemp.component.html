@@ -1,75 +1,96 @@
-<h1>Exam: {{exam?.name}}</h1>
-<h3>Time: {{timeNow/60}} : {{timeNow%60}}</h3>
-<form [formGroup]="examForm" (ngSubmit)="finishExam()">
-    <div formArrayName="questionAnswers">
+<div data-spy="scroll" data-target="#myScrollspy" data-offset="15">
+    <div class="row"> 
+        <nav class="col-sm-4 col-md-3" id="myScrollspy">
+            <div data-offset-top="70" data-spy="affix">
+                <h3>Time: {{timeNowInMinutes}} : {{timeNow%60}}</h3>
+                <!-- <hr>
+                <dt>Exam</dt>
+                <dd>{{exam?.name}}</dd>
+                
+                <dt>Allowed Time</dt>
+                <dd>{{exam?.allowedTime}} (in minutes)</dd>
+                
+                <dt>Subject</dt>
+                <dd>{{exam?.subject}}</dd> -->
         
-        <div *ngFor="let question of exam?.questions; let questionId = index">    
-
-            <div class="well bs-component">
-                <fieldset>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            {{question?.body}}
-                        </div>
-                    </div>
-                    <div class="row">
+                <hr>
+                <h2>Questions:</h2>
                 
-                        <div class="col-sm-5 col-sm-offset-1">
-                            
-                            <div class="radio">
-                                <label>
-                                    <input type="radio"
-                                    formControlName="{{questionId}}"
-                                    [value]="question?.answerOptionOne">
-                                    {{question?.answerOptionOne}}
-                                </label>
-                            </div>
-                
-                            <div class="radio">
-                                <label>
-                                    <input type="radio"
-                                    formControlName="{{questionId}}"
-                                    [value]="question?.answerOptionTwo">
-                                    {{question?.answerOptionTwo}}
-                                </label>
-                            </div>
-                
-                        </div>
-                        <div class="col-sm-5 col-sm-offset-1">
-                            <div class="row">
-                    
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio"
-                                        formControlName="{{questionId}}"
-                                        [value]="question?.answerOptionThree">
-                                        {{question?.answerOptionThree}}
-                                    </label>
-                                </div>
-                    
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio"
-                                        formControlName="{{questionId}}"
-                                        [value]="question?.answerOptionFour">
-                                        {{question?.answerOptionFour}}
-                                    </label>
-                                </div>
-                    
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-4 col-xs-offset-8 col-sm-3 col-sm-offset-9 col-md-2 col-md-offset-10">
-                            <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)">
-                                Submit Answer
-                            </button>
-                        </div>
-                    </div>
-                </fieldset>
+                <ul class="nav nav-pills nav-stacked" id="examButtonsGroup">
+                    <li><a *ngFor="let question of exam?.questions; let questionId = index" class="text-truncate" id="sb{{question?._id}}" href="exam/{{exam?._id}}#ques{{question?._id}}" routerLinkActive="active">{{questionId+1}} {{question?.body}}</a></li>
+                    <!-- text-success -->
+                </ul>
             </div>
-
-        </div>
+            
+        </nav>
     
+        <div class="col-sm-8 col-md-9 main bs-component">   
+            <form [formGroup]="examForm" (ngSubmit)="finishExam()">
+                <div formArrayName="questionAnswers">  
+            
+                    <div *ngFor="let question of exam?.questions; let questionId = index" class="well" id="ques{{question._id}}">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p><kbd>{{questionId+1}}</kbd> {{question?.body}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-offset-1 col-sm-11 col-xs-12">
+                                    
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionOne">
+                                            {{question?.answerOptionOne}}
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionTwo">
+                                            {{question?.answerOptionTwo}}
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionThree">
+                                            {{question?.answerOptionThree}}
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                            formControlName="{{questionId}}"
+                                            [value]="question?.answerOptionFour">
+                                            {{question?.answerOptionFour}}
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
+                                    <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)" id="btn{{question?._id}}">Submit Answer</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
+                        <button type="submit" class="btn btn-danger">Submit Exam</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</form>
+</div>

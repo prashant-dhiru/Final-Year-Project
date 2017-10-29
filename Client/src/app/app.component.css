@@ -1,19 +1,17 @@
 .footer {
-    width: 100%;
+  width: 100%;
 }
 
 #footertext {
-    text-align: center;
+  text-align: center;
 }
 
+.Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
 
-
- .Site {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-  
-  .Site-content {
-    flex: 1;
-  }
+.Site-content {
+  flex: 1;
+}

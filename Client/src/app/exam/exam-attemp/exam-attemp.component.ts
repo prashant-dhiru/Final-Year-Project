@@ -11,29 +11,31 @@ import { Question } from '../../Classes/question';
 @Component({
   selector: 'fyp-exam-attemp',
   templateUrl: './exam-attemp.component.html',
-  styles: []
+  styleUrls: ['./exam-attemp.component.css']
 })
 export class ExamAttempComponent implements OnInit {
 
   examForm: FormGroup;
   timeNow = 0;
+  timeNowInMinutes: number;
   lastSprintTime = 0;
-  timer: Observable<any> = Observable.timer(0, 1000);
+  timer: Observable<any> = Observable.timer(0, 995);
   timerSubscription: Subscription;
   subscription: Subscription;
   id: string;
   // exam: Exam;
+  examTimeLimit: number;
 
   exam = {
     name: 'SAMPLE EXAM 1',
     description: 'IDK if this will work',
-    allowedTime: 180,
+    allowedTime: 1,
     subject: 'testsub1',
     createdAt: '2017-10-21T10:12:31.838Z',
     _id: '59eb1d8f0d185f115854b290',
     questions: [
       {
-        body: 'this is que1',
+        body: 'this is que11111111111111111111111111111111111111111111111111111',
         answerOptionOne: 'op 1',
         answerOptionTwo: 'op 2',
         answerOptionThree: 'op 3',
@@ -44,7 +46,7 @@ export class ExamAttempComponent implements OnInit {
         _id: '59eb1dcb0d185f115854b292'
       },
       {
-        body: 'this is que2',
+        body: 'this is que2222222222222222222222222222222222222222222222222222222222',
         answerOptionOne: 'option 1',
         answerOptionTwo: 'option 2',
         answerOptionThree: 'option 3',
@@ -102,6 +104,14 @@ export class ExamAttempComponent implements OnInit {
 
   submitAnswer(questionId: string, questionIndex: number) {
 
+    if (!this.examForm.value.questionAnswers[questionIndex]) {
+      return;
+    }
+
+    if (this.examData.questionAnswers.find((element) => element.question === questionId)) {
+      return console.error('Answer for this question has already been submitted, not submitting this attemp');
+    }
+
     const someval = {
       question: questionId,
       timeTaken: this.onLap(),
@@ -110,26 +120,28 @@ export class ExamAttempComponent implements OnInit {
 
     this.examData.questionAnswers.push(someval);
 
-    console.log(this.examData);
-
     // sprinting value becuase it is needed to spring value on every lap
     // sprinting has to be done after lap
     this.onSprint();
 
-  }
+    document.getElementById('btn' + questionId).setAttribute('disabled', 'true');
+    document.getElementById('sb' + questionId).setAttribute('class', 'text-truncate text-success');
 
+  }
 
   getExam () {
     this.subscription = this.examService.getExam(this.id).subscribe((response: Response) => {
-      
+
       this.exam = response.json();
       console.log(this.exam);
+      this.examTimeLimit = this.exam.allowedTime * 60;
 
       // starting the timer to tick
       this.timerSubscription = this.timer.subscribe((value) => {
         this.tickerFunc();
       });
 
+      this.examTimeLimit = this.exam.allowedTime * 60;
 
       // init exam, if any process remaining
 
@@ -154,20 +166,25 @@ export class ExamAttempComponent implements OnInit {
     // this.getExam();
     this.initExamForm();
 
-    // temporary, to be cleareds
-    this.timerSubscription = this.timer.subscribe((value) => {
-      this.tickerFunc();
-    });
+          // starting the timer to tick
+          this.timerSubscription = this.timer.subscribe((value) => {
+            this.tickerFunc();
+          });
+    
+          this.examTimeLimit = this.exam.allowedTime * 60;
 
 
+          // document.fullscreenElement = document
   }
 
   tickerFunc () {
     this.timeNow++;
 
-    // if (this.timeNow >= examTimeLimit) {
-    //   finExam();
-    // }
+    this.timeNowInMinutes = Math.floor(this.timeNow / 60);
+
+    if (this.timeNow >= this.examTimeLimit) {
+      this.finishExam();
+    }
   }
 
   onSprint () {
@@ -178,11 +195,13 @@ export class ExamAttempComponent implements OnInit {
     return this.timeNow - this.lastSprintTime;
   }
 
-  finishExam () {
+  finishExam (): void {
     // stopping the timer
     this.timerSubscription.unsubscribe();
     this.examData.totalTimeTaken = this.timeNow;
     this.examData.exam = this.exam._id;
+
+    console.log(this.examData);
 
     this.subscription = this.examService.submitExam(this.id, this.examData).subscribe((response: Response) => {
       this.router.navigate(['exam', 'result', this.id]);
@@ -200,6 +219,14 @@ export class ExamAttempComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
+  }
+
+  canDeactivateComponent (): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.timerSubscription) {
+      return window.confirm('An Exam is underway, are you sure want to leave?');
+    } else {
+      return false;
+    }
   }
 
 }

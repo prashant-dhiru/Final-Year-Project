@@ -45,6 +45,10 @@ export class ExamListComponent implements OnInit {
   // 'name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'
 
   redirecttoExam(examId: string) {
+
+    const elem = document.documentElement; // Make the body go full screen.
+    this.requestFullScreen(elem);
+
     this.router.navigate(['exam', examId]);
   }
 
@@ -63,5 +67,22 @@ export class ExamListComponent implements OnInit {
       return false;
     }
   }
+
+  requestFullScreen (element: any) {
+
+    // Supports most browsers and their versions.
+    if (element.requestFullScreen) {
+      element.requestFullScreen();
+    } else if (element.webkitRequestFullScreen) {
+      element.webkitRequestFullScreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.msRequestFullScreen) {
+      element.msRequestFullScreen();
+    }
+  }
+
+
+
 
 }

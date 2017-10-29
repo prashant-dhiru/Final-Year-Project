@@ -40,7 +40,7 @@ import { ExamQuickResultComponent } from './exam/exam-quick-result/exam-quick-re
 import { ExamResultComponent } from './exam/exam-result/exam-result.component';
 import { ExamListComponent } from './exam/exam-list/exam-list.component';
 
-
+import { CanDeactivateComponent } from './Guards/can-leave-exam.guard';
 
 declare let require: any;
 
@@ -80,7 +80,8 @@ declare let require: any;
     UserService,
     AdminService,
     IsAuthenticatedService,
-    ExamService
+    ExamService,
+    CanDeactivateComponent
   ],
   bootstrap: [AppComponent]
 })

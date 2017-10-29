@@ -1,4 +1,5 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-static-top">
+    <!-- navbar-fixed-top -->
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -20,6 +21,7 @@
         <li><a [routerLink]="['/user']" routerLinkActive="active">User</a></li>
         <li><a [routerLink]="['/admin']" routerLinkActive="active">Admin</a></li>
       </ul>
+
       <ul class="nav navbar-nav navbar-right">
         <li><a *ngIf="isUserAuthenticated()" (click)="logoutUser()" [routerLink]="['user', 'me']"><span class="glyphicon glyphicon-log-in"></span>  Logout</a></li>
         <li><a [routerLink]="['user', 'login']" *ngIf="!isUserAuthenticated()"><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>

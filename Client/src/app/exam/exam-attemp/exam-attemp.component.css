@@ -1,0 +1,25 @@
+.affix {
+    top: 15px;
+    z-index: 9999 !important;
+}
+
+body {
+    position: relative;
+}
+div.col-sm-9 div {
+    height: 250px;
+    font-size: 28px;
+}
+
+@media screen and (max-width: 810px) {
+    #section1, #section2, #section3, #section41, #section42  {
+        margin-left: 150px;
+    }
+  }
+
+#examButtonsGroup {
+    max-width: 230px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
