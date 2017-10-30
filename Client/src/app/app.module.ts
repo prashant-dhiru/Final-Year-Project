@@ -28,11 +28,8 @@ import { RouteNotFoundComponent } from './route-not-found/route-not-found.compon
 import { ExamComponent } from './exam/exam.component';
 import { UserLoginComponent } from './user/user-login/user-login.component';
 
-
 import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 import { UserMeComponent } from './user/user-me/user-me.component';
-import { DummyComponent } from './Playground/dummy/dummy.component';
-
 
 import { ExamAttempComponent } from './exam/exam-attemp/exam-attemp.component';
 import { ExamQuestionItemComponent } from './exam/exam-attemp/exam-question-item/exam-question-item.component';
@@ -41,6 +38,8 @@ import { ExamResultComponent } from './exam/exam-result/exam-result.component';
 import { ExamListComponent } from './exam/exam-list/exam-list.component';
 
 import { CanDeactivateComponent } from './Guards/can-leave-exam.guard';
+import { AboutComponent } from './about/about.component';
+import { HomeComponent } from './home/home.component';
 
 declare let require: any;
 
@@ -60,14 +59,15 @@ declare let require: any;
     UserLoginComponent,
     AdminLoginComponent,
     UserMeComponent,
-    DummyComponent,
     AdminMeComponent,
     DisplayExamComponent,
     ExamAttempComponent,
     ExamQuestionItemComponent,
     ExamQuickResultComponent,
     ExamResultComponent,
-    ExamListComponent
+    ExamListComponent,
+    AboutComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

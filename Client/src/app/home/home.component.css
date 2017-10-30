@@ -1,0 +1,49 @@
+header {
+    padding-left: 20px;
+}
+
+.centre {
+    text-align: center;
+}
+
+p {
+    text-align: justify;
+}
+
+.pad-para {
+    
+}
+
+header h2:after {
+    display: block;
+    content: '';
+    width: 3.25em;
+    height: 2px;
+    margin: 0.7em 0 1em 0;
+    border-radius: 2px;
+}
+
+*:before, *:after {
+    box-sizing: border-box;
+}
+
+.border {
+
+    border-style: solid;
+    border-color: rgb(221, 221, 221);
+    border-width: 1px;
+    box-sizing: border-box;
+    margin: 0px;
+    margin-bottom: 35px;
+    padding: 12px;
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+    cursor: default;
+    display: inline-block;
+
+}
+
+
+
