@@ -32,7 +32,6 @@ import { IsAuthenticatedService } from './Shared/is-authenticated.service';
 import { UserMeComponent } from './user/user-me/user-me.component';
 
 import { ExamAttempComponent } from './exam/exam-attemp/exam-attemp.component';
-import { ExamQuestionItemComponent } from './exam/exam-attemp/exam-question-item/exam-question-item.component';
 import { ExamQuickResultComponent } from './exam/exam-quick-result/exam-quick-result.component';
 import { ExamResultComponent } from './exam/exam-result/exam-result.component';
 import { ExamListComponent } from './exam/exam-list/exam-list.component';
@@ -62,7 +61,6 @@ declare let require: any;
     AdminMeComponent,
     DisplayExamComponent,
     ExamAttempComponent,
-    ExamQuestionItemComponent,
     ExamQuickResultComponent,
     ExamResultComponent,
     ExamListComponent,

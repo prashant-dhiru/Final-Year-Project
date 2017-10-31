@@ -95,7 +95,7 @@ router.post('/admin/createExam', adminAuthenticate, (request, response) => {
     var aggregateExamResult = new AggregateExamResult({exam: exam._id});
     
     /* saving into database */
-    aggregateExamResult.save().catch((error) => console.log(error));
+    aggregateExamResult.save().catch((error) => console.error(error));
     /* Demo Documents Insertion finished */
 
     //finally saving the exam into the database while handling any error
@@ -131,7 +131,7 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
     Exam.findById(id).select('_id questions name').exec((error, exam) => {
 
         //if error occures, sending error with Internal Server Errorerror code and returning
-        if (error) return response.status(500).send(error)
+        if (error) return response.status(500).send(error);
 
         //if there is no exam in database with the id, sending emty response back with Not Found status code
         if (!exam) return response.status(404).send('No exam with such ID');

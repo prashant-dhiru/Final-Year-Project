@@ -51,8 +51,10 @@ export class UserSignupComponent implements OnInit {
       window.sessionStorage.setItem('userLevel', '1');
       this.router.navigate(['/exam']);
     }, (error: any) => {
+      console.error(error);
       if (error.status === 405) {
         this.isRegistrationFailure = 2;
+        // already logged in
       } else {
         this.isRegistrationFailure = 1; // 503
       }

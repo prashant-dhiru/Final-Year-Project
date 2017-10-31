@@ -23,9 +23,10 @@ export class ExamAttempComponent implements OnInit {
   timerSubscription: Subscription;
   subscription: Subscription;
   id: string;
-  // exam: Exam;
+  exam: Exam;
   examTimeLimit: number;
 
+  /*
   exam = {
     name: 'SAMPLE EXAM 1',
     description: 'IDK if this will work',
@@ -91,11 +92,12 @@ export class ExamAttempComponent implements OnInit {
       }
     ]
   };
+  */
 
   examData = {
     questionAnswers: [],
     totalTimeTaken: this.timeNow,
-    exam: this.exam._id
+    exam: ''
   };
 
   constructor(private examService: ExamService, private activatedRoute: ActivatedRoute, private router: Router) {
@@ -136,10 +138,7 @@ export class ExamAttempComponent implements OnInit {
       console.log(this.exam);
       this.examTimeLimit = this.exam.allowedTime * 60;
 
-      // starting the timer to tick
-      this.timerSubscription = this.timer.subscribe((value) => {
-        this.tickerFunc();
-      });
+      this.initExamForm();
 
       this.examTimeLimit = this.exam.allowedTime * 60;
 
@@ -160,21 +159,16 @@ export class ExamAttempComponent implements OnInit {
     (<Question[]>this.exam.questions).forEach((question, index) => {
       (<FormArray>this.examForm.controls.questionAnswers).push(new FormControl());
     });
+
+    // starting the timer to tick
+    this.timerSubscription = this.timer.subscribe((value) => {
+      this.tickerFunc();
+    });
+
   }
 
   ngOnInit() {
-    // this.getExam();
-    this.initExamForm();
-
-          // starting the timer to tick
-          this.timerSubscription = this.timer.subscribe((value) => {
-            this.tickerFunc();
-          });
-    
-          this.examTimeLimit = this.exam.allowedTime * 60;
-
-
-          // document.fullscreenElement = document
+    this.getExam();
   }
 
   tickerFunc () {
@@ -195,7 +189,7 @@ export class ExamAttempComponent implements OnInit {
     return this.timeNow - this.lastSprintTime;
   }
 
-  finishExam (): void {
+  finishExam () {
     // stopping the timer
     this.timerSubscription.unsubscribe();
     this.examData.totalTimeTaken = this.timeNow;
@@ -204,7 +198,8 @@ export class ExamAttempComponent implements OnInit {
     console.log(this.examData);
 
     this.subscription = this.examService.submitExam(this.id, this.examData).subscribe((response: Response) => {
-      this.router.navigate(['exam', 'result', this.id]);
+      console.log(response);
+      this.router.navigate(['exam', 'submit', this.id]);
     }, (error: any) => {
       console.log(error);
       if (error.status === 401) {
@@ -222,7 +217,7 @@ export class ExamAttempComponent implements OnInit {
   }
 
   canDeactivateComponent (): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.timerSubscription) {
+    if (!this.timerSubscription.closed) {
       return window.confirm('An Exam is underway, are you sure want to leave?');
     } else {
       return false;

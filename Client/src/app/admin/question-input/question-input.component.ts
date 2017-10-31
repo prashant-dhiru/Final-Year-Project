@@ -17,6 +17,7 @@ export class QuestionInputComponent implements OnInit {
   questionItemForm: FormGroup;
   subscription: Subscription;
   id: string;
+  lastSubmittedQuestionId: string;
 
   constructor(private adminService: AdminService, private activatedRoute: ActivatedRoute) {
     this.id = this.activatedRoute.snapshot.params['id'];
@@ -78,19 +79,24 @@ export class QuestionInputComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.isAdminAuthenticated()) {
+    if (!this.isAdminAuthenticated()) {
       return this.isSubmissionFailed = 1;
     }
     this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value, this.id).subscribe((response: Response) => {
       this.isSubmissionFailed = 0;
+      this.lastSubmittedQuestionId = response.json()._id;
     }, (error: any) => {
       if (error.status === 401) {
+        this.isSubmissionFailed = 1;
         // 401 unauthorised
       } else if (error.status === 400) {
+        this.isSubmissionFailed = 2;
         // 400 invalid exam id
       } else if (error.status === 404) {
+        this.isSubmissionFailed = 3;
         // 404 exam with such id not present
       } else {
+        this.isSubmissionFailed = 4;
         // 500 internal server error while searching for exam
         // also contain unique voilation, if any
       }

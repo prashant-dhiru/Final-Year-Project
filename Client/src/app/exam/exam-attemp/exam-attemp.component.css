@@ -12,10 +12,8 @@ div.col-sm-9 div {
 }
 
 @media screen and (max-width: 810px) {
-    #section1, #section2, #section3, #section41, #section42  {
-        margin-left: 150px;
-    }
-  }
+    margin-left: 150px;
+}
 
 #examButtonsGroup {
     max-width: 230px;

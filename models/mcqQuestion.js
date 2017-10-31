@@ -42,12 +42,12 @@ const MultipleChoiceQuestionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    // difficulty: {
-    //     type: Number,
-    //     min: 1,
-    //     max: 5,
-    //     maxlength: 1
-    // },
+    difficulty: {
+        type: Number,
+        min: 1,
+        max: 5,
+        maxlength: 1
+    },
     exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }
 
     //'body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', 'exam', '_id'

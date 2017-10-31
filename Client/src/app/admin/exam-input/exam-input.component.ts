@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
+import { Router } from '@angular/router';
 
 import { Question } from '../../Classes/question';
 import { AdminService } from '../admin.service';
@@ -16,7 +17,7 @@ export class ExamInputComponent implements OnInit {
   submissionError = 0;
   subscription: Subscription;
 
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService, private router: Router) { }
 
   ngOnInit() {
     this.examFormInit();
@@ -44,20 +45,20 @@ export class ExamInputComponent implements OnInit {
   }
 
   onSubmit () {
-    if (this.isAdminAuthenticated()) {
+    if (!this.isAdminAuthenticated()) {
       return this.submissionError = 1;
     }
     this.subscription = this.adminService.createExam(this.examForm.value).subscribe((response: Response) => {
       this.submissionError = 0;
-      // redirect to view exam component with examid
+      this.router.navigate(['admin', 'exam', response.json()._id, 'insertque']);
     }, (error: any) => {
       if (error.status === 401) {
         this.submissionError = 1;
+        // 401 unauthenticated
       } else {
         this.submissionError = 2;
+        // 500 internal server error
       }
-      // 401 unauthenticated
-      // 500 internal server error
     }, () => {
       this.subscription.unsubscribe();
     });

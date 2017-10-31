@@ -47,20 +47,27 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
         //picking only required properties, leaving other properties
         var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
 
-        //doing manual pickings for questions, no-inbuilt method for it
-        var questions = exam.questions.map((question) => {
-            return {
-                body: question.body,
-                answerOptionOne: question.answerOptionOne,
-                answerOptionTwo: question.answerOptionTwo,
-                answerOptionThree: question.answerOptionThree,
-                answerOptionFour: question.answerOptionFour,
-                marksForCorrectAnswer: question.marksForCorrectAnswer,
-                negativeMark: question.negativeMark,
-                difficulty: question.difficulty,
-                _id: question._id
-            }
-        });
+        //checking if exam has no questions, then not mapping the questions, and simply assigning questions variable with an empty arry
+        if (!exam.questions.length) {
+            var questions = [];
+        } 
+        else {
+            // if any questions found, mapping them
+            //doing manual pickings for questions, no-inbuilt method for it
+            var questions = exam.questions.map((question) => {
+                return {
+                    body: question.body,
+                    answerOptionOne: question.answerOptionOne,
+                    answerOptionTwo: question.answerOptionTwo,
+                    answerOptionThree: question.answerOptionThree,
+                    answerOptionFour: question.answerOptionFour,
+                    marksForCorrectAnswer: question.marksForCorrectAnswer,
+                    negativeMark: question.negativeMark,
+                    difficulty: question.difficulty,
+                    _id: question._id
+                }
+            });
+        }
 
         //assigning manually picked questions into the body to send back
         body.questions = questions;
@@ -86,7 +93,7 @@ router.get('/exam', authenticate, (request, response) => {
         if (error) return response.status(500).send(error);
 
         //if there is no exam in database, sending emty response back with Not Found status code
-        if (!exams) return response.status(404).send();
+        if (!exams.length) return response.status(404).send();
 
         //sending the exam back to the client while picking only essential parts from the exams to prevnt data-misuse
         response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
@@ -151,6 +158,19 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
     
+    // if user has not submitted any answer, saving the exam return as no further calculation is
+    // needed to be done
+    if (!request.body.questionAnswers.length) {
+        // saving exam in database
+        return examReturn.save().then(() => {
+
+            //responsing back as exam successfully stored in database
+            response.send('Exam Successfully submitted in Store');
+
+            //Handing any potential errors, sending error to client with the Internal Server error status code
+        }, (error) => response.status(500).send(error));
+    }
+
     // mapping users's input to be saved in database with correct information
     var answers = request.body.questionAnswers.map(questionAnswer => {
         return { 
@@ -186,7 +206,8 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
             AggregateExamQuestionAnalysis.findOne({exam: id, question: questionAnswer.question}).exec((error, aggregateExamQuestionAnalysis) => {
                 
                 // if error occures or the document seeding is not done properly, returning, as the documnets are seeded with zeroes
-                if (error) return;
+                if (error) return console.error(error);
+
                 if (!aggregateExamQuestionAnalysis) return;
                 
                 // if no student has submitted the exam yet, the scores of the student is the base information
@@ -242,8 +263,6 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
-
-    // following functions are tested and running
 
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
