@@ -1,5 +1,9 @@
 @import url("css/main.css");
 
 #main {
-	border: 1px solid #c8cccf;;
+	border: 1px solid #c8cccf;
+}
+
+.gray {
+	background-color: #c8cccf;
 }

@@ -24,9 +24,9 @@ export class ExamResultComponent implements OnInit {
 
   ngOnInit() {
     this.subscription = this.examService.getExamResult(this.id).subscribe((response: Response) => {
-
+      console.log(response.json());
     }, (error: any) => {
-
+      console.error(error);
     }, () => {
       this.subscription.unsubscribe();
     });

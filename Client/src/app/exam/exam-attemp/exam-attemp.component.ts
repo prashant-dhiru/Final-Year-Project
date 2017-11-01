@@ -25,74 +25,7 @@ export class ExamAttempComponent implements OnInit {
   id: string;
   exam: Exam;
   examTimeLimit: number;
-
-  /*
-  exam = {
-    name: 'SAMPLE EXAM 1',
-    description: 'IDK if this will work',
-    allowedTime: 1,
-    subject: 'testsub1',
-    createdAt: '2017-10-21T10:12:31.838Z',
-    _id: '59eb1d8f0d185f115854b290',
-    questions: [
-      {
-        body: 'this is que11111111111111111111111111111111111111111111111111111',
-        answerOptionOne: 'op 1',
-        answerOptionTwo: 'op 2',
-        answerOptionThree: 'op 3',
-        answerOptionFour: 'op 4',
-        marksForCorrectAnswer: 4,
-        negativeMark: 1,
-        difficulty: undefined,
-        _id: '59eb1dcb0d185f115854b292'
-      },
-      {
-        body: 'this is que2222222222222222222222222222222222222222222222222222222222',
-        answerOptionOne: 'option 1',
-        answerOptionTwo: 'option 2',
-        answerOptionThree: 'option 3',
-        answerOptionFour: 'option 4',
-        marksForCorrectAnswer: 4,
-        negativeMark: 1,
-        difficulty: undefined,
-        _id: '59eb1dd80d185f115854b294'
-      },
-      {
-        body: 'this is que3',
-        answerOptionOne: 'opt 1',
-        answerOptionTwo: 'opt 2',
-        answerOptionThree: 'opt 3',
-        answerOptionFour: 'opt 4',
-        marksForCorrectAnswer: 4,
-        negativeMark: 1,
-        difficulty: undefined,
-        _id: '59eb1df00d185f115854b298'
-      },
-      {
-        body: 'this is que4',
-        answerOptionOne: 'opto 1',
-        answerOptionTwo: 'opto 2',
-        answerOptionThree: 'opto 3',
-        answerOptionFour: 'opto 4',
-        marksForCorrectAnswer: 4,
-        negativeMark: 1,
-        difficulty: undefined,
-        _id: '59eb1e000d185f115854b29a'
-      },
-      {
-        body: 'this is que5',
-        answerOptionOne: 'optio 1',
-        answerOptionTwo: 'optio 2',
-        answerOptionThree: 'optio 3',
-        answerOptionFour: 'optio 4',
-        marksForCorrectAnswer: 4,
-        negativeMark: 1,
-        difficulty: undefined,
-        _id: '59eb1e110d185f115854b29c'
-      }
-    ]
-  };
-  */
+  examLoadSuccess = -1;
 
   examData = {
     questionAnswers: [],
@@ -137,16 +70,12 @@ export class ExamAttempComponent implements OnInit {
       this.exam = response.json();
       console.log(this.exam);
       this.examTimeLimit = this.exam.allowedTime * 60;
-
+      this.examLoadSuccess = 1;
       this.initExamForm();
-
-      this.examTimeLimit = this.exam.allowedTime * 60;
-
-      // init exam, if any process remaining
-
     }, (error: any) => {
       window.alert('Error Occured while fetching exam: ' + error.message);
       setTimeout(() => this.router.navigate(['../']), 1500);
+      this.examLoadSuccess = 0;
     }, () => {
       this.subscription.unsubscribe();
     });

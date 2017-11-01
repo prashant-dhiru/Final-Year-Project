@@ -95,8 +95,41 @@ router.get('/exam', authenticate, (request, response) => {
         //if there is no exam in database, sending emty response back with Not Found status code
         if (!exams.length) return response.status(404).send();
 
-        //sending the exam back to the client while picking only essential parts from the exams to prevnt data-misuse
-        response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
+        // if authenticated user is admin, not attacking the hasUserAttempted attribute on exams
+        // simply mapping th exam and sending back exam as response
+        if (request.session.userLevel == 0)
+            response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
+
+        //finding that user has attempted how many exams here
+        ExamReturn.find({user: request.session.userId}).select('exam -_id').exec((error, examReturns) => {
+
+            // checking for any potential error here, and replying with Internal server error status code
+            if (error) return response.status(500).send(error);
+
+            // if user hasn't attempted any exam, handling that condition here
+            if (!examReturns.length)
+
+                //marking all exams as unattempted while mapping them, and sending the mapped exams back as response
+                return response.send(exams.map((exam) => {                 
+                    var mapped = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
+                    mapped.hasUserAttempted = false;
+                    return mapped;
+                }));
+
+            // mappping the exam return data to an array from an array of objects
+            examReturns = examReturns.map((examReturn) => examReturn.exam);
+
+            //sending the exam back to the client while picking only essential parts from the exams to prevnt data-misuse
+            response.send(exams.map((exam) => {
+                var mapped = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
+
+                // checking at this poing that if user has attempted exams or not by array.includes method
+                mapped.hasUserAttempted = examReturns.includes(exam._id);
+                return mapped;
+            }));
+
+        });
+
     });
     //route finishes here
 });
