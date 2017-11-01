@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 
 import { AdminService } from '../admin.service';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-admin-me',
@@ -13,10 +14,10 @@ export class AdminMeComponent implements OnInit {
 
   syncStatus = -1;
   subscription: Subscription;
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService, private isAuthenticatedService: IsAuthenticatedService) { }
 
   ngOnInit() {
-    const adminAuthenticated = this.isAdminAuthenticated();
+    const adminAuthenticated = this.isAuthenticatedService.isAdminAuthenticated();
     this.subscription = this.adminService.checkAdminAuthenticated().subscribe((response: Response) => {
       if (adminAuthenticated) {
         this.syncStatus = 0;
@@ -36,18 +37,6 @@ export class AdminMeComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
 }

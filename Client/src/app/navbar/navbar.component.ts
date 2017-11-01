@@ -4,6 +4,8 @@ import { Response } from '@angular/http';
 import { Router } from '@angular/router';
 
 import { UserService } from '../user/user.service';
+import { AdminService } from '../admin/admin.service';
+import { IsAuthenticatedService } from '../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-navbar',
@@ -13,36 +15,52 @@ export class NavbarComponent implements OnInit {
 
   subscription: Subscription;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private adminService: AdminService,
+    private router: Router,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) { }
 
   ngOnInit() {
   }
 
-  isUserAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '1') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
   logoutUser () {
-    if (!this.isUserAuthenticated) {
-      return;
-    }
     this.subscription = this.userService.logoutuser().subscribe((response: Response) => {
-      window.sessionStorage.setItem('isAuthenticated', 'false');
-      window.sessionStorage.setItem('userLevel', '-1');
+      this.isAuthenticatedService.unAuthenticate();
       this.router.navigate(['/user/login']);
     }, (error: any) => {
-      console.error('Unable to Logout the User');
+      console.error('Logging Out Procedure Failed');
     }, () => {
       this.subscription.unsubscribe();
     });
+  }
+
+  logoutAdmin () {
+    this.subscription = this.adminService.logoutAdmin().subscribe((response: Response) => {
+      this.isAuthenticatedService.unAuthenticate();
+      this.router.navigate(['/admin']);
+    }, (error: any) => {
+      console.error('Logging Out Procedure Failed');
+    }, () => {
+      this.subscription.unsubscribe();
+    });
+  }
+
+  logout () {
+    if (this.isAuthenticatedService.isUserAuthenticated()) {
+      this.logoutUser();
+    } else if (this.isAuthenticatedService.isAdminAuthenticated()) {
+      this.logoutAdmin();
+    }
+  }
+
+  ifAuthenticated () {
+    return this.isAuthenticatedService.ifAuthenticated();
+  }
+
+  isUserAuthenticated () {
+    return this.isAuthenticatedService.isUserAuthenticated();
   }
 
 }

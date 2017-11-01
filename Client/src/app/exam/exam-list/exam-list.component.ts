@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { ExamService } from '../exam.service';
 import { Exam } from '../../Classes/exam';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-exam-list',
@@ -17,10 +18,10 @@ export class ExamListComponent implements OnInit {
   subscription: Subscription;
   isexamFetchingFailure = -1;
 
-  constructor(private examService: ExamService, private router: Router) { }
+  constructor(private examService: ExamService, private router: Router, private isAuthenticatedService: IsAuthenticatedService) { }
 
   ngOnInit() {
-    if (!this.isUserAuthenticated()) {
+    if (!this.isAuthenticatedService.isUserAuthenticated()) {
       return this.isexamFetchingFailure = 1;
     }
     this.subscription = this.examService.getExamList().subscribe((response: Response) => {
@@ -54,18 +55,6 @@ export class ExamListComponent implements OnInit {
 
   redirectToResult(examId: string) {
     this.router.navigate(['exam', 'result', examId]);
-  }
-
-  isUserAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '1') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   requestFullScreen (element: any) {

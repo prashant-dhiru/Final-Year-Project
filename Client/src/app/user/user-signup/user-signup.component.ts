@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 
 import { User } from '../../Classes/user';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 const validator = require('validator');
 
@@ -21,34 +22,25 @@ export class UserSignupComponent implements OnInit {
   isRegistrationFailure = -1;
   student: any;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) {}
 
   ngOnInit() {
     this.initForm();
   }
 
-  isUserAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '1') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
   onSubmit() {
-    if (this.isUserAuthenticated()) {
+    if (this.isAuthenticatedService.isUserAuthenticated()) {
       return this.isRegistrationFailure = 2;
     }
     this.subscription = this.userService.registerUser(this.loginForm.value).subscribe((response: Response) => {
       this.student = response.json();
       this.isRegistrationFailure = 0;
       this.loginForm.reset({'phoneNumber': ''});
-      window.sessionStorage.setItem('isAuthenticated', 'true');
-      window.sessionStorage.setItem('userLevel', '1');
+      this.isAuthenticatedService.authenticateUser();
       this.router.navigate(['/exam']);
     }, (error: any) => {
       console.error(error);

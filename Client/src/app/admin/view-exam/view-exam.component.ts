@@ -5,6 +5,7 @@ import { Response } from '@angular/http';
 
 import { ExamService } from '../../exam/exam.service';
 import { Exam } from '../../Classes/exam';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-view-exam',
@@ -16,10 +17,14 @@ export class ViewExamComponent implements OnInit {
   subscription: Subscription;
   isexamFetchingFailure = -1;
 
-  constructor(private examService: ExamService, private router: Router) { }
+  constructor(
+    private examService: ExamService,
+    private router: Router,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) { }
 
   ngOnInit() {
-    if (!this.isAdminAuthenticated()) {
+    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
       return this.isexamFetchingFailure = 1;
     }
     this.subscription = this.examService.getExamList().subscribe((response: Response) => {
@@ -48,18 +53,5 @@ export class ViewExamComponent implements OnInit {
   redirectToInsertQuestion(examId: string) {
     this.router.navigate(['admin', 'exam', examId, 'insertque']);
   }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
 
 }

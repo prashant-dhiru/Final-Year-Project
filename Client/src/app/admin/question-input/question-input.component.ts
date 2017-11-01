@@ -5,6 +5,7 @@ import { Subscription, Observable } from 'rxjs/Rx';
 import { ActivatedRoute } from '@angular/router';
 
 import { AdminService } from '../admin.service';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-question-input',
@@ -19,7 +20,11 @@ export class QuestionInputComponent implements OnInit {
   id: string;
   lastSubmittedQuestionId: string;
 
-  constructor(private adminService: AdminService, private activatedRoute: ActivatedRoute) {
+  constructor(
+    private adminService: AdminService,
+    private activatedRoute: ActivatedRoute,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) {
     this.id = this.activatedRoute.snapshot.params['id'];
   }
 
@@ -79,7 +84,7 @@ export class QuestionInputComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.isAdminAuthenticated()) {
+    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
       return this.isSubmissionFailed = 1;
     }
     this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value, this.id).subscribe((response: Response) => {
@@ -103,18 +108,6 @@ export class QuestionInputComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated') === 'true') {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   resetIsSubmissionFailed () {

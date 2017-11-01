@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { Question } from '../../Classes/question';
 import { AdminService } from '../admin.service';
 
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
+
 @Component({
   selector: 'fyp-exam-input',
   templateUrl: './exam-input.component.html'
@@ -17,7 +19,7 @@ export class ExamInputComponent implements OnInit {
   submissionError = 0;
   subscription: Subscription;
 
-  constructor(private adminService: AdminService, private router: Router) { }
+  constructor(private adminService: AdminService, private router: Router, private isAuthenticatedService: IsAuthenticatedService) { }
 
   ngOnInit() {
     this.examFormInit();
@@ -45,7 +47,8 @@ export class ExamInputComponent implements OnInit {
   }
 
   onSubmit () {
-    if (!this.isAdminAuthenticated()) {
+
+    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
       return this.submissionError = 1;
     }
     this.subscription = this.adminService.createExam(this.examForm.value).subscribe((response: Response) => {
@@ -62,18 +65,6 @@ export class ExamInputComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated') === 'true') {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   resetSubmissionError () {

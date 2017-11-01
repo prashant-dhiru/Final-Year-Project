@@ -5,6 +5,7 @@ import { Response } from '@angular/http';
 import { Router } from '@angular/router';
 
 import { UserService } from '../user.service';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-user-login',
@@ -16,22 +17,14 @@ export class UserLoginComponent implements OnInit {
   subscription: Subscription;
   isLoginFailure = 0;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) {}
 
   ngOnInit() {
     this.initUserLoginForm();
-  }
-
-  isUserAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '1') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   initUserLoginForm () {
@@ -50,12 +43,11 @@ export class UserLoginComponent implements OnInit {
   }
 
   onSubmit () {
-    if (this.isUserAuthenticated()) {
+    if (this.isAuthenticatedService.isUserAuthenticated()) {
       return this.isLoginFailure = 2;
     }
     this.subscription = this.userService.loginUser(this.userLoginForm.value).subscribe((response: Response) => {
-      window.sessionStorage.setItem('isAuthenticated', 'true');
-      window.sessionStorage.setItem('userLevel', '1');
+      this.isAuthenticatedService.authenticateUser();
       this.router.navigate(['/exam']);
     }, (error: any) => {
       if ( error.status === 405 ) {

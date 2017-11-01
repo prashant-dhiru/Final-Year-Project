@@ -7,8 +7,16 @@ export class IsAuthenticatedService {
 
   isUserAuthenticated () {
     if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '1') {
-        return true;
+      if (window.sessionStorage.getItem('isAuthenticated')  === 'true') {
+        if (window.sessionStorage.getItem('userLevel')) {
+          if (window.sessionStorage.getItem('userLevel') === '1') {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -19,8 +27,16 @@ export class IsAuthenticatedService {
 
   isAdminAuthenticated () {
     if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
+      if (window.sessionStorage.getItem('isAuthenticated')  === 'true') {
+        if (window.sessionStorage.getItem('userLevel')) {
+          if (window.sessionStorage.getItem('userLevel') === '0') {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -43,4 +59,21 @@ export class IsAuthenticatedService {
     window.sessionStorage.setItem('isAuthenticated', 'false');
     window.sessionStorage.setItem('userLevel', '-1');
   }
+
+  ifAuthenticated () {
+    if (window.sessionStorage.getItem('isAuthenticated')) {
+      if (window.sessionStorage.getItem('isAuthenticated')  === 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  clearStorage () {
+    window.sessionStorage.clear();
+  }
+
 }

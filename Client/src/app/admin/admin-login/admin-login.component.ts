@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 import { Router } from '@angular/router';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 import { AdminService } from '../admin.service';
 
@@ -17,7 +18,7 @@ export class AdminLoginComponent implements OnInit {
   adminLoginForm: FormGroup;
   isLoginFailure = 0;
 
-  constructor(private adminService: AdminService, private router: Router) {}
+  constructor(private adminService: AdminService, private router: Router, private isAuthenticatedService: IsAuthenticatedService) {}
 
   ngOnInit() {
     this.initAdminLoginForm();
@@ -30,12 +31,11 @@ export class AdminLoginComponent implements OnInit {
   }
 
   onSubmit () {
-    if (this.isAdminAuthenticated()) {
+    if (this.isAuthenticatedService.isAdminAuthenticated()) {
       return this.isLoginFailure = 2;
     }
     this.subscription = this.adminService.loginAdmin(this.adminLoginForm.controls['password'].value).subscribe((response: Response) => {
-      window.sessionStorage.setItem('isAuthenticated', 'true');
-      window.sessionStorage.setItem('userLevel', '0');
+      this.isAuthenticatedService.authenticateAdmin();
       this.router.navigate(['/admin/create-exam']);
     }, (error: any) => {
       if (error.status === 405) {
@@ -49,18 +49,6 @@ export class AdminLoginComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   resetIsLoginFailure () {

@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'fyp-user',
-  templateUrl: './user.component.html'
+  template: `
+  <div class="bs-component">
+    <router-outlet></router-outlet>
+  </div>
+  `
 })
 export class UserComponent implements OnInit {
 

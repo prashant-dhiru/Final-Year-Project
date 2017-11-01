@@ -5,6 +5,7 @@ import { Response } from '@angular/http';
 
 import { AdminService } from '../../admin.service';
 import { Exam } from '../../../Classes/exam';
+import { IsAuthenticatedService } from '../../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-display-exam',
@@ -68,7 +69,11 @@ export class DisplayExamComponent implements OnInit {
   }; */
   exam: Exam;
 
-  constructor(private adminService: AdminService, private activatedRoute: ActivatedRoute) {
+  constructor(
+    private adminService: AdminService,
+    private activatedRoute: ActivatedRoute,
+    private isAuthenticatedService: IsAuthenticatedService
+  ) {
     this.id = this.activatedRoute.snapshot.params['id'];
     // if (!ObjectID.isValid(this.id)) {
       // do something here, object id invalid
@@ -76,7 +81,7 @@ export class DisplayExamComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.isAdminAuthenticated()) {
+    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
       return this.submissionError = 1;
     }
     this.subscription = this.adminService.checkExam(this.id).subscribe((response: Response) => {
@@ -99,18 +104,6 @@ export class DisplayExamComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
-
-  isAdminAuthenticated () {
-    if (window.sessionStorage.getItem('isAuthenticated')) {
-      if (window.sessionStorage.getItem('userLevel') === '0') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
   }
 
   resetSubmissionError () {
