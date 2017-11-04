@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit {
   logoutAdmin () {
     this.subscription = this.adminService.logoutAdmin().subscribe((response: Response) => {
       this.isAuthenticatedService.unAuthenticate();
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/admin', 'login']);
     }, (error: any) => {
       console.error('Logging Out Procedure Failed');
     }, () => {
@@ -57,10 +57,6 @@ export class NavbarComponent implements OnInit {
 
   ifAuthenticated () {
     return this.isAuthenticatedService.ifAuthenticated();
-  }
-
-  isUserAuthenticated () {
-    return this.isAuthenticatedService.isUserAuthenticated();
   }
 
 }

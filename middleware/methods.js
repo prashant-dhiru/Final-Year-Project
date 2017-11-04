@@ -57,5 +57,66 @@ var specialPAR = function (collection, baseOfReduction, valueArray) {
     return finalObj;
 };
 
+/**
+ * @param {any} arrayTwoId 
+ * @param {any[]} arrayOne 
+ * @param {string} arrayOneKey
+ * @return {number} hasID
+ * this function is only an auxilary function to the below mergeArrays function
+ */
+function hasID (arrayTwoId, arrayOne, arrayOneKey) {
+
+    // traversing the array to its entire length
+    for (var i = 0; i < arrayOne.length; i++) {
+        // chcking if the object's key's value is equal to the passed key's value
+        if (_.isEqual(arrayOne[i][arrayOneKey], arrayTwoId)) {
+            // if is the condition, returning the position of the key in the array of objects back
+            return i;
+        }
+    }
+
+    // if key not found in entire array of objects, returning negative value for unsuccess case
+    return -1;
+
+};
+
+/**
+ * @param {any[]} arrayOne 
+ * @param {string} arrayOneKey 
+ * @param {any[]} arrayTwo 
+ * @param {string} arrayTwoKey
+ * @return {any[]} mergeArrays
+ */
+function mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
+
+    // traversing the array to its whol length
+    for (var i = 0; i<arrayTwo.length; i++) {
+
+        // finding the location of object in arrayOne whose key matches with the current iteration of second array of objects
+        var idIndex = hasID(arrayTwo[i][arrayTwoKey], arrayOne, arrayOneKey);
+
+        // checking if any such key is found
+        if (idIndex >= 0) {
+
+            // if key is found, merging the contents of object of secong array into the object of first array
+            // var sometempvar = Object.assign({}, arrayOne[idIndex], arrayTwo[i]);
+            _.merge(arrayOne[idIndex], arrayTwo[i]);
+            // for (var key in arrayTwo[i]) {            
+            //     Object.defineProperty(arrayOne[idIndex], key, {value: arrayTwo[i][key]});
+            //     // arrayOne[idIndex][key] = arrayTwo[i][key];
+            // }
+    
+            // newArray.push(sometempvar);
+        } else {
+            // if not found, pushing the object of array two into array one
+            arrayOne.push(arrayTwo[i]);
+        }
+    
+    }
+
+    //returing arrayone back as this array now contains all the merged value, original array has been lost
+    return arrayOne;
+}
+
 //exporting the methods here to be used in the routes
-module.exports = {pluckAndReduce, specialMinifier, specialPAR};
+module.exports = {pluckAndReduce, specialMinifier, specialPAR, mergeArrays};

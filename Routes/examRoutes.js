@@ -11,6 +11,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 //importing middleware from middleware directory to authenticate students
 const {authenticate} = require('../middleware/authenticate');
 const {userAuthenticate} = require('../middleware/userAuthenticate');
+const { mergeArrays } = require('../middleware/methods');
 
 //importing models from models directory
 const {ExamReturn} = require('../models/examReturn');
@@ -98,7 +99,7 @@ router.get('/exam', authenticate, (request, response) => {
         // if authenticated user is admin, not attacking the hasUserAttempted attribute on exams
         // simply mapping th exam and sending back exam as response
         if (request.session.userLevel == 0)
-            response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
+            return response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
 
         //finding that user has attempted how many exams here
         ExamReturn.find({user: request.session.userId}).select('exam -_id').exec((error, examReturns) => {
@@ -309,23 +310,32 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
 
                     if (error) return response.status(500).send(error);
                     
-                    examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
+                    var examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
     
-                    examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
+                    var examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
     
-                    questionResult = examReturn.questionAnswers.map((doc) => {
-                        return _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']);
-                    });
+                    var questionResult = examReturn.questionAnswers.map((doc) => _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']));
 
-                    questions = exam.questions.map((question) => {
-                        return _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', '_id']);
-                    });
+                    var questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', '_id']));
 
                     exam = _.pick(exam, ['name', 'description', 'allowedTime', 'subject']);
 
+                    // questionResult key question
+                    // questions key _id
+                    // aggregateExamQuestionAnalysis key question
+
+                    // if (questions.length) {
+                    //     var questionsAnalysis = mergeArrays(aggregateExamQuestionAnalysis, 'question', questions, '_id');
+                    //     if (questionResult.length) {
+                    //         questionsAnalysis = mergeArrays(questionsAnalysis, 'question', questionResult, 'question');
+                    //     }
+                    // } else {
+                    //     var questionsAnalysis = [];
+                    // }
+
                     response.send({
                         examAnalysis,
-                        questionsAnalysis: aggregateExamQuestionAnalysis,
+                        aggregateExamQuestionAnalysis,
                         examResult,
                         questionResult,
                         exam,

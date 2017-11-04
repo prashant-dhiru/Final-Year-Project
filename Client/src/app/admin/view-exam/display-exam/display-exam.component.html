@@ -1,7 +1,6 @@
 <div class="bs-component">
     <form class="form-horizontal" *ngIf="submissionError == 0">
       <fieldset disabled="disabled">
-        <legend>Create Exam</legend>
   
         <div class="form-group">
           <label class="control-label col-lg-2" for="_id">Exam ID:</label>
@@ -43,7 +42,8 @@
         </div>
   
         <hr>
-        <legend>Questions</legend>
+        <h2>Questions</h2>
+        <hr>
   
         <ul class="list-group" *ngFor="let question of exam.questions; let questionId = index">
           <fyp-question-item-list [question]="question" [questionId]="questionId" id="quesitem"></fyp-question-item-list>

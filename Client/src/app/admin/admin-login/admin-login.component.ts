@@ -36,7 +36,7 @@ export class AdminLoginComponent implements OnInit {
     }
     this.subscription = this.adminService.loginAdmin(this.adminLoginForm.controls['password'].value).subscribe((response: Response) => {
       this.isAuthenticatedService.authenticateAdmin();
-      this.router.navigate(['/admin/create-exam']);
+      this.router.navigate(['/admin']);
     }, (error: any) => {
       if (error.status === 405) {
         this.isLoginFailure = 2;

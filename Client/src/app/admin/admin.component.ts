@@ -9,7 +9,11 @@ import { IsAuthenticatedService } from '../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-admin',
-  templateUrl: './admin.component.html'
+  template: `
+  <div class="bs-component">
+    <router-outlet></router-outlet>
+  </div>
+  `
 })
 export class AdminComponent implements OnInit {
 

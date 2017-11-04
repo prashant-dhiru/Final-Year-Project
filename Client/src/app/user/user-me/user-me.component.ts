@@ -60,7 +60,7 @@ export class UserMeComponent implements OnInit {
   }
 
   refreshBrowser () {
-    location.reload();
+    window.location.reload();
   }
 
 }

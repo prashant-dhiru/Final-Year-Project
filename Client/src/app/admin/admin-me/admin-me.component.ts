@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { AdminService } from '../admin.service';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
@@ -8,13 +9,17 @@ import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 @Component({
   selector: 'fyp-admin-me',
   templateUrl: './admin-me.component.html',
-  styles: []
+  styleUrls: ['./admin-me.component.css']
 })
 export class AdminMeComponent implements OnInit {
 
   syncStatus = -1;
   subscription: Subscription;
-  constructor(private adminService: AdminService, private isAuthenticatedService: IsAuthenticatedService) { }
+  constructor(
+    private adminService: AdminService,
+    private isAuthenticatedService: IsAuthenticatedService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     const adminAuthenticated = this.isAuthenticatedService.isAdminAuthenticated();
@@ -33,10 +38,16 @@ export class AdminMeComponent implements OnInit {
       } else {
         this.syncStatus = 3;
         // all good, both unsynced
+        this.router.navigate(['admin', 'login']);
       }
     }, () => {
       this.subscription.unsubscribe();
     });
   }
+
+  refreshBrowser () {
+    window.location.reload();
+  }
+
 
 }

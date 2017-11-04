@@ -11,12 +11,13 @@ import { ExamService } from '../exam.service';
 @Component({
   selector: 'fyp-exam-result',
   templateUrl: './exam-result.component.html',
-  styles: []
+  styleUrls: ['./exam-result.component.css']
 })
 export class ExamResultComponent implements OnInit {
 
   id: string;
   subscription: Subscription;
+  analysisData: any;
 
   constructor(private examService: ExamService, private activatedRoute: ActivatedRoute) {
     this.id = this.activatedRoute.snapshot.params['id'];
@@ -25,6 +26,7 @@ export class ExamResultComponent implements OnInit {
   ngOnInit() {
     this.subscription = this.examService.getExamResult(this.id).subscribe((response: Response) => {
       console.log(response.json());
+      this.analysisData = response.json();
     }, (error: any) => {
       console.error(error);
     }, () => {

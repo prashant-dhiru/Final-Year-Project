@@ -1,35 +1,29 @@
+<h1>Hello Admin</h1>
 <div class="panel panel-success" *ngIf="syncStatus == 0">
   <div class="panel-heading">
     <h3 class="panel-title">Good to GO</h3>
   </div>
   <div class="panel-body">
-    You are Synchronised with server, you are logged in
+    <p>You are Synchronised with server, you are logged in</p>
+    <div class="row">
+      <div class="col-sm-6 col-xs-12">
+        <a [routerLink]="['/admin', 'create-exam']"><h3>Create Exams</h3></a>
+        <img src="Create-Exam.png" alt="">
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <a [routerLink]="['/admin', 'exam']"><h3>View Exams</h3></a>
+        <img src="View-Exam.png" alt="">
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="panel panel-warning" *ngIf="syncStatus == 1">
+<div class="panel panel-warning" *ngIf="syncStatus == 1 || syncStatus == 2">
   <div class="panel-heading">
     <h3 class="panel-title">Panel warning</h3>
   </div>
   <div class="panel-body">
-    synchronised from server, but not synchronised here
-  </div>
-</div>
-
-<div class="panel panel-warning" *ngIf="syncStatus == 2">
-  <div class="panel-heading">
-    <h3 class="panel-title">Panel warning</h3>
-  </div>
-  <div class="panel-body">
-    not synchronised from server, but from here
-  </div>
-</div>
-
-<div class="panel panel-success" *ngIf="syncStatus == 3">
-  <div class="panel-heading">
-    <h3 class="panel-title">Good to GO</h3>
-  </div>
-  <div class="panel-body">
-    You are Synchronised with server, you are not logged in
+      There Seems some Unsynchronization between you and server.
+      Please <a (click)="refreshBrowser()">refresh your browser</a>
   </div>
 </div>

@@ -34,14 +34,14 @@
         <fieldset>
           <dl class="row">
 
-            <dt class="col-xs-2">{{exam._id}}</dt>
-            <dt class="col-xs-3">{{exam.name}}</dt>
-            <dt class="col-xs-3">{{exam.subject}}</dt>
-            <div class="col-xs-2">
-              <button class="btn btn-primary btn-block" type="button" (click)="redirectToViewExam(exam._id)">View Exam</button>  
+            <dt class="col-lg-2">{{exam._id}}</dt>
+            <dt class="col-lg-3">{{exam.name}}</dt>
+            <dt class="col-lg-3">{{exam.subject}}</dt>
+            <div class="col-lg-2 col-xs-6">
+              <button class="btn btn-primary" type="button" (click)="redirectToViewExam(exam._id)">View Exam</button>  
             </div>
-            <div class="col-xs-2">
-              <button class="btn btn-primary btn-block" type="button" (click)="redirectToInsertQuestion(exam._id)">Insert Question</button>
+            <div class="col-lg-2 col-xs-6">
+              <button class="btn btn-primary" type="button" (click)="redirectToInsertQuestion(exam._id)">Insert Question</button>
             </div>
           </dl>
         </fieldset>

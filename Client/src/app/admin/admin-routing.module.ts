@@ -8,8 +8,8 @@ import { QuestionInputComponent } from './question-input/question-input.componen
 import { DisplayExamComponent } from './view-exam/display-exam/display-exam.component';
 
 export const ADMIN_ROUTES: Routes = [
-  { path: '', component: AdminLoginComponent },
-  { path: 'me', component: AdminMeComponent },
+  { path: '', component: AdminMeComponent },
+  { path: 'login', component: AdminLoginComponent },
   { path: 'create-exam', component: ExamInputComponent },
   { path: 'exam', component: ViewExamComponent },
   { path: 'exam/:id/insertque', component: QuestionInputComponent },
