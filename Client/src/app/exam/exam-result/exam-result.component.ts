@@ -25,8 +25,16 @@ export class ExamResultComponent implements OnInit {
 
   ngOnInit() {
     this.subscription = this.examService.getExamResult(this.id).subscribe((response: Response) => {
-      console.log(response.json());
       this.analysisData = response.json();
+      console.log(this.analysisData);
+      if (this.analysisData.aggregateExamQuestionAnalysis.length) {
+        this.mergeArrays(this.analysisData.aggregateExamQuestionAnalysis, 'question', this.analysisData.questions, '_id');
+        delete this.analysisData.questions;
+        if (this.analysisData.questionResult.length) {
+          this.mergeArrays(this.analysisData.aggregateExamQuestionAnalysis, 'question', this.analysisData.questionResult, 'question');
+          delete this.analysisData.questionResult;
+        }
+      }
     }, (error: any) => {
       console.error(error);
     }, () => {
@@ -34,4 +42,24 @@ export class ExamResultComponent implements OnInit {
     });
   }
 
+  hasID (arrayTwoId, arrayOne, arrayOneKey) {
+    for (let i = 0; i < arrayOne.length; i++) {
+      if (Object.is(arrayOne[i][arrayOneKey], arrayTwoId)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
+    for (let i = 0; i < arrayTwo.length; i++) {
+      const idIndex = this.hasID(arrayTwo[i][arrayTwoKey], arrayOne, arrayOneKey);
+      if (idIndex >= 0) {
+        Object.assign(arrayOne[idIndex], arrayTwo[i]);
+      } else {
+        arrayOne.push(arrayTwo[i]);
+      }
+    }
+    return arrayOne;
+  }
 }

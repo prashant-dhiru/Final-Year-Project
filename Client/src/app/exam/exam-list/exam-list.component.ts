@@ -17,6 +17,7 @@ export class ExamListComponent implements OnInit {
   examList: Exam[];
   subscription: Subscription;
   isexamFetchingFailure = -1;
+  examReturns: string[];
 
   constructor(private examService: ExamService, private router: Router, private isAuthenticatedService: IsAuthenticatedService) { }
 
@@ -25,8 +26,12 @@ export class ExamListComponent implements OnInit {
       return this.isexamFetchingFailure = 1;
     }
     this.subscription = this.examService.getExamList().subscribe((response: Response) => {
-      this.examList = response.json();
+      this.examList = response.json().exams;
+      this.examReturns = response.json().examReturns;
       this.isexamFetchingFailure = 0;
+      this.examList.forEach((exam) => {
+        exam.hasUserAttempted = this.examReturns.includes(exam._id);
+      });
     }, (error: any) => {
       if (error.status === 401) {
         this.isexamFetchingFailure = 1;
@@ -58,7 +63,6 @@ export class ExamListComponent implements OnInit {
   }
 
   requestFullScreen (element: any) {
-
     // Supports most browsers and their versions.
     if (element.requestFullScreen) {
       element.requestFullScreen();
@@ -70,8 +74,5 @@ export class ExamListComponent implements OnInit {
       element.msRequestFullScreen();
     }
   }
-
-
-
 
 }

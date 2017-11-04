@@ -54,7 +54,6 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
         } 
         else {
             // if any questions found, mapping them
-            //doing manual pickings for questions, no-inbuilt method for it
             var questions = exam.questions.map((question) => {
                 return {
                     body: question.body,
@@ -88,7 +87,7 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
 router.get('/exam', authenticate, (request, response) => {
 
     //finding all exams descending date order wise
-    Exam.find({}).sort('-date').exec((error, exams) => {
+    Exam.find({}).select('name description allowedTime subject createdAt _id').sort('-date').exec((error, exams) => {
 
         //if error occurs, sending back error with Internal Server error status code
         if (error) return response.status(500).send(error);
@@ -99,7 +98,7 @@ router.get('/exam', authenticate, (request, response) => {
         // if authenticated user is admin, not attacking the hasUserAttempted attribute on exams
         // simply mapping th exam and sending back exam as response
         if (request.session.userLevel == 0)
-            return response.send(exams.map((exam) => _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id'])));
+            return response.send(exams);
 
         //finding that user has attempted how many exams here
         ExamReturn.find({user: request.session.userId}).select('exam -_id').exec((error, examReturns) => {
@@ -107,27 +106,17 @@ router.get('/exam', authenticate, (request, response) => {
             // checking for any potential error here, and replying with Internal server error status code
             if (error) return response.status(500).send(error);
 
-            // if user hasn't attempted any exam, handling that condition here
-            if (!examReturns.length)
+            // if user hasn't attempted any exam, sending the exams back as response
+            if (!examReturns.length) {
+                return response.send({exams, examReturns: []});
+            }
 
-                //marking all exams as unattempted while mapping them, and sending the mapped exams back as response
-                return response.send(exams.map((exam) => {                 
-                    var mapped = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
-                    mapped.hasUserAttempted = false;
-                    return mapped;
-                }));
-
+            //sending the exam back to the client
             // mappping the exam return data to an array from an array of objects
-            examReturns = examReturns.map((examReturn) => examReturn.exam);
-
-            //sending the exam back to the client while picking only essential parts from the exams to prevnt data-misuse
-            response.send(exams.map((exam) => {
-                var mapped = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
-
-                // checking at this poing that if user has attempted exams or not by array.includes method
-                mapped.hasUserAttempted = examReturns.includes(exam._id);
-                return mapped;
-            }));
+            response.send({
+                exams,
+                examReturns: examReturns.map((examReturn) => examReturn.exam)
+            });
 
         });
 
@@ -149,14 +138,6 @@ router.get('/exam/quick/:id', userAuthenticate, (request, response) => {
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
-
-    console.log(request.body);
-
-    console.log('fetched exam id is: ', request.body.exam);
-
-    // check if exam id can be sent with the examReturn data from client as id
-    if (id !== request.body.exam)
-        return response.status(400).send('The ExamID in the address bar has been changed, exam could not be submitted');
 
     //finding the examreturn data from database and fetching all question answers too with it
     ExamReturn.findOne({exam: id, user: request.student._id}).populate('questionAnswers').exec((error, examReturn) => {
@@ -191,19 +172,6 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
-    
-    // if user has not submitted any answer, saving the exam return as no further calculation is
-    // needed to be done
-    if (!request.body.questionAnswers.length) {
-        // saving exam in database
-        return examReturn.save().then(() => {
-
-            //responsing back as exam successfully stored in database
-            response.send('Exam Successfully submitted in Store');
-
-            //Handing any potential errors, sending error to client with the Internal Server error status code
-        }, (error) => response.status(500).send(error));
-    }
 
     // mapping users's input to be saved in database with correct information
     var answers = request.body.questionAnswers.map(questionAnswer => {
@@ -222,6 +190,19 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
         totalTimeTaken: request.body.totalTimeTaken,
         totalQuestionAttempted: answers.length
     });
+    
+    // if user has not submitted any answer, saving the exam return as no further calculation is
+    // needed to be done
+    if (!answers.length) {
+        // saving exam in database
+        return examReturn.save().then(() => {
+
+            //responsing back as exam successfully stored in database
+            response.send('Exam Successfully submitted in Store');
+
+            //Handing any potential errors, sending error to client with the Internal Server error status code
+        }, (error) => response.status(500).send(error));
+    }
 
     //saving all the answers to questions in the database in one function, but one by one
     QuestionAnswer.create(answers, (error, questionAnswers) => {
@@ -319,19 +300,6 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
                     var questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', '_id']));
 
                     exam = _.pick(exam, ['name', 'description', 'allowedTime', 'subject']);
-
-                    // questionResult key question
-                    // questions key _id
-                    // aggregateExamQuestionAnalysis key question
-
-                    // if (questions.length) {
-                    //     var questionsAnalysis = mergeArrays(aggregateExamQuestionAnalysis, 'question', questions, '_id');
-                    //     if (questionResult.length) {
-                    //         questionsAnalysis = mergeArrays(questionsAnalysis, 'question', questionResult, 'question');
-                    //     }
-                    // } else {
-                    //     var questionsAnalysis = [];
-                    // }
 
                     response.send({
                         examAnalysis,

@@ -155,7 +155,7 @@
 		}
 
 		a:hover {
-			color: #ff7496;
+			color: #000000;
 		}
 
 	strong, b {
@@ -532,7 +532,7 @@
 					}
 
 					ul.icons li a:hover:before {
-						text-shadow: 1.25px 0px 0px #ff7496, -1.25px 0px 0px #ff7496, 0px 1.25px 0px #ff7496, 0px -1.25px 0px #ff7496;
+						text-shadow: 1.25px 0px 0px #95999b, -1.25px 0px 0px #95999b, 0px 1.25px 0px #95999b, 0px -1.25px 0px #95999b;
 					}
 
 					ul.icons li a:before {
@@ -548,7 +548,7 @@
 					}
 
 					ul.icons li a:hover {
-						border-color: #ff7496;
+						border-color: #95999b;
 					}
 
 			@media screen and (max-width: 480px) {
@@ -598,7 +598,6 @@
 		-moz-appearance: none;
 		-webkit-appearance: none;
 		-ms-appearance: none;
-		appearance: none;
 		-moz-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		-webkit-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		-ms-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -622,8 +621,8 @@
 		input[type="button"]:hover,
 		button:hover,
 		.button:hover {
-			border-color: #ff7496;
-			color: #ff7496 !important;
+			border-color: #000000;
+			color: #000000 !important;
 		}
 
 		input[type="submit"].icon,

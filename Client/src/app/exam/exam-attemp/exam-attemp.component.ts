@@ -19,7 +19,7 @@ export class ExamAttempComponent implements OnInit {
   timeNow = 0;
   timeNowInMinutes: number;
   lastSprintTime = 0;
-  timer: Observable<any> = Observable.timer(0, 995);
+  timer: Observable<any> = Observable.timer(0, 990);
   timerSubscription: Subscription;
   subscription: Subscription;
   id: string;
@@ -66,7 +66,6 @@ export class ExamAttempComponent implements OnInit {
 
   getExam () {
     this.subscription = this.examService.getExam(this.id).subscribe((response: Response) => {
-
       this.exam = response.json();
       console.log(this.exam);
       this.examTimeLimit = this.exam.allowedTime * 60;
@@ -149,7 +148,7 @@ export class ExamAttempComponent implements OnInit {
     if (!this.timerSubscription.closed) {
       return window.confirm('An Exam is underway, are you sure want to leave?');
     } else {
-      return false;
+      return true;
     }
   }
 
