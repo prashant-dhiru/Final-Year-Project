@@ -48,29 +48,8 @@ router.get('/exam/:id', userAuthenticate, (request, response) => {
         //picking only required properties, leaving other properties
         var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
 
-        //checking if exam has no questions, then not mapping the questions, and simply assigning questions variable with an empty arry
-        if (!exam.questions.length) {
-            var questions = [];
-        } 
-        else {
-            // if any questions found, mapping them
-            var questions = exam.questions.map((question) => {
-                return {
-                    body: question.body,
-                    answerOptionOne: question.answerOptionOne,
-                    answerOptionTwo: question.answerOptionTwo,
-                    answerOptionThree: question.answerOptionThree,
-                    answerOptionFour: question.answerOptionFour,
-                    marksForCorrectAnswer: question.marksForCorrectAnswer,
-                    negativeMark: question.negativeMark,
-                    difficulty: question.difficulty,
-                    _id: question._id
-                }
-            });
-        }
-
-        //assigning manually picked questions into the body to send back
-        body.questions = questions;
+        //mapping the questions and assigning manually picked questions into the body to send back
+        body.questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'marksForCorrectAnswer', 'negativeMark', '_id']));
 
         //sending the exam back to the client
         response.send(body);
