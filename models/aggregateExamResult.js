@@ -29,7 +29,7 @@ const AggregateExamResultSchema = new mongoose.Schema({
         default: 0
     }
 
-    //'exam', 'questionAnalysis', 'cutOff', 'studentsAttempted', 'averageQuestionsAttempted', 'averageTimeSpent', '_id'
+    //'exam', 'questionAnalysis', 'cutOff', 'studentsAttempted', 'averageQuestionsAttempted', 'averageTimeSpent', '_id', '__v'
 
     //Schema definiton finishes here
 });

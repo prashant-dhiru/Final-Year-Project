@@ -1,8 +1,14 @@
 //importing required packages installed by npm
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 //for depricated Promise of mongoose
 mongoose.Promise = global.Promise;
+
+const { QuestionAnswer } = require('./questionAnswer');
+const { ExamReturn } = require('./examReturn');
+
+const {pluckAndReduce} = require('../middleware/methods');
 
 const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
 
@@ -19,67 +25,78 @@ const AggregateExamQuestionAnalysisSchema = new mongoose.Schema({
     studentsAttempted: {
         type: Number,
         default: 0
+    },
+    avreageTimeTakenByStudentsWhoGotThisQuestionRight: {
+        type: Number,
+        default: 0
+    },
+    percentageOfStudentWhoAttempted: {
+        type: Number,
+        default: 0
+    },
+    percentageOfStudentWhoAttemptedGotThisQuestionRight: {
+        type: Number,
+        default: 0
     }
 
-    // 'exam', 'question', 'cutOff', 'avreageTimeTakenByStudents', 'studentsAttempted', '_id', '__v'
+    // 'exam', 'question', 'cutOff', 'avreageTimeTakenByStudents', 'studentsAttempted', '_id', '__v', 'avreageTimeTakenByStudentsWhoGotThisQuestionRight', 'percentageOfStudentWhoAttempted', 'percentageOfStudentWhoAttemptedGotThisQuestionRight'
 });
 
-const AggregateExamQuestionAnalysis = mongoose.model('AggregateExamQuestionAnalysis', AggregateExamQuestionAnalysisSchema);
-module.exports = {AggregateExamQuestionAnalysis};
-
-
 /**
-// 
-//  * @param {any} this
-//  * @return {Promise} calculateComparableQuestionDataByDocument
-//  * resolved with instance of this model if success, rejected with error if error
-//  * Document Method
-//  
+ * @param {any} this
+ * @return {Promise} calculateComparableQuestionDataByDocument
+ * resolved with instance of this model if success, rejected with error if error
+ * Document Method
+ */
 AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDocument = function () {
     
     // this = aggregateExamQuestionAnalysis;
     //questionAnswers.length number of students who attempted this question
 
-    // console.log('This reference: ', this);
     aggregateExamQuestionAnalysis = this;
 
     //finding Submitted answers of this exam and question
-    return QuestionAnswer.find({exam: aggregateExamQuestionAnalysis.exam, question: aggregateExamQuestionAnalysis.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(function (questionAnswers) {
+    return QuestionAnswer.find({exam: this.exam, question: this.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(questionAnswers => {
         
-        if (questionAnswers.length === 0) return Promise.reject();
+        if (questionAnswers.length === 0) return Promise.reject('No Question Arnswers length, rejecting request');
 
         //calculating values for these two keys
-        aggregateExamQuestionAnalysis.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
-        aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
+        this.cutOff = pluckAndReduce(questionAnswers, 'marksObtained');
+        this.avreageTimeTakenByStudents = pluckAndReduce(questionAnswers, 'timeTaken');
 
         //total students who attempted this question
-        aggregateExamQuestionAnalysis.studentsAttempted = questionAnswers.length;
+        this.studentsAttempted = questionAnswers.length;
 
         //further calculation requires total number of students who attempted the exam
         //finding the total number of students wo attempted the exam
-        return ExamReturn.find({exam: aggregateExamQuestionAnalysis.exam}).count(function (error, totalStudentWhoAttemptedExam) {
+        return ExamReturn.find({exam: this.exam}).count((error, totalStudentWhoAttemptedExam) => {
 
             //handling any potential errors
             if (error) return Promise.reject(error);
-            if (totalStudentWhoAttemptedExam === 0) return Promise.reject();
+            if (totalStudentWhoAttemptedExam <= 0) return Promise.reject('No students who have attempted exam, rejecting request');
 
             //calculating percentages based keys here
-            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
+            this.percentageOfStudentWhoAttempted = questionAnswers.length * 100 / totalStudentWhoAttemptedExam;
             
             //last two value requires the average times taken by students who got this question right
             //mapping queestions answers to find the Answer which are correct and array of time taken
-            var correctAnswerTimes = questionAnswers.map((questionAnswer) => {
-                if (questionAnswer.isAnswerCorrect) return questionAnswer.timeTaken;
+            var correctAnswerTimes = [];
+            questionAnswers.map((questionAnswer) => {
+                if (questionAnswer.isAnswerCorrect) return correctAnswerTimes.push(questionAnswer.timeTaken);
             });
 
             //correctanswerTimes.length number of students who attempted this question and got right
 
-            aggregateExamQuestionAnalysis.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / totalStudentWhoAttemptedExam;
+            this.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / questionAnswers.length;
 
-            aggregateExamQuestionAnalysis.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / correctAnswerTimes.length;
+            if (correctAnswerTimes.length) {
+                this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / questionAnswers.length;
+            } else {
+                this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = 0;
+            }
 
             //saving the document, returning the promise
-            return aggregateExamQuestionAnalysis.save();
+            return this.save();
         });
 
         //handling any potential errors
@@ -88,7 +105,13 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
     //method finishes here
 };
 
-
 const AggregateExamQuestionAnalysis = mongoose.model('AggregateExamQuestionAnalysis', AggregateExamQuestionAnalysisSchema);
 module.exports = {AggregateExamQuestionAnalysis};
- */
+
+// avreageTimeTakenByStudentsWhoGotThisQuestionRight: Number =  sumOfTimeOfAllUsersWhoGotThisQuestionRightForThisQuestion / countOfAllUsersWhoAttemptedThisQuestion
+//questionReturnForExamWhoGotThisQuestionRight
+
+// percentageOfStudentWhoAttempted: Number = totalNumberOfStudentsWhoAttemptedThisQuestion * 100 / totalNumberOfStudentsWhoAttemptedThisExam
+
+// percentageOfStudentWhoAttemptedGotThisQuestionRight: Number
+// countOfAllUsersWhoGotThisQuestionRight * 100 / countOfAllUsersWhoAttemptedThisQuestion

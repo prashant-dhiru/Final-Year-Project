@@ -188,7 +188,6 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
 
         //if error occurs, sending back error with Internal Server error status code
         if (error) return response.status(500).send(error);
-
         
         questionAnswers.forEach(questionAnswer => {
 
@@ -202,29 +201,9 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
                 // if error occures or the document seeding is not done properly, returning, as the documnets are seeded with zeroes
                 if (error) return console.error(error);
 
-                if (!aggregateExamQuestionAnalysis) return;
-                
-                // if no student has submitted the exam yet, the scores of the student is the base information
-                if (aggregateExamQuestionAnalysis.studentsAttempted == 0) {
-                    
-                    aggregateExamQuestionAnalysis.cutOff = questionAnswer.marksObtained;
-                    aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = questionAnswer.timeTaken;
+                if (!aggregateExamQuestionAnalysis) return console.error('couldnot find seed data');
 
-                    // if students have appeared, finding the average and storing it
-                } else {
-                    aggregateExamQuestionAnalysis.cutOff = (aggregateExamQuestionAnalysis.cutOff + questionAnswer.marksObtained) / 2;
-                    aggregateExamQuestionAnalysis.avreageTimeTakenByStudents = (aggregateExamQuestionAnalysis.avreageTimeTakenByStudents + questionAnswer.timeTaken) / 2;
-                }
-
-                //incrementing the number of students that have appeared the question
-                aggregateExamQuestionAnalysis.studentsAttempted++;
-
-                // avreageTimeTakenByStudentsWhoGotThisQuestionRight: Number,
-                // percentageOfStudentWhoAttempted: Number
-                // percentageOfStudentWhoAttemptedGotThisQuestionRight: Number
-
-                // saving back the document into the datase while handling any potential error
-                aggregateExamQuestionAnalysis.save().catch((error) => console.error(error));
+                aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then((doc) => console.log('Aggregate being calculated')).catch(error => console.error(error));
 
             });
         });
@@ -260,8 +239,8 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
 
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
-        AggregateExamQuestionAnalysis.find({exam: id}).sort('question').select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id').then((aggregateExamQuestionAnalysis) => {
-
+        AggregateExamQuestionAnalysis.find({exam: id}).sort('question').select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id avreageTimeTakenByStudentsWhoGotThisQuestionRight percentageOfStudentWhoAttemptedGotThisQuestionRight percentageOfStudentWhoAttempted').then((aggregateExamQuestionAnalysis) => {
+            
             ExamReturn.findOne({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
 
                 if (error) return response.status(500).send(error);

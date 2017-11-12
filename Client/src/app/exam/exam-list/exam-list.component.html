@@ -40,7 +40,7 @@
             <dt class="col-lg-3 col-md-7">{{exam.name}}</dt>
             <dt class="col-lg-3 col-md-6">{{exam.subject}}</dt>
             <div class="col-lg-2 col-md-3">
-              <button class="btn btn-primary btn-block" type="button" [disabled]="exam.hasUserAttempted" data-toggle="modal" data-target="#myModal">Give Exam</button>
+              <button class="btn btn-primary btn-block" [disabled]="exam.hasUserAttempted" type="button"  data-toggle="modal" data-target="#myModal">Give Exam</button>
 
               <!-- Modal -->
               <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
@@ -88,7 +88,7 @@
 
             </div>
             <div class="col-lg-2 col-md-3">
-              <button class="btn btn-primary btn-block" type="button" (click)="redirectToResult(exam._id)">View Result</button>
+              <button class="btn btn-primary btn-block" type="button" [disabled]="!exam.hasUserAttempted" (click)="redirectToResult(exam._id)">View Result</button>
             </div>
           </dl>
         </fieldset>

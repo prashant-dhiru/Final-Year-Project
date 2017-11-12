@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { UserService } from './user/user.service';
 import { AdminService } from './admin/admin.service';
@@ -72,7 +74,9 @@ declare let require: any;
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    BrowserAnimationsModule,
+    NgxChartsModule
   ],
   providers: [
     UserService,

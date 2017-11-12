@@ -6,10 +6,9 @@
                 <h4>Allowed Time {{exam?.allowedTime}} Minute(s)</h4>
                 <hr>
                 <h2>Questions:</h2>
-                
+
                 <ul class="nav nav-pills nav-stacked" id="examButtonsGroup">
                     <li><a *ngFor="let question of exam?.questions; let questionId = index" class="text-truncate" id="sb{{question?._id}}" href="exam/{{exam?._id}}#ques{{question?._id}}" routerLinkActive="active">{{questionId+1}} {{question?.body}}</a></li>
-                    <!-- text-success -->
                 </ul>
             </div>
             

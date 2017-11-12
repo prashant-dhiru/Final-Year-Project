@@ -18,10 +18,10 @@
           </thead>
           <tbody>
             <tr>
-              <td>{{analysisData?.exam?.name}}</td>
-              <td>{{analysisData?.exam?.description}}</td>
-              <td>{{analysisData?.exam?.subject}}</td>
-              <td>{{analysisData?.exam?.allowedTime}}</td>
+              <td>{{exam?.name}}</td>
+              <td>{{exam?.description}}</td>
+              <td>{{exam?.subject}}</td>
+              <td>{{exam?.allowedTime}}</td>
             </tr>
           </tbody>
         </table>
@@ -44,12 +44,12 @@
           </thead>
           <tbody>
             <tr>
-              <td>{{analysisData?.examResult?.marksObtained}}</td>
-              <td>{{analysisData?.examResult?.totalQuestionAttempted}}</td>
-              <td>{{analysisData?.examResult?.totalQuestionNotAttempted}}</td>
-              <td>{{analysisData?.examResult?.totalTimeTaken}}</td>
-              <td>{{analysisData?.examResult?.percentageOfQuestionAttempted}} %</td>
-              <td>{{analysisData?.examResult?.percentageOfQuestionNotAttempted}} %</td>
+              <td>{{examReturn?.marksObtained}}</td>
+              <td>{{examReturn?.totalQuestionAttempted}}</td>
+              <td>{{examReturn?.totalQuestionNotAttempted}}</td>
+              <td>{{examReturn?.totalTimeTaken}}</td>
+              <td>{{examReturn?.percentageOfQuestionAttempted}} %</td>
+              <td>{{examReturn?.percentageOfQuestionNotAttempted}} %</td>
             </tr>
           </tbody>  
         </table>
@@ -70,10 +70,10 @@
           </thead>
           <tbody>
             <tr>
-              <td>{{analysisData?.examAnalysis?.averageQuestionsAttempted}}</td>
-              <td>{{analysisData?.examAnalysis?.averageTimeSpent}}</td>
-              <td>{{analysisData?.examAnalysis?.cutOff}}</td>
-              <td>{{analysisData?.examAnalysis?.studentsAttempted}}</td>
+              <td>{{examAnalysis?.averageQuestionsAttempted}}</td>
+              <td>{{examAnalysis?.averageTimeSpent}}</td>
+              <td>{{examAnalysis?.cutOff}}</td>
+              <td>{{examAnalysis?.studentsAttempted}}</td>
             </tr>
           </tbody>  
         </table>
@@ -81,4 +81,19 @@
 
     </fieldset>
   </form>
+
+  <ngx-charts-bar-vertical
+    [view]="data.view"
+    [scheme]="data.colorScheme"
+    [results]="data.single"
+    [gradient]="data.gradient"
+    [xAxis]="data.showXAxis"
+    [yAxis]="data.showYAxis"
+    [legend]="data.showLegend"
+    [showXAxisLabel]="data.showXAxisLabel"
+    [showYAxisLabel]="data.showYAxisLabel"
+    [xAxisLabel]="data.xAxisLabel"
+    [yAxisLabel]="data.yAxisLabel"
+    (select)="onSelect($event)">
+  </ngx-charts-bar-vertical>
 </div>
