@@ -1,3 +1,8 @@
 .centre {
     text-align: center;
 }
+
+.listButton {
+    margin-left: 10px;
+    margin-right: 10px;
+}

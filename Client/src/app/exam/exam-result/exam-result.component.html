@@ -1,86 +1,173 @@
 <div class="bs-component">
-  <form class="form-horizontal">
+  <fieldset>
+    <legend>Exam Details</legend>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th colspan="4" class="centre"><h3>Exam Detail</h3></th>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Subject</th>
+            <th>Allowed Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{exam?.name}}</td>
+            <td>{{exam?.description}}</td>
+            <td>{{exam?.subject}}</td>
+            <td>{{exam?.allowedTime}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">  
+        <thead>
+          <tr>
+            <th colspan="6" class="centre"><h3>Exam Submission Data</h3></th>
+          </tr>
+          <tr>
+            <th>Marks Obtained</th>
+            <th>Total Questions Attempted</th>
+            <th>Total Questions Not Attempted</th>
+            <th>Total Time Taken</th>
+            <th>Percentage Of Questions Attempted</th>
+            <th>Percentage Of Question Not Attempted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{examReturn?.marksObtained}}</td>
+            <td>{{examReturn?.totalQuestionAttempted}}</td>
+            <td>{{examReturn?.totalQuestionNotAttempted}}</td>
+            <td>{{examReturn?.totalTimeTaken}}</td>
+            <td>{{examReturn?.percentageOfQuestionAttempted}} %</td>
+            <td>{{examReturn?.percentageOfQuestionNotAttempted}} %</td>
+          </tr>
+        </tbody>  
+      </table>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">  
+        <thead>
+          <tr>
+            <th colspan="6" class="centre"><h3>Exam Analysis Data</h3></th>
+          </tr>
+          <tr>
+            <th>Average Questions Attempted By Students</th>
+            <th>Average Time Spent By Students</th>
+            <th>Average marks Obtained By Students</th>
+            <th>Number of Students Attempted this Exam</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{examAnalysis?.averageQuestionsAttempted}}</td>
+            <td>{{examAnalysis?.averageTimeSpent}}</td>
+            <td>{{examAnalysis?.cutOff}}</td>
+            <td>{{examAnalysis?.studentsAttempted}}</td>
+          </tr>
+        </tbody>  
+      </table>
+    </div>
+
+  </fieldset>
+
+  <br>
+  <div class="clearfix">
+    <div class="row">
+      <div class="col-xs-12">
+        <legend><h3>Questions:</h3></legend>
+      </div>
+    </div>
+    <ul class="list-group centre">
+      <a *ngFor="let question of questions; let i = index" class="btn btn-large btn-primary listButton" (click)="selectQuestionForDisplay(question._id)">{{i+1}}</a>
+    </ul>
+
     <fieldset>
-      <legend>Exam Details</legend>
-
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th colspan="4" class="centre"><h3>Exam Detail</h3></th>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Subject</th>
-              <th>Allowed Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{exam?.name}}</td>
-              <td>{{exam?.description}}</td>
-              <td>{{exam?.subject}}</td>
-              <td>{{exam?.allowedTime}}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <tbody>
+                <tr>
+                  <th>ID: </th>
+                  <td>{{selectedQuestion?._id}}</td>
+                </tr>
+                <tr>
+                  <th>Question: </th>
+                  <td>{{selectedQuestion?.body}}</td>
+                </tr>
+                <tr>
+                  <th>Answer Option One: </th>
+                  <td>{{selectedQuestion?.answerOptionOne}}</td>
+                </tr>
+                <tr>
+                  <th>Answer Option Two: </th>
+                  <td>{{selectedQuestion?.answerOptionTwo}}</td>
+                </tr>
+                <tr>
+                  <th>Answer Option Three: </th>
+                  <td>{{selectedQuestion?.answerOptionThree}}</td>
+                </tr>
+                <tr>
+                  <th>Answer Option Four: </th>
+                  <td>{{selectedQuestion?.answerOptionFour}}</td>
+                </tr>
+                <tr>
+                  <th>Corrrect Answer: </th>
+                  <td>{{selectedQuestion?.correctAnswer}}</td>
+                </tr>
+                <tr>
+                  <th>Marks: </th>
+                  <td>{{selectedQuestion?.marksForCorrectAnswer}}</td>
+                </tr>
+                <tr>
+                  <th>Negative Marks: </th>
+                  <td>{{selectedQuestion?.negativeMark}}</td>
+                </tr>
+                <tr>
+                  <th>Difficulty: </th>
+                  <td>{{selectedQuestion?.difficulty}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <tbody>
+                <tr>
+                  <th>Time taken: </th>
+                  <td>{{selectedQuestion?.timeTaken}}</td>
+                </tr>
+                <tr>
+                  <th>Answer Submitted: </th>
+                  <td>{{selectedQuestion?.answerSubmitted}}</td>
+                </tr>
+                <tr>
+                  <th>Is Answer Correct: </th>
+                  <td>{{selectedQuestion?.isAnswerCorrect}}</td>
+                </tr>
+                <tr>
+                  <th>Marks Obtained</th>
+                  <td>{{selectedQuestion?.marksObtained}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">  
-          <thead>
-            <tr>
-              <th colspan="6" class="centre"><h3>Exam Submission Data</h3></th>
-            </tr>
-            <tr>
-              <th>Marks Obtained</th>
-              <th>Total Questions Attempted</th>
-              <th>Total Questions Not Attempted</th>
-              <th>Total Time Taken</th>
-              <th>Percentage Of Questions Attempted</th>
-              <th>Percentage Of Question Not Attempted</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{examReturn?.marksObtained}}</td>
-              <td>{{examReturn?.totalQuestionAttempted}}</td>
-              <td>{{examReturn?.totalQuestionNotAttempted}}</td>
-              <td>{{examReturn?.totalTimeTaken}}</td>
-              <td>{{examReturn?.percentageOfQuestionAttempted}} %</td>
-              <td>{{examReturn?.percentageOfQuestionNotAttempted}} %</td>
-            </tr>
-          </tbody>  
-        </table>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">  
-          <thead>
-            <tr>
-              <th colspan="6" class="centre"><h3>Exam Analysis Data</h3></th>
-            </tr>
-            <tr>
-              <th>Average Questions Attempted By Students</th>
-              <th>Average Time Spent By Students</th>
-              <th>Average marks Obtained By Students</th>
-              <th>Number of Students Attempted this Exam</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{examAnalysis?.averageQuestionsAttempted}}</td>
-              <td>{{examAnalysis?.averageTimeSpent}}</td>
-              <td>{{examAnalysis?.cutOff}}</td>
-              <td>{{examAnalysis?.studentsAttempted}}</td>
-            </tr>
-          </tbody>  
-        </table>
-      </div>
-
     </fieldset>
-  </form>
+  </div>
 
   <ngx-charts-bar-vertical
     [view]="data.view"

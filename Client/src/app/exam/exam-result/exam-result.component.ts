@@ -28,6 +28,7 @@ export class ExamResultComponent implements OnInit {
   examReturn: ExamReturn;
   exam: Exam;
   examAnalysis: ExamAnalysis;
+  selectedQuestion: any;
 
   data = {
     single: [
@@ -90,16 +91,8 @@ export class ExamResultComponent implements OnInit {
       delete response.aggregateExamQuestionAnalysis;
       //
 
-      // if (this.analysisData.aggregateExamQuestionAnalysis.length) {
-      //   const someval = this.mergeArrays(this.analysisData.aggregateExamQuestionAnalysis, 'question', this.analysisData.questions, '_id');
-      //   // console.log(someval);
-        
-      //   if (this.analysisData.questionResult.length) {
-      //     const someval2 = this.mergeArrays(this.analysisData.aggregateExamQuestionAnalysis, 'question', this.analysisData.questionResult, 'question');
-      //     console.log(someval2);
-          
-      //   }
-      // }
+      this.selectQuestionForDisplay(this.questions[0]._id);
+
     }, (error: any) => {
       console.error(error);
     }, () => {
@@ -117,11 +110,11 @@ export class ExamResultComponent implements OnInit {
   }
 
   mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
-    const finalArray = [];
+    const finalArray = arrayOne;
     for (let i = 0; i < arrayTwo.length; i++) {
       const idIndex = this.hasID(arrayTwo[i][arrayTwoKey], arrayOne, arrayOneKey);
       if (idIndex >= 0) {
-        finalArray.push(Object.assign({}, arrayOne[idIndex], arrayTwo[i]));
+        Object.assign(finalArray[idIndex], arrayTwo[i]);
       } else {
         finalArray.push(arrayTwo[i]);
       }
@@ -143,5 +136,108 @@ export class ExamResultComponent implements OnInit {
   onSelect(event) {
     console.log(event);
   }
+
+  mapPercentWhoAttempted () {
+    return this.aggregateExamQuestionAnalysis.map(dataElement => {
+      return {
+        name: dataElement.question,
+        series: [
+          {
+            name: 'percentageOfStudentWhoAttempted',
+            value: dataElement.percentageOfStudentWhoAttempted
+          },
+          {
+            name: 'percentageOfStudentWhoNotAttempted',
+            value: (100 - dataElement.percentageOfStudentWhoAttempted)
+          }
+        ]
+      };
+    });
+  }
+
+  mapPercentWhoGotRight () {
+    return this.aggregateExamQuestionAnalysis.map(dataElement => {
+      return {
+        name: dataElement,
+        series: [
+          {
+            name: 'percentageOfStudentWhoAttemptedGotThisQuestionRight',
+            value: dataElement.percentageOfStudentWhoAttemptedGotThisQuestionRight
+          },
+          {
+            name: 'percentageOfStudentWhoAttemptedGotThisQuestionWrong',
+            value: (100 - dataElement.percentageOfStudentWhoAttemptedGotThisQuestionRight)
+          }
+        ]
+      };
+    });
+  }
+
+  mapStudentsAttempted () {
+    return this.aggregateExamQuestionAnalysis.map(dataElement => {
+      return {
+        name: dataElement.question,
+        value: dataElement.studentsAttempted
+      };
+    });
+  }
+
+  mapMarksObtained () {
+    if (!this.questionAnswers.length) {
+      return [];
+    }
+    const mergedArray = this.mergeArraysStrictly(this.aggregateExamQuestionAnalysis, 'question', this.questionAnswers, 'question');
+    return mergedArray.map(dataElement => {
+      return {
+        name: dataElement.question,
+        series: [
+          {
+            value: dataElement.cutOff,
+            name: 'AverageMarksObatinedByStudents'
+          },
+          {
+            value: dataElement.marksObtained,
+            name: 'MarksObtaintedByYou'
+          }
+        ]
+      };
+    });
+  }
+
+  mapTimeTaken () {
+    if (!this.questionAnswers.length) {
+      return [];
+    }
+    const mergedArray = this.mergeArraysStrictly(this.aggregateExamQuestionAnalysis, 'question', this.questionAnswers, 'question');
+    return mergedArray.map(dataElement => {
+      return {
+        name: dataElement.question,
+        series: [
+          {
+            value: dataElement.avreageTimeTakenByStudents,
+            name: 'avreageTimeTakenByStudents'
+          },
+          {
+            value: dataElement.avreageTimeTakenByStudentsWhoGotThisQuestionRight,
+            name: 'avreageTimeTakenByStudentsWhoGotThisQuestionRight'
+          },
+          {
+            value: dataElement.timeTaken,
+            name: 'timeTakenByYou'
+          }
+        ]
+      };
+    });
+  }
+
+  selectQuestionForDisplay (questionID: string) {
+    const question = this.questions.find(que => que._id === questionID);
+    const questionAnswer = this.questionAnswers.find(queA => queA.question === questionID);
+    this.selectedQuestion = Object.assign({}, question, questionAnswer);
+  }
+
+  // aggregateExamQuestionAnalysis key question 7 fields
+  // questions key _id 9 fields
+  // questionAnswers key question 5 fields
 
 }
