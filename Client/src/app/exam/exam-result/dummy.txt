@@ -1,0 +1,28 @@
+[
+    {
+      name: '1',
+      series: [
+        {
+          name: 'val1',
+          value: 56
+        },
+        {
+          name: 'val1',
+          value: 44
+        }
+      ]
+    },
+    {
+      name: '2',
+      series: [
+        {
+          name: 'val1',
+          value: 70
+        },
+        {
+          name: 'val2',
+          value: 30
+        }
+      ]
+    }
+  ]

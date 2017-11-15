@@ -4,13 +4,29 @@ import { Subscription } from 'rxjs/Rx';
 import { ActivatedRoute } from '@angular/router';
 
 import { ExamService } from '../exam.service';
+// import {
+//   getArtHistoryInspiredColorScheme,
+//   getModernAndCleanColorScheme,
+//   getMutedAndMinimalColorScheme
+// } from '../../Shared/getColorSchemes';
 
-import { Question } from '../../Classes/question';
-import { QuestionAnswer } from '../../Classes/question-answer';
-import { ExamReturn } from '../../Classes/exam-return';
-import { Exam } from '../../Classes/exam';
-import { ExamAnalysis } from '../../Classes/exam-analysis';
-import { AggregateExamQuestionAnalysis } from '../../Classes/aggregate-exam-question-analysis';
+import {
+  User,
+  Exam,
+  Question,
+  ExamReturn,
+  QuestionAnswer,
+  ExamAnalysis,
+  AggregateExamQuestionAnalysis,
+  NormailzedHorizontalBarChart,
+  AreaChart,
+  LineChart,
+  NumberCard,
+  GraphData,
+  SeriesData,
+  ColorScheme,
+  GraphDataSet
+} from '../../Classes';
 
 @Component({
   selector: 'fyp-exam-result',
@@ -29,39 +45,9 @@ export class ExamResultComponent implements OnInit {
   exam: Exam;
   examAnalysis: ExamAnalysis;
   selectedQuestion: any;
+  hasDataLoadingComplete = false;
 
-  data = {
-    single: [
-      {
-        name: 'Germany',
-        value: 8940000
-      },
-      {
-        name: 'USA',
-        value: 5000000
-      },
-      {
-        name: 'France',
-        value: 7200000
-      },
-      {
-        name: 'India',
-        value: 6000000
-      }
-    ],
-    view: [700, 400],
-    showXAxis: true,
-    showYAxis: true,
-    gradient: false,
-    showLegend: true,
-    showXAxisLabel: true,
-    xAxisLabel: 'Country',
-    showYAxisLabel: true,
-    yAxisLabel: 'Population',
-    colorScheme: {
-      domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-    },
-  };
+  percentWhoAttemptedDataSet: GraphDataSet;
 
   constructor(private examService: ExamService, private activatedRoute: ActivatedRoute) {
     this.id = this.activatedRoute.snapshot.params['id'];
@@ -93,14 +79,21 @@ export class ExamResultComponent implements OnInit {
 
       this.selectQuestionForDisplay(this.questions[0]._id);
 
-    }, (error: any) => {
-      console.error(error);
-    }, () => {
-      this.subscription.unsubscribe();
-    });
+      this.percentWhoAttemptedDataSet = new GraphDataSet(
+        this.mapPercentWhoAttempted(),
+        this.getArtHistoryInspiredColorScheme(),
+        [undefined, 400]
+      );
+
+      this.hasDataLoadingComplete = true;
+
+      // for each question, use 35 as height, and add 50 in total after calculation for the x axis display
+      // 35 * 10 question  = 350, 350 + 50 for x axis = 400 total height
+
+    }, (error: any) => console.error(error), () => this.subscription.unsubscribe());
   }
 
-  hasID (arrayTwoId, arrayOne, arrayOneKey) {
+  hasID (arrayTwoId, arrayOne, arrayOneKey): number {
     for (let i = 0; i < arrayOne.length; i++) {
       if (Object.is(arrayOne[i][arrayOneKey], arrayTwoId)) {
         return i;
@@ -109,7 +102,7 @@ export class ExamResultComponent implements OnInit {
     return -1;
   }
 
-  mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
+  mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey): any[] {
     const finalArray = arrayOne;
     for (let i = 0; i < arrayTwo.length; i++) {
       const idIndex = this.hasID(arrayTwo[i][arrayTwoKey], arrayOne, arrayOneKey);
@@ -122,7 +115,7 @@ export class ExamResultComponent implements OnInit {
     return finalArray;
   }
 
-  mergeArraysStrictly (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
+  mergeArraysStrictly (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey): any[] {
     const finalArray = [];
     for (let i = 0; i < arrayTwo.length; i++) {
       const idIndex = this.hasID(arrayTwo[i][arrayTwoKey], arrayOne, arrayOneKey);
@@ -133,11 +126,7 @@ export class ExamResultComponent implements OnInit {
     return finalArray;
   }
 
-  onSelect(event) {
-    console.log(event);
-  }
-
-  mapPercentWhoAttempted () {
+  mapPercentWhoAttempted (): GraphData[] {
     return this.aggregateExamQuestionAnalysis.map(dataElement => {
       return {
         name: dataElement.question,
@@ -153,12 +142,12 @@ export class ExamResultComponent implements OnInit {
         ]
       };
     });
-  }
+  } // normailzed horizontal bar chart
 
-  mapPercentWhoGotRight () {
+  mapPercentWhoGotRight (): GraphData[] {
     return this.aggregateExamQuestionAnalysis.map(dataElement => {
       return {
-        name: dataElement,
+        name: dataElement.question,
         series: [
           {
             name: 'percentageOfStudentWhoAttemptedGotThisQuestionRight',
@@ -171,18 +160,18 @@ export class ExamResultComponent implements OnInit {
         ]
       };
     });
-  }
+  } // normalized horizontal bar chart
 
-  mapStudentsAttempted () {
+  mapStudentsAttempted (): SeriesData[] {
     return this.aggregateExamQuestionAnalysis.map(dataElement => {
       return {
         name: dataElement.question,
         value: dataElement.studentsAttempted
       };
     });
-  }
+  } // number cards
 
-  mapMarksObtained () {
+  mapMarksObtained (): GraphData[] {
     if (!this.questionAnswers.length) {
       return [];
     }
@@ -202,9 +191,9 @@ export class ExamResultComponent implements OnInit {
         ]
       };
     });
-  }
+  } // line chart
 
-  mapTimeTaken () {
+  mapTimeTaken (): GraphData[] {
     if (!this.questionAnswers.length) {
       return [];
     }
@@ -228,9 +217,9 @@ export class ExamResultComponent implements OnInit {
         ]
       };
     });
-  }
+  } // area chart
 
-  selectQuestionForDisplay (questionID: string) {
+  selectQuestionForDisplay (questionID: string): void {
     const question = this.questions.find(que => que._id === questionID);
     const questionAnswer = this.questionAnswers.find(queA => queA.question === questionID);
     this.selectedQuestion = Object.assign({}, question, questionAnswer);
@@ -239,5 +228,14 @@ export class ExamResultComponent implements OnInit {
   // aggregateExamQuestionAnalysis key question 7 fields
   // questions key _id 9 fields
   // questionAnswers key question 5 fields
+
+  getArtHistoryInspiredColorScheme () {
+    return new ColorScheme([
+        '#FFCE00',
+        '#0375B4',
+        '#007849',
+        '#262228'
+    ]);
+  }
 
 }
