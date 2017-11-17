@@ -11,6 +11,7 @@ import { LineChart } from './line-chart';
 import { NumberCard } from './number-card';
 import { GraphData, SeriesData, ColorScheme } from './graph-data';
 import { GraphDataSet } from './graph-data-set';
+import { NumberCardDataSet } from './number-card-data-set';
 
 export {
     User,
@@ -27,5 +28,6 @@ export {
     GraphData,
     SeriesData,
     ColorScheme,
-    GraphDataSet
+    GraphDataSet,
+    NumberCardDataSet
 };

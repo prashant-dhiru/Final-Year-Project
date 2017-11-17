@@ -4,11 +4,11 @@ import { Subscription } from 'rxjs/Rx';
 import { ActivatedRoute } from '@angular/router';
 
 import { ExamService } from '../exam.service';
-// import {
-//   getArtHistoryInspiredColorScheme,
-//   getModernAndCleanColorScheme,
-//   getMutedAndMinimalColorScheme
-// } from '../../Shared/getColorSchemes';
+import {
+  getArtHistoryInspiredColorScheme,
+  getModernAndCleanColorScheme,
+  getMutedAndMinimalColorScheme
+} from '../../Shared/getColorSchemes';
 
 import {
   User,
@@ -25,7 +25,8 @@ import {
   GraphData,
   SeriesData,
   ColorScheme,
-  GraphDataSet
+  GraphDataSet,
+  NumberCardDataSet
 } from '../../Classes';
 
 @Component({
@@ -48,6 +49,10 @@ export class ExamResultComponent implements OnInit {
   hasDataLoadingComplete = false;
 
   percentWhoAttemptedDataSet: GraphDataSet;
+  percentWhoGotRight: GraphDataSet;
+  studentsAttempted: NumberCardDataSet;
+  marksComparison: GraphDataSet;
+  timeComparison: GraphDataSet;
 
   constructor(private examService: ExamService, private activatedRoute: ActivatedRoute) {
     this.id = this.activatedRoute.snapshot.params['id'];
@@ -77,13 +82,39 @@ export class ExamResultComponent implements OnInit {
       delete response.aggregateExamQuestionAnalysis;
       //
 
-      this.selectQuestionForDisplay(this.questions[0]._id);
+      this.selectQuestionForDisplay(this.questions[0]._id, 1);
 
-      this.percentWhoAttemptedDataSet = new GraphDataSet(
-        this.mapPercentWhoAttempted(),
-        this.getArtHistoryInspiredColorScheme(),
-        [undefined, 400]
-      );
+      this.percentWhoAttemptedDataSet = {
+        graphData: this.mapPercentWhoAttempted(),
+        graphColorScheme: this.getArtHistoryInspiredColorScheme(),
+        graphSize: [undefined, ((this.aggregateExamQuestionAnalysis.length * 35) + 50)]
+      };
+
+      this.percentWhoGotRight = {
+        graphData: this.mapPercentWhoGotRight(),
+        graphColorScheme: this.getArtHistoryInspiredColorScheme(),
+        graphSize: [undefined, ((this.aggregateExamQuestionAnalysis.length * 35) + 50)]
+      };
+
+      const browserWindowWidth = window.innerWidth || document.body.clientWidth;
+
+      this.studentsAttempted = {
+        graphData: this.mapStudentsAttempted(),
+        graphColorScheme: this.getArtHistoryInspiredColorScheme(),
+        graphSize: [(browserWindowWidth - (browserWindowWidth / 10)), undefined]
+      };
+
+      this.marksComparison = {
+        graphData: this.mapMarksObtained(),
+        graphColorScheme: this.getArtHistoryInspiredColorScheme(),
+        graphSize: [undefined, undefined]
+      };
+
+      this.timeComparison = {
+        graphData: this.mapTimeTaken(),
+        graphColorScheme: this.getArtHistoryInspiredColorScheme(),
+        graphSize: [undefined, undefined]
+      };
 
       this.hasDataLoadingComplete = true;
 
@@ -143,6 +174,7 @@ export class ExamResultComponent implements OnInit {
       };
     });
   } // normailzed horizontal bar chart
+  // done
 
   mapPercentWhoGotRight (): GraphData[] {
     return this.aggregateExamQuestionAnalysis.map(dataElement => {
@@ -161,6 +193,7 @@ export class ExamResultComponent implements OnInit {
       };
     });
   } // normalized horizontal bar chart
+  // done
 
   mapStudentsAttempted (): SeriesData[] {
     return this.aggregateExamQuestionAnalysis.map(dataElement => {
@@ -170,6 +203,7 @@ export class ExamResultComponent implements OnInit {
       };
     });
   } // number cards
+  // done
 
   mapMarksObtained (): GraphData[] {
     if (!this.questionAnswers.length) {
@@ -192,6 +226,7 @@ export class ExamResultComponent implements OnInit {
       };
     });
   } // line chart
+  // done
 
   mapTimeTaken (): GraphData[] {
     if (!this.questionAnswers.length) {
@@ -219,17 +254,20 @@ export class ExamResultComponent implements OnInit {
     });
   } // area chart
 
-  selectQuestionForDisplay (questionID: string): void {
+  selectQuestionForDisplay (questionID: string, questionNumber: number): void {
     const question = this.questions.find(que => que._id === questionID);
     const questionAnswer = this.questionAnswers.find(queA => queA.question === questionID);
     this.selectedQuestion = Object.assign({}, question, questionAnswer);
+    Object.defineProperty(this.selectedQuestion, 'questionNumber', {
+      value: questionNumber
+    });
   }
 
   // aggregateExamQuestionAnalysis key question 7 fields
   // questions key _id 9 fields
   // questionAnswers key question 5 fields
 
-  getArtHistoryInspiredColorScheme () {
+  getArtHistoryInspiredColorScheme (): ColorScheme {
     return new ColorScheme([
         '#FFCE00',
         '#0375B4',

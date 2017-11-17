@@ -1,4 +1,4 @@
-import { GraphData, ColorScheme } from './index';
+import { GraphData, ColorScheme } from './graph-data';
 
 export class GraphDataSet {
     constructor (
