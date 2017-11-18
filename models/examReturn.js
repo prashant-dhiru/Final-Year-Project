@@ -79,6 +79,5 @@ ExamReturnSchema.pre('save', function (next) {
     //method ends here
 });
 
-
 const ExamReturn = mongoose.model('ExamReturn', ExamReturnSchema);
 module.exports = {ExamReturn};

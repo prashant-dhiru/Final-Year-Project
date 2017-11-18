@@ -58,6 +58,7 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
     //finding Submitted answers of this exam and question
     return QuestionAnswer.find({exam: this.exam, question: this.question}).select('isAnswerCorrect marksObtained timeTaken -_id').then(questionAnswers => {
         
+        // if no answers has been submitted for this question, rejecting the request for anaysis of the question
         if (questionAnswers.length === 0) return Promise.reject('No Question Arnswers length, rejecting request');
 
         //calculating values for these two keys
@@ -89,8 +90,11 @@ AggregateExamQuestionAnalysisSchema.methods.calculateComparableQuestionDataByDoc
 
             this.percentageOfStudentWhoAttemptedGotThisQuestionRight = correctAnswerTimes.length * 100 / questionAnswers.length;
 
+            // if some student has done this question right, finding the aerage tme for the right answer
             if (correctAnswerTimes.length) {
                 this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = _.reduce( correctAnswerTimes, (total, n) => total+n ) / questionAnswers.length;
+
+                // if no students has done the answer correctly, setting the value to 0
             } else {
                 this.avreageTimeTakenByStudentsWhoGotThisQuestionRight = 0;
             }

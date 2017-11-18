@@ -9,17 +9,16 @@ const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
 //importing middleware from middleware directory to authenticate admin
-const {adminAuthenticate} = require('../middleware/adminAuthenticate');
+const { adminAuthenticate } = require('../middleware/adminAuthenticate');
 
 //importing admin from config directory
 const admin = require('../config/admin');
 
 //importing models from models directory
-const {Exam} = require('../models/exam');
-const {MCQuestion} = require('../models/mcqQuestion');
-
-const {AggregateExamResult} = require('../models/aggregateExamResult');
-const {AggregateExamQuestionAnalysis} = require('../models/aggregateExamQuestionAnalysis');
+const { AggregateExamQuestionAnalysis } = require('../models/aggregateExamQuestionAnalysis');
+const { AggregateExamResult } = require('../models/aggregateExamResult');
+const { Exam } = require('../models/exam');
+const { MCQuestion } = require('../models/mcqQuestion');
 
 /*************************************************
  * Route to Login the Admin into the system
@@ -94,9 +93,9 @@ router.post('/admin/createExam', adminAuthenticate, (request, response) => {
     /* Creating Demo Document here for Insertion */
     var aggregateExamResult = new AggregateExamResult({exam: exam._id});
     
-    /* saving into database */
+    // saving into database
     aggregateExamResult.save().catch((error) => console.error(error));
-    /* Demo Documents Insertion finished */
+    // Demo Documents Insertion finished
 
     //finally saving the exam into the database while handling any error
     // if any error, sending the error back with Internal Service Error
@@ -116,7 +115,7 @@ router.post('/admin/exam/:id/insertque',adminAuthenticate, (request, response) =
     //fetching the examID from the request parameter
     var id = request.params.id;
     
-    /* Checking if the id is valid or not */
+    // Checking if the id is valid or not
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
@@ -183,7 +182,7 @@ router.get('/admin/exam/:id', adminAuthenticate, (request, response) => {
     //fetching the examID from the request parameter
     var id = request.params.id;
 
-    /* Checking if the id is valid or not */
+    // Checking if the id is valid or not
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');

@@ -68,8 +68,8 @@ function hasID (arrayTwoId, arrayOne, arrayOneKey) {
 
     // traversing the array to its entire length
     for (var i = 0; i < arrayOne.length; i++) {
-        // chcking if the object's key's value is equal to the passed key's value
-        if (_.isEqual(arrayOne[i][arrayOneKey], arrayTwoId)) {
+        // checking if the object's key's value is equal to the passed key's value
+        if (Object.is(arrayOne[i][arrayOneKey], arrayTwoId)) {
             // if is the condition, returning the position of the key in the array of objects back
             return i;
         }
@@ -99,19 +99,11 @@ function mergeArrays (arrayOne, arrayOneKey, arrayTwo, arrayTwoKey) {
         if (idIndex >= 0) {
 
             // if key is found, merging the contents of object of secong array into the object of first array
-            // var sometempvar = Object.assign({}, arrayOne[idIndex], arrayTwo[i]);
-            _.merge(arrayOne[idIndex], arrayTwo[i]);
-            // for (var key in arrayTwo[i]) {            
-            //     Object.defineProperty(arrayOne[idIndex], key, {value: arrayTwo[i][key]});
-            //     // arrayOne[idIndex][key] = arrayTwo[i][key];
-            // }
-    
-            // newArray.push(sometempvar);
+            Object.assign(arrayOne[idIndex], arrayTwo[i]);
         } else {
             // if not found, pushing the object of array two into array one
             arrayOne.push(arrayTwo[i]);
         }
-    
     }
 
     //returing arrayone back as this array now contains all the merged value, original array has been lost

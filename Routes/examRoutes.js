@@ -9,54 +9,17 @@ const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
 //importing middleware from middleware directory to authenticate students
-const {authenticate} = require('../middleware/authenticate');
-const {userAuthenticate} = require('../middleware/userAuthenticate');
+const { authenticate } = require('../middleware/authenticate');
 const { mergeArrays } = require('../middleware/methods');
+const { userAuthenticate } = require('../middleware/userAuthenticate');
 
 //importing models from models directory
-const {ExamReturn} = require('../models/examReturn');
-const {QuestionAnswer} = require('../models/questionAnswer');
-const {Exam} = require('../models/exam');
-
-const {AggregateExamResult} = require('../models/aggregateExamResult');
 const { AggregateExamQuestionAnalysis } = require('../models/aggregateExamQuestionAnalysis');
+const { AggregateExamResult } = require('../models/aggregateExamResult');
+const { Exam } = require('../models/exam');
+const { ExamReturn } = require('../models/examReturn');
+const { QuestionAnswer } = require('../models/questionAnswer');
 
-/***********************************************************
- * This route is used to get full details about an exam
- * when user is about to start exam, he fetches all exam details from here
- * this route is private, only authentiated users (students) can access this route
- */
-router.get('/exam/:id', userAuthenticate, (request, response) => {
-    
-    //fetching the examID from the request parameter
-    var id = request.params.id;
-
-    /* Checking if the id is valid or not */
-    if (!ObjectId.isValid(id))
-        //if invalid, responsing with text and Bad Request status code
-        return response.status(400).send('Invalid Exam ID');
-
-    //fetching the exam from database, and fetching the questions with it
-    Exam.findById(id).populate('questions').exec((error, exam) => {
-
-        //if error occurs, sending back error with Internal Server error status code
-        if (error) return response.status(500).send(error);
-        
-        //if there is no exam in database with the id, sending emty response back with Not Found status code
-        if (!exam) return response.status(404).send();
-
-        //picking only required properties, leaving other properties
-        var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
-
-        //mapping the questions and assigning manually picked questions into the body to send back
-        body.questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'marksForCorrectAnswer', 'negativeMark', '_id']));
-
-        //sending the exam back to the client
-        response.send(body);
-    });
-    //route finishes here
-});
-/******************************************************************************************************** */
 
 /*******************************************************
  * This route is used when user wishes to get a list of all exams
@@ -74,10 +37,9 @@ router.get('/exam', authenticate, (request, response) => {
         //if there is no exam in database, sending emty response back with Not Found status code
         if (!exams.length) return response.status(404).send();
 
-        // if authenticated user is admin, not attacking the hasUserAttempted attribute on exams
-        // simply mapping th exam and sending back exam as response
-        if (request.session.userLevel == 0)
-            return response.send(exams);
+        // if authenticated user is admin, not attaching the hasUserAttempted attribute on exams
+        // simply mapping the exam and sending back exam as response
+        if (request.session.userLevel == 0) return response.send(exams);
 
         //finding that user has attempted how many exams here
         ExamReturn.find({user: request.session.userId}).select('exam -_id').exec((error, examReturns) => {
@@ -104,6 +66,44 @@ router.get('/exam', authenticate, (request, response) => {
 });
 /******************************************************************************************************** */
 
+/***********************************************************
+ * This route is used to get full details about an exam
+ * when user is about to start exam, he fetches all exam details from here
+ * this route is private, only authentiated users (students) can access this route
+ */
+router.get('/exam/:id', userAuthenticate, (request, response) => {
+    
+    //fetching the examID from the request parameter
+    var id = request.params.id;
+
+    // Checking if the id is valid or not
+    if (!ObjectId.isValid(id))
+
+        //if invalid, responsing with text and Bad Request status code
+        return response.status(400).send('Invalid Exam ID');
+
+    //fetching the exam from database, and fetching the questions with it
+    Exam.findById(id).populate('questions').exec((error, exam) => {
+
+        //if error occurs, sending back error with Internal Server error status code
+        if (error) return response.status(500).send(error);
+        
+        //if there is no exam in database with the id, sending emty response back with Not Found status code
+        if (!exam) return response.status(404).send();
+
+        //picking only required properties, leaving other properties
+        var body = _.pick(exam, ['name', 'description', 'allowedTime', 'subject', 'createdAt', '_id']);
+
+        //mapping the questions and assigning manually picked questions into the body to send back
+        body.questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'marksForCorrectAnswer', 'negativeMark', '_id']));
+
+        //sending the exam back to the client
+        response.send(body);
+    });
+    //route finishes here
+});
+/******************************************************************************************************** */
+
 /**
  * This route is used to get exam's quick results or exam returns
  * This is a private route, only authenticated users can access this route
@@ -113,7 +113,7 @@ router.get('/exam/quick/:id', userAuthenticate, (request, response) => {
     //fetching the examID from the request parameter
     var id = request.params.id;
     
-    /* Checking if the id is valid or not */
+    // Checking if the id is valid or not
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
@@ -203,7 +203,8 @@ router.post('/exam/submit/:id', userAuthenticate, (request, response) => {
 
                 if (!aggregateExamQuestionAnalysis) return console.error('couldnot find seed data');
 
-                aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().then((doc) => console.log('Aggregate being calculated')).catch(error => console.error(error));
+                // calculating aggregate data for each question and logging error data into console if any error occures
+                aggregateExamQuestionAnalysis.calculateComparableQuestionDataByDocument().catch(error => console.error(error));
 
             });
         });
@@ -232,48 +233,80 @@ router.get('/exam/result/:id', authenticate, (request, response) => {
     //fetching the examID from the request parameter
     var id = request.params.id;
 
-    /* Checking if the id is valid or not */
+    // Checking if the id is valid or not
     if (!ObjectId.isValid(id))
         //if invalid, responsing with text and Bad Request status code
         return response.status(400).send('Invalid Exam ID');
 
+    // calculating aggregate data for exam and getting the aggregateexamresult document back as response
     AggregateExamResult.getComparableData(id).then((aggregateExamResult) => {
 
-        AggregateExamQuestionAnalysis.find({exam: id}).sort('question').select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id avreageTimeTakenByStudentsWhoGotThisQuestionRight percentageOfStudentWhoAttemptedGotThisQuestionRight percentageOfStudentWhoAttempted').then((aggregateExamQuestionAnalysis) => {
+        //finding all aggregate documents for questions and selecting the right data to prevent manual picking
+        AggregateExamQuestionAnalysis.find({exam: id}).select('question cutOff avreageTimeTakenByStudents studentsAttempted -_id avreageTimeTakenByStudentsWhoGotThisQuestionRight percentageOfStudentWhoAttemptedGotThisQuestionRight percentageOfStudentWhoAttempted').then((aggregateExamQuestionAnalysis) => {
             
+            // fetching the exam returns submitted by the user, and populating all question answers too with it
             ExamReturn.findOne({exam: id}).populate('questionAnswers').exec((error, examReturn) => {
 
+                // checking for any potential errors, and if any, sending the error back as response with Internal Server Error status code
                 if (error) return response.status(500).send(error);
 
                 Exam.findById(id).populate('questions').exec((error, exam) => {
 
+                    // checking for any potential errors, and if any, sending the error back as response with Internal Server Error status code
                     if (error) return response.status(500).send(error);
                     
-                    var examAnalysis = _.pick(aggregateExamResult, ['averageTimeSpent', 'averageQuestionsAttempted', 'studentsAttempted', 'cutOff']);
-    
-                    var examResult = _.pick(examReturn, ['totalTimeTaken', 'totalQuestionAttempted', 'totalQuestionNotAttempted','percentageOfQuestionAttempted', 'percentageOfQuestionNotAttempted', 'marksObtained']);
-    
-                    var questionResult = examReturn.questionAnswers.map((doc) => _.pick(doc, ['question', 'timeTaken', 'answerSubmitted', 'isAnswerCorrect', 'marksObtained']));
-
-                    var questions = exam.questions.map((question) => _.pick(question, ['body', 'answerOptionOne', 'answerOptionTwo', 'answerOptionThree', 'answerOptionFour', 'correctAnswer', 'marksForCorrectAnswer', 'negativeMark', 'difficulty', '_id']));
-
-                    exam = _.pick(exam, ['name', 'description', 'allowedTime', 'subject']);
-
+                    // sending the data back as response, while mapping all the data
                     response.send({
-                        examAnalysis,
+                        examAnalysis: _.pick(aggregateExamResult, [
+                            'averageTimeSpent',
+                            'averageQuestionsAttempted',
+                            'studentsAttempted',
+                            'cutOff'
+                        ]),
                         aggregateExamQuestionAnalysis,
-                        examResult,
-                        questionResult,
-                        exam,
-                        questions
+                        examResult: _.pick(examReturn, [
+                            'totalTimeTaken',
+                            'totalQuestionAttempted',
+                            'totalQuestionNotAttempted',
+                            'percentageOfQuestionAttempted',
+                            'percentageOfQuestionNotAttempted',
+                            'marksObtained'
+                        ]),
+                        questionResult: examReturn.questionAnswers.map((doc) => _.pick(doc, [
+                            'question',
+                            'timeTaken',
+                            'answerSubmitted',
+                            'isAnswerCorrect',
+                            'marksObtained'
+                        ])),
+                        exam: _.pick(exam, [
+                            'name',
+                            'description',
+                            'allowedTime',
+                            'subject'
+                        ]),
+                        questions: exam.questions.map((question) => _.pick(question, [
+                            'body',
+                            'answerOptionOne',
+                            'answerOptionTwo',
+                            'answerOptionThree',
+                            'answerOptionFour',
+                            'correctAnswer',
+                            'marksForCorrectAnswer',
+                            'negativeMark',
+                            'difficulty',
+                            '_id'
+                        ]))
                     });
 
                 });
                 
             });
 
+        // if any error occuresduring fetching exam returns, sending the error back as response with Internal Server Error status code
         }, (error) => response.status(500).send(error));
 
+    // if error occures during calculating aggregate results for exam, sending error back as response with Internal Server Error status code
     }, (error) => response.status(400).send(error));
 
 
