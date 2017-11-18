@@ -3,14 +3,14 @@ import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 
-import { UserService } from '../user.service';
-import { User } from '../../Classes/user';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
+import { User } from '../../Classes/user';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'fyp-user-me',
   templateUrl: './user-me.component.html',
-  styles: []
+  styleUrls: ['./user-me.component.css']
 })
 export class UserMeComponent implements OnInit {
 

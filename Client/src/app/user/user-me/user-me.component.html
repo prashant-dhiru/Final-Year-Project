@@ -1,71 +1,133 @@
-<div class="panel panel-warning" *ngIf="syncStatus == 1 || syncStatus == 2">
-  <div class="panel-heading">
-    <h3 class="panel-title">Panel warning</h3>
-  </div>
-  <div class="panel-body">
-    There Seems some Unsynchronization between you and server.
-    Please <a (click)="refreshBrowser()">refresh your browser</a>
+<div class="container">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 col-sm-12">
+        <div class="formcss">
+          <form class="form-horizontal" *ngIf="syncStatus == 0">
+            <fieldset>
+          
+              <div class="form-group">
+                <h3>Hello {{user?.firstName}}, <small>you are Synchorised</small></h3>
+                <hr>
+              </div>
+          
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="uID">User ID:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        class="form-control"
+                        id="uID"
+                        placeholder="User ID"
+                        value="{{user?._id}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="firstname">Name:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        class="form-control"
+                        id="firstName"
+                        placeholder="First Name"
+                        value="{{user?.firstName}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                  <input type="text"
+                        class="form-control"
+                        placeholder="Middle Name"
+                        value="{{user?.middleName}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                  <input type="text"
+                        class="form-control"
+                        placeholder="Last Name"
+                        value="{{user?.lastName}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="email">Email:
+                </label>
+                <div class="col-lg-10">
+                  <input type="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="Email"
+                        value="{{user?.email}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="phoneno">Contact Number:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        class="form-control"
+                        id="phoneno"
+                        placeholder="Phone Number"
+                        value="{{user?.phoneNumber}}"
+                        readonly>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="address">Address:
+                </label>
+                <div class="col-lg-10">
+                  <textarea class="form-control"
+                            id="address"
+                            placeholder="Address"
+                            [value]="user?.address"
+                            readonly>
+                  </textarea>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="sclass">Class:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        class="form-control"
+                        id="sclass"
+                        placeholder="Class"
+                        value="{{user?.studentClass}}"
+                        readonly>
+                </div>
+              </div>
+          
+            </fieldset>
+          </form>
+        </div>
+        <div class="panel panel-error" *ngIf="syncStatus == 1 || syncStatus == 2">
+          <div class="panel-heading">
+            <h3 class="panel-title">Oops!!</h3>
+          </div>
+          <div class="panel-body">
+            There Seems some Unsynchronization between you and server.
+            Please <a (click)="refreshBrowser()">refresh your browser</a>
+          </div>
+        </div>
+      </div>     
+    </div>
   </div>
 </div>
-
-<form class="form-horizontal" *ngIf="syncStatus == 0">
-  <fieldset>
-
-    <legend>Hello {{user?.firstName}}, <small>you are Synchorised</small></legend>
-
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="uID">User ID:</label>
-      <div class="col-lg-10">
-        <input type="text" class="form-control" id="uID" placeholder="User ID" value="{{user?._id}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="firstname">Name:</label>
-      <div class="col-lg-10">
-        <input type="text" class="form-control" id="firstName" placeholder="First Name" value="{{user.firstName}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <input type="text" class="form-control" placeholder="Middle Name" value="{{user?.middleName}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <input type="text" class="form-control" placeholder="Last Name" value="{{user.lastName}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="email">Email:</label>
-      <div class="col-lg-10">
-        <input type="email" class="form-control" id="email" placeholder="Email" value="{{user.email}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="phoneno">Contact Number:</label>
-      <div class="col-lg-10">
-        <input type="text" class="form-control" id="phoneno" placeholder="Phone Number" value="{{user.phoneNumber}}" readonly>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="address">Address:</label>
-      <div class="col-lg-10">
-        <textarea class="form-control" id="address" placeholder="Address" [value]="user?.address" readonly></textarea>
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label class="control-label col-lg-2" for="sclass">Class:</label>
-      <div class="col-lg-10">
-        <input type="text" class="form-control" id="sclass" placeholder="Class" value="{{user.studentClass}}" readonly>
-      </div>
-    </div>
-
-  </fieldset>
-</form>

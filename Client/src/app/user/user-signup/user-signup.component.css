@@ -1,6 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-
-lightFormBgColor {
+.formcss {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     background-color: #fcfcfc; 
     padding-left: 50px;
@@ -8,4 +6,8 @@ lightFormBgColor {
     padding-top: 20px;
     padding-bottom: 20px;
     margin-bottom: 40px;
+}
+
+button.btn {
+    margin-left: 5px;
 }

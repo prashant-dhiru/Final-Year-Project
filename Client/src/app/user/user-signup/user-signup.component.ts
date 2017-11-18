@@ -4,23 +4,22 @@ import { Observable, Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 import { Router } from '@angular/router';
 
-import { UserService } from '../user.service';
-
-import { User } from '../../Classes/user';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
+import { User } from '../../Classes/user';
+import { UserService } from '../user.service';
 
 const validator = require('validator');
 
 @Component({
   selector: 'fyp-user-signup',
-  templateUrl: './user-signup.component.html'
+  templateUrl: './user-signup.component.html',
+  styleUrls: ['./user-signup.component.css']
 })
 export class UserSignupComponent implements OnInit {
 
   loginForm: FormGroup;
   subscription: Subscription;
   isRegistrationFailure = -1;
-  student: any;
 
   constructor(
     private userService: UserService,
@@ -29,66 +28,6 @@ export class UserSignupComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initForm();
-  }
-
-  onSubmit() {
-    if (this.isAuthenticatedService.isUserAuthenticated()) {
-      return this.isRegistrationFailure = 2;
-    }
-    this.subscription = this.userService.registerUser(this.loginForm.value).subscribe((response: Response) => {
-      this.student = response.json();
-      this.isRegistrationFailure = 0;
-      this.loginForm.reset({'phoneNumber': ''});
-      this.isAuthenticatedService.authenticateUser();
-      this.router.navigate(['/exam']);
-    }, (error: any) => {
-      console.error(error);
-      if (error.status === 405) {
-        this.isRegistrationFailure = 2;
-        // already logged in
-      } else {
-        this.isRegistrationFailure = 1; // 503
-      }
-    }, () => {
-      this.subscription.unsubscribe();
-    });
-  }
-
-  phoneNumberValidator (control: FormControl): {[s: string]: boolean} {
-    if (!validator.isMobilePhone((<string>control.value), 'en-IN')) {
-      return {phoneNumberValidator: true};
-    }
-    return null;
-  }
-
-  ///////////////////////////////////////////////
-  emailUniqueValidator (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> {
-
-    return new Promise((resolve, reject) => {
-      this.userService.checkEmailUnique(control.value).subscribe((response: Response) => {
-        response.json().found ? reject({emailUniqueValidator: true}) : resolve(null);
-      }, (error: any) => reject({emailUniqueValidator: true}));
-    });
-
-    // return new Promise(resolve => {
-    //   this.userService.checkEmailUnique(control.value).map(response => {
-    //     response.json().found ? resolve({emailUniqueValidator: true}) : resolve(null);
-    //   });
-    // });
-  }
-
-  matchingPasswords (password, confirm) {
-    return (group: FormGroup) => {
-      if (group.controls[password].value === group.controls[confirm].value) {
-        return null;
-      } else {
-        return { 'matchingPasswords': true };
-      }
-    };
-  }
-
-  initForm () {
     this.loginForm = new FormGroup({
       'firstName': new FormControl('', [
         Validators.maxLength(15),
@@ -109,7 +48,7 @@ export class UserSignupComponent implements OnInit {
         Validators.email,
         Validators.maxLength(50)
       ], [
-        // this.emailUniqueValidator.bind(this)
+        this.emailUniqueValidator.bind(this)
       ]),
       'address': new FormControl('', Validators.maxLength(500)),
       'studentClass': new FormControl('', [
@@ -129,9 +68,58 @@ export class UserSignupComponent implements OnInit {
     }, this.matchingPasswords('password', 'confirm'));
   }
 
-  resetIsRegistrationFailure () {
-    this.isRegistrationFailure = -1;
+  onSubmit(): void {
+    this.subscription = this.userService.registerUser(this.loginForm.value).subscribe((response: Response) => {
+      this.isRegistrationFailure = 0;
+      this.loginForm.reset({'phoneNumber': ''});
+      this.isAuthenticatedService.authenticateUser();
+      setTimeout(() => {
+        this.router.navigate(['/exam']);
+      }, 3000);
+    }, (error: any) => {
+      console.error(error);
+      if (error.status === 405) {
+        if (this.isAuthenticatedService.isUserAuthenticated()) {
+          this.isRegistrationFailure = 0;
+          return this.router.navigate(['/exam']);
+        }
+        this.isAuthenticatedService.authenticateUser();
+        this.isRegistrationFailure = 2;
+        // already logged in
+        setTimeout(() => {
+          this.router.navigate(['/exam']);
+        }, 3000);
+      } else {
+        this.isRegistrationFailure = 1; // 503
+      }
+    }, () => {
+      this.subscription.unsubscribe();
+    });
   }
 
+  phoneNumberValidator (control: FormControl): {[s: string]: boolean} {
+    if (!validator.isMobilePhone((<string>control.value), 'en-IN')) {
+      return {phoneNumberValidator: true};
+    }
+    return null;
+  }
+
+  emailUniqueValidator (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> {
+    return new Promise((resolve, reject) => {
+      this.userService.checkEmailUnique(control.value).subscribe((response: Response) => {
+        response.json().found ? resolve({emailUniqueValidator: true}) : resolve(null);
+      }, (error: any) => resolve({emailUniqueValidator: true}));
+    });
+  }
+
+  matchingPasswords (password: string, confirm: string): any {
+    return (group: FormGroup) => {
+      if (group.controls[password].value === group.controls[confirm].value) {
+        return null;
+      } else {
+        return { 'matchingPasswords': true };
+      }
+    };
+  }
 
 }
