@@ -1,7 +1,0 @@
-/admin/logout
-/admin/createExam
-/admin/exam/:id/insertque
-
-/admin/exam/:id
-/admin/me
-/admin/login

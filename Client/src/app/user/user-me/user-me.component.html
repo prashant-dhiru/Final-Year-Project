@@ -7,7 +7,7 @@
             <fieldset>
           
               <div class="form-group">
-                <h3>Hello {{user?.firstName}}, <small>you are Synchorised</small></h3>
+                <h3 class="capitalize">Hello {{user?.firstName}}, <small>you are Synchorised</small></h3>
                 <hr>
               </div>
           
@@ -124,7 +124,7 @@
           </div>
           <div class="panel-body">
             There Seems some Unsynchronization between you and server.
-            Please <a (click)="refreshBrowser()">refresh your browser</a>
+            Click <a (click)="syncWithServer()">here</a> to synchronise you with the Server.
           </div>
         </div>
       </div>     

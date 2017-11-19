@@ -35,7 +35,8 @@ export class UserLoginComponent implements OnInit {
       'password': new FormControl('', [
         Validators.minLength(8),
         Validators.required,
-        Validators.maxLength(64)
+        Validators.maxLength(64),
+        this.containsNoSpaceValidator
       ])
     });
   }
@@ -63,6 +64,17 @@ export class UserLoginComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
+  }
+
+  containsNoSpaceValidator (control: FormControl): {[s: string]: boolean} {
+    const controlValue = (<string>control.value);
+    if (!controlValue) {
+      return null;
+    }
+    if (controlValue.trim().length > 0) {
+      return null;
+    }
+    return {containsNoSpaceValidator: true};
   }
 
 }

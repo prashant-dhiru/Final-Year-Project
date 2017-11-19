@@ -81,7 +81,7 @@
                         formControlName="email"
                         required
                         maxlength="50">
-                  <span class="help-block" *ngIf="(loginForm.controls.email.errors?.emailUniqueValidator && loginForm.controls.email.dirty)" class="list-group-item">
+                  <span class="help-block list-group-item" *ngIf="(loginForm.controls.email.errors?.emailUniqueValidator && loginForm.controls.email.dirty)">
                       This Email is already Registered with us!
                   </span>
                   <!-- <ul class="help-block list-group">

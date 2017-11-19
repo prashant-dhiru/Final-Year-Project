@@ -1,0 +1,14 @@
+td, div, dt {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+}
+
+.list-group-item {
+    margin-bottom: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}

@@ -1,29 +1,46 @@
-<h1>Hello Admin</h1>
-<div class="panel panel-success" *ngIf="syncStatus == 0">
-  <div class="panel-heading">
-    <h3 class="panel-title">Good to GO</h3>
-  </div>
-  <div class="panel-body">
-    <p>You are Synchronised with server, you are logged in</p>
+<div class="container">
+  <div class="bs-component">
     <div class="row">
-      <div class="col-sm-6 col-xs-12">
-        <a [routerLink]="['/admin', 'create-exam']"><h3>Create Exams</h3></a>
-        <img src="Create-Exam.png" alt="">
-      </div>
-      <div class="col-sm-6 col-xs-12">
-        <a [routerLink]="['/admin', 'exam']"><h3>View Exams</h3></a>
-        <img src="View-Exam.png" alt="">
+      <div class="col-md-8 col-md-offset-2 col-sm-12">
+
+        <div class="formcss" *ngIf="syncStatus == 0">
+          <h2>Hello Admin, <small>You are Synchronised</small></h2>
+          <hr>
+          <div class="row">
+            <div class="col-sm-6 col-xs-12">
+              <div class="thumbnail">
+                <a [routerLink]="['/admin', 'exam']">
+                  <img src="View-Exam.png" alt="View Exams">
+                  <div class="caption">
+                    <h3>View Exams</h3>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+              <div class="thumbnail">
+                <a [routerLink]="['/admin', 'create-exam']">
+                  <img src="Create-Exam.png" alt="Create Exams">
+                  <div class="caption">
+                    <h3>Create Exams</h3>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-warning" *ngIf="syncStatus == 1 || syncStatus == 2">
+          <div class="panel-heading">
+            <h3 class="panel-title">Panel warning</h3>
+          </div>
+          <div class="panel-body">
+            There Seems some Unsynchronization between you and server.
+            Click <a (click)="syncWithServer()">here</a> to synchronise you with the Server.
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
-</div>
-
-<div class="panel panel-warning" *ngIf="syncStatus == 1 || syncStatus == 2">
-  <div class="panel-heading">
-    <h3 class="panel-title">Panel warning</h3>
-  </div>
-  <div class="panel-body">
-      There Seems some Unsynchronization between you and server.
-      Please <a (click)="refreshBrowser()">refresh your browser</a>
   </div>
 </div>

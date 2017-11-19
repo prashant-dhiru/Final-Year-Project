@@ -1,151 +1,272 @@
-<div class="bs-component">
-  <form class="form-horizontal" [formGroup]="questionItemForm" (ngSubmit)="onSubmit()">
-    <fieldset>
-      <legend>Input new Question</legend>
+<div class="container">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 col-sm-12">
+        <div class="formcss">
+          <form class="form-horizontal" [formGroup]="questionItemForm" (ngSubmit)="onSubmit()">
+            <fieldset>
 
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="question">Question:</label>
-        <div class="col-lg-10">
-          <textarea class="form-control" id="question" placeholder="Question" formControlName="body" rows="3"></textarea>
-        </div>
-      </div>
+              <div class="form-group">
+                <h2>Input new Question</h2>
+                <hr>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="question">Question:
+                </label>
+                <div class="col-lg-10"
+                    [ngClass]="{
+                  'has-error': (!questionItemForm.controls.body.valid && questionItemForm.controls.body.touched),
+                  'has-success': (questionItemForm.controls.body.valid)
+                }">
+                  <textarea class="form-control"
+                            id="question"
+                            placeholder="Question Body"
+                            formControlName="body"
+                            rows="3"
+                            required
+                            minlength="10" 
+                            maxlength="1000">
+                  </textarea>
+                  <span class="help-block"
+                        *ngIf="(questionItemForm.controls.body.errors?.questionUniqueValidator && questionItemForm.controls.body.dirty)">This Question Already Exists in the database
+                  </span>
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="answerOptionOne">Option 1:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.answerOptionOne.valid && questionItemForm.controls.answerOptionOne.touched),
+                  'has-success': (questionItemForm.controls.answerOptionOne.valid)
+                }">
+                  <input type="text"
+                        class="form-control"
+                        id="answerOptionOne"
+                        placeholder="Input First Option"
+                        formControlName="answerOptionOne"
+                        #optionOne
+                        required
+                        minlength="1"
+                        maxlength="100">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="answerOptionTwo">Option 2:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.answerOptionTwo.valid && questionItemForm.controls.answerOptionTwo.touched),
+                  'has-success': (questionItemForm.controls.answerOptionTwo.valid)
+                }">
+                  <input type="text"
+                        class="form-control"
+                        id="answerOptionTwo"
+                        placeholder="Input Second Option"
+                        formControlName="answerOptionTwo"
+                        #optionTwo
+                        required
+                        minlength="1"
+                        maxlength="100">
+                </div>
+              </div>
+    
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="answerOptionThree">Option 3:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.answerOptionThree.valid && questionItemForm.controls.answerOptionThree.touched),
+                  'has-success': (questionItemForm.controls.answerOptionThree.valid)
+                }">
+                  <input type="text"
+                        class="form-control"
+                        id="answerOptionThree"
+                        placeholder="Input Thrid Option"
+                        formControlName="answerOptionThree"
+                        #optionThree
+                        required
+                        minlength="1"
+                        maxlength="100">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="answerOptionFour">Option 4:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.answerOptionFour.valid && questionItemForm.controls.answerOptionFour.touched),
+                  'has-success': (questionItemForm.controls.answerOptionFour.valid)
+                }">
+                  <input type="text"
+                        class="form-control"
+                        id="answerOptionFour"
+                        placeholder="Input Fourth Option"
+                        formControlName="answerOptionFour"
+                        #optionFour
+                        required
+                        minlength="1"
+                        maxlength="100">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="correct">Correct Option:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.correctAnswer.valid && questionItemForm.controls.correctAnswer.touched),
+                  'has-success': (questionItemForm.controls.correctAnswer.valid)
+                }">
+                  <select id="correct"
+                          formControlName="correctAnswer"
+                          class="form-control"
+                          title="Choose Correct Option" 
+                          required>
+                    <option *ngIf="optionOne.value"
+                            value="{{optionOne.value}}">{{optionOne.value}}
+                    </option>
+                    <option *ngIf="optionTwo.value"
+                            value="{{optionTwo.value}}">{{optionTwo.value}}
+                    </option>
+                    <option *ngIf="optionThree.value"
+                            value="{{optionThree.value}}">{{optionThree.value}}
+                    </option>
+                    <option *ngIf="optionFour.value"
+                            value="{{optionFour.value}}">{{optionFour.value}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="correctanswer">Marks:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.marksForCorrectAnswer.valid && questionItemForm.controls.marksForCorrectAnswer.dirty),
+                  'has-success': (questionItemForm.controls.marksForCorrectAnswer.valid && questionItemForm.controls.marksForCorrectAnswer.touched)
+                }">
+                  <input type="number"
+                        class="form-control"
+                        id="correctanswer"
+                        placeholder="Marks Given for Answer is Correct"
+                        formControlName="marksForCorrectAnswer"
+                        required
+                        maxlength="2">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="wronganswer">Nagative Mark:
+                </label>
+                <div class="col-lg-10">
+                  <div class="input-group">
+                    <span class="input-group-addon">-</span>
+                    <div [ngClass]="{
+                      'has-error': (!questionItemForm.controls.negativeMark.valid && questionItemForm.controls.negativeMark.dirty),
+                      'has-success': (questionItemForm.controls.negativeMark.valid && questionItemForm.controls.negativeMark.touched)
+                    }">
+                      <input type="number"
+                        class="form-control" 
+                        id="wronganswer"
+                        placeholder="Marks Deducted for Answer is Incorrect"
+                        formControlName="negativeMark"
+                        required
+                        maxlength="2">
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="difficulty">Question Difficulty:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (!questionItemForm.controls.difficulty.valid && questionItemForm.controls.difficulty.touched),
+                  'has-success': (questionItemForm.controls.difficulty.valid && questionItemForm.controls.difficulty.touched)
+                }">
+                    <select id="difficulty"
+                            formControlName="difficulty"
+                            class="form-control"
+                            title="Choose Difficulty"
+                            required>
+                      <option value="1">1 (least Difficult)</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5 (most Difficult)</option>
+                    </select>
+                </div>
+              </div>
+        
+              <div class="form-group row"> 
+                <div class="col-lg-10 col-lg-offset-2">
+                  <button type="reset"
+                          class="btn btn-default"
+                          (click)="questionItemForm.reset({'body': ''})">Clear
+                  </button>
+                  <button type="submit"
+                          class="btn btn-primary"
+                          [disabled]="!questionItemForm.valid">Submit
+                  </button>
+                </div>
+              </div>
+        
+            </fieldset>
+          </form>
 
-      <div class="row">
-        <div class="col-md-6">
-
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="answerOptionOne">Option 1:</label>
-            <div class="col-lg-10">
-              <input type="text" class="form-control" id="answerOptionOne" placeholder="Input First Option" formControlName="answerOptionOne" #optionOne>
-            </div>
+          <div class="alert alert-dismissible alert-success" *ngIf="isSubmissionFailed == 0">
+            <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
+            <p>
+              <strong>Success!</strong>
+              The Question has been submitted in the database with id {{lastSubmittedQuestionId}}. You can continue to fed more questions to the exam.
+            </p>
           </div>
-
+          
         </div>
 
-        <div class="col-md-6">
-            
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="answerOptionTwo">Option 2:</label>
-            <div class="col-lg-10">
-              <input type="text" class="form-control" id="answerOptionTwo" placeholder="Input Second Option" formControlName="answerOptionTwo" #optionTwo>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-
-      <div class="row">
-        <div class="col-md-6">
-
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="answerOptionThree">Option 3:</label>
-            <div class="col-lg-10">
-              <input type="text" class="form-control" id="answerOptionThree" placeholder="Input Thrid Option" formControlName="answerOptionThree" #optionThree>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="col-md-6">
-
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="answerOptionFour">Option 4:</label>
-            <div class="col-lg-10">
-              <input type="text" class="form-control" id="answerOptionFour" placeholder="Input Fourth Option" formControlName="answerOptionFour" #optionFour>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="correct">Correct Option:</label>
-        <div class="col-lg-10">
-          <select id="correct" formControlName="correctAnswer" class="form-control" title="Choose Correct Option">
-            <option *ngIf="optionOne.value" value="{{optionOne.value}}">{{optionOne.value}}</option>
-            <option *ngIf="optionTwo.value" value="{{optionTwo.value}}">{{optionTwo.value}}</option>
-            <option *ngIf="optionThree.value" value="{{optionThree.value}}">{{optionThree.value}}</option>
-            <option *ngIf="optionFour.value" value="{{optionFour.value}}">{{optionFour.value}}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="correctanswer">Marks:</label>
-        <div class="col-lg-10">
-          <input type="number" class="form-control" id="correctanswer" placeholder="Marks Given for Answer is Correct" formControlName="marksForCorrectAnswer">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="wronganswer">Nagative Mark:</label>
-        <div class="col-lg-10">
-          <div class="input-group">
-            <span class="input-group-addon">-</span>
-            <input type="number" class="form-control" id="wronganswer" placeholder="Marks Deducted for Answer is Incorrect" formControlName="negativeMark">
+        <div class="panel panel-error" *ngIf="isSubmissionFailed == 1">
+          <div class="panel-body">
+            <p>You seem to be unauthenticated from the server. Login <a [routerLink]="['/admin', 'login']">here</a>!!</p>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="difficulty">Question Difficulty:</label>
-        <div class="col-lg-10">
-            <select id="difficulty" formControlName="difficulty" class="form-control" title="Choose Difficulty">
-              <option value="1">1 (least Difficult)</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5 (most Difficult)</option>
-            </select>
+        <div class="panel panel-error" *ngIf="isSubmissionFailed == 2">
+          <div class="panel-body">
+            <p>
+              <strong>Oh No!</strong>
+              The Object ID you inputted seems to be incorrect. Input a correct Object ID for Exam!!
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group"> 
-        <div class=" col-lg-10 col-lg-offset-2">
-          <button type="reset" class="btn btn-default" (click)="questionItemForm.reset()">Clear</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!questionItemForm.valid">Submit</button>
+        <div class="panel panel-error" *ngIf="isSubmissionFailed == 3">
+          <div class="panel-body">
+            <p>
+              <strong>Oops!</strong>
+              The store has no exam with the id {{id}}. Try giving the ID an check!!
+            </p>
+          </div>
         </div>
+
+        <div class="panel panel-error" *ngIf="isSubmissionFailed == 4">
+          <div class="panel-body">
+            <p>
+              <strong>Oh snap!</strong>
+              There seems to be a technical problem with the server, or the connection, Please Try Again later.
+            </p>
+          </div>
+        </div>
+        
       </div>
-
-    </fieldset>
-  </form>
-
-  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 1">
-    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
-    <p>You seem to be unauthenticated from the server. Login <a [routerLink]="['/admin']">here</a>!!</p>
+    </div>
   </div>
-
-  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 2">
-    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
-    <p>
-      <strong>Oh No!</strong>
-      The Object ID you inputted seems to be incorrect. Input a correct Object ID for Exam!!
-    </p>
-  </div>
-
-  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 3">
-    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
-    <p>
-      <strong>Oops!</strong>
-      The store has no exam with the id {{id}}. Try giving the ID an check!!
-    </p>
-  </div>
-
-  <div class="alert alert-dismissible alert-warning" *ngIf="isSubmissionFailed == 4">
-    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
-    <p>
-      <strong>Oh snap!</strong>
-      There seems to be a technical problem with the server, or the connection, Please Try Again later; or there already exists an question with this id in the database.
-    </p>
-  </div>
-
-  <div class="alert alert-dismissible alert-success" *ngIf="isSubmissionFailed == 0">
-    <button type="button" class="close" data-dismiss="alert" (click)="resetIsSubmissionFailed()">&times;</button>
-    <p>
-      <strong>Success!</strong>
-      The Question has been submitted in the database with id {{lastSubmittedQuestionId}}. You can continue to fed more questions to the exam.
-    </p>
-  </div>
-
-</div> 
+</div>

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { AdminService } from '../admin.service';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
+import { setTimeout } from 'timers';
 
 @Component({
   selector: 'fyp-admin-me',
@@ -45,9 +46,12 @@ export class AdminMeComponent implements OnInit {
     });
   }
 
-  refreshBrowser () {
-    window.location.reload();
+  syncWithServer (): void {
+    if (this.syncStatus === 1) {
+      this.isAuthenticatedService.authenticateAdmin();
+    } else if (this.syncStatus === 2) {
+      this.isAuthenticatedService.unAuthenticate();
+    }
   }
-
 
 }

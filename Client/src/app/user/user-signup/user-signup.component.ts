@@ -31,12 +31,17 @@ export class UserSignupComponent implements OnInit {
     this.loginForm = new FormGroup({
       'firstName': new FormControl('', [
         Validators.maxLength(15),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
-      'middleName': new FormControl('', Validators.maxLength(15)),
+      'middleName': new FormControl('', [
+        Validators.maxLength(15),
+        this.containsNoSpaceValidator
+      ]),
       'lastName': new FormControl('', [
         Validators.maxLength(15),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
       'phoneNumber': new FormControl('', [
         Validators.required,
@@ -50,20 +55,26 @@ export class UserSignupComponent implements OnInit {
       ], [
         this.emailUniqueValidator.bind(this)
       ]),
-      'address': new FormControl('', Validators.maxLength(500)),
+      'address': new FormControl('', [
+        Validators.maxLength(500),
+        this.containsNoSpaceValidator
+      ]),
       'studentClass': new FormControl('', [
         Validators.required,
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        this.containsNoSpaceValidator
       ]),
       'password': new FormControl('', [
         Validators.required,
         Validators.minLength(8),
-        Validators.maxLength(64)
+        Validators.maxLength(64),
+        this.containsNoSpaceValidator
       ]),
       'confirm': new FormControl('', [
         Validators.required,
         Validators.minLength(8),
-        Validators.maxLength(64)
+        Validators.maxLength(64),
+        this.containsNoSpaceValidator
       ])
     }, this.matchingPasswords('password', 'confirm'));
   }
@@ -120,6 +131,17 @@ export class UserSignupComponent implements OnInit {
         return { 'matchingPasswords': true };
       }
     };
+  }
+
+  containsNoSpaceValidator (control: FormControl): {[s: string]: boolean} {
+    const controlValue = (<string>control.value);
+    if (!controlValue) {
+      return null;
+    }
+    if (controlValue.trim().length > 0) {
+      return null;
+    }
+    return {containsNoSpaceValidator: true};
   }
 
 }

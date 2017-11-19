@@ -3,9 +3,16 @@ a {
 }
 
 img {
-    max-width: 330px;
-    height: auto;
+    width: 100%;
     display: block;
-    margin: auto;
+}
+
+.formcss {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #fcfcfc; 
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
 }

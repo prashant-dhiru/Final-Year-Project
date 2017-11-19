@@ -13,7 +13,10 @@
       
               <div class="form-group">
                 <label class="sr-only" for="email">Email:</label>
-                <div [ngClass]="{'has-error': (!userLoginForm.controls.email.valid && userLoginForm.controls.email.touched), 'has-success': (userLoginForm.controls.email.valid && userLoginForm.controls.email.touched)}">
+                <div [ngClass]="{
+                  'has-error': (!userLoginForm.controls.email.valid && userLoginForm.controls.email.touched),
+                  'has-success': (userLoginForm.controls.email.valid && userLoginForm.controls.email.touched)
+                }">
                   <input type="email"
                         class="form-control"
                         id="email"
@@ -26,7 +29,10 @@
     
               <div class="form-group">
                 <label class="sr-only" for="password">Password:</label>
-                <div [ngClass]="{'has-error': (!userLoginForm.controls.password.valid && userLoginForm.controls.password.touched), 'has-success': (userLoginForm.controls.password.valid && userLoginForm.controls.password.touched)}">
+                <div [ngClass]="{
+                  'has-error': (!userLoginForm.controls.password.valid && userLoginForm.controls.password.touched),
+                  'has-success': (userLoginForm.controls.password.valid && userLoginForm.controls.password.touched)
+                }">
                   <input type="password"
                         class="form-control"
                         id="password"
@@ -44,7 +50,7 @@
     
               <div class="form-group"> 
                 <button type="submit"
-                        class="btn btn-default btn-success btn-flat btn-block"
+                        class="btn btn-success btn-flat btn-block"
                         [disabled]="!userLoginForm.valid">Submit
                 </button>
               </div>

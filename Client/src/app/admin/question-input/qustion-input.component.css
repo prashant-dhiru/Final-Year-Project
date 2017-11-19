@@ -1,16 +1,13 @@
-/* ul {
-    -moz-columns: auto 2;
-    -webkit-columns: auto 2;
-    columns: auto 2; 
-    column-fill: auto;
-} */
-
 .formcss {
-    border: 1px solid #ededed;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     background-color: #fcfcfc; 
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 20px;
     padding-bottom: 20px;
     margin-bottom: 40px;
+}
+
+button.btn {
+    margin-left: 5px;
 }

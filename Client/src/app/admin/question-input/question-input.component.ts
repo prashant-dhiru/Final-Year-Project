@@ -1,8 +1,8 @@
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { Response } from '@angular/http';
 import { Subscription, Observable } from 'rxjs/Rx';
-import { ActivatedRoute } from '@angular/router';
 
 import { AdminService } from '../admin.service';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
@@ -10,7 +10,7 @@ import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 @Component({
   selector: 'fyp-question-input',
   templateUrl: './question-input.component.html',
-  styles: []
+  styleUrls: ['./qustion-input.component.css']
 })
 export class QuestionInputComponent implements OnInit {
 
@@ -29,53 +29,55 @@ export class QuestionInputComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.questionItemFormInit();
-  }
-
-  questionItemFormInit () {
     this.questionItemForm = new FormGroup({
       'body': new FormControl('', [
         Validators.required,
         Validators.minLength(10),
-        Validators.maxLength(1000)
-        /*body: {unique: true}*/
+        Validators.maxLength(1000),
+        this.containsNoSpaceValidator
       ], [
-        // this.questionUniqueValidator.bind(this)
+        this.questionUniqueValidator.bind(this)
       ]),
       'answerOptionOne': new FormControl('', [
         Validators.minLength(1),
         Validators.maxLength(100),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
       'answerOptionTwo': new FormControl('', [
         Validators.minLength(1),
         Validators.maxLength(100),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
       'answerOptionThree': new FormControl('', [
         Validators.minLength(1),
         Validators.maxLength(100),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
       'answerOptionFour': new FormControl('', [
         Validators.minLength(1),
         Validators.maxLength(100),
-        Validators.required
+        Validators.required,
+        this.containsNoSpaceValidator
       ]),
       'correctAnswer': new FormControl('', [
         Validators.minLength(1),
         Validators.maxLength(100),
         Validators.required
       ]),
-      'marksForCorrectAnswer': new FormControl('4', [
+      'marksForCorrectAnswer': new FormControl('', [
         Validators.required,
-        Validators.maxLength(2)
+        Validators.maxLength(2),
+        Validators.pattern('^[0-9]+$')
       ]),
-      'negativeMark': new FormControl('1', [
+      'negativeMark': new FormControl('', [
         Validators.required,
-        Validators.maxLength(1)
+        Validators.maxLength(1),
+        Validators.pattern('^[0-9]+$')
       ]),
-      'difficulty': new FormControl('', [
+      'difficulty': new FormControl('1', [
         Validators.min(1),
         Validators.max(5),
         Validators.maxLength(1)
@@ -84,9 +86,6 @@ export class QuestionInputComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
-      return this.isSubmissionFailed = 1;
-    }
     this.subscription = this.adminService.putQuestionIntoExam(this.questionItemForm.value, this.id).subscribe((response: Response) => {
       this.isSubmissionFailed = 0;
       this.lastSubmittedQuestionId = response.json()._id;
@@ -115,33 +114,22 @@ export class QuestionInputComponent implements OnInit {
   }
 
   questionUniqueValidator (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> {
-
-    // return this.adminService.checkQuestionUnique(control.value).map((response) => {});
-    return new Promise(resolve => {
-      this.adminService.checkQuestionUnique(control.value).map(response => {
-        const body = response.json();
-        if (body.found === false) {
-          resolve(null);
-        } else {
-          resolve({questionUniqueValidator: false});
-        }
-      });
+    return new Promise((resolve, reject) => {
+      this.adminService.checkQuestionUnique(control.value).subscribe((response: Response) => {
+        response.json().found ? resolve({questionUniqueValidator: true}) : resolve(null);
+      }, (error: any) => resolve({questionUniqueValidator: true}));
     });
-    // const promise = new Promise(function (resolve, reject) {
-      // this.subscription = this.adminService.checkQuestionUnique(control.value).subscribe((response: Response) => {
-
-      // }, (error: any) => {
-      //   if (error.status === 401) {
-      //     return Promise.reject({questionUniqueValidator: true});
-      //   } else {
-      //     return Promise.reject(error);
-      //   }
-      // }, () => {
-        
-      //   this.subscription.unsubscribe();
-      // });
-    // });
-    // return promise;
-
   }
+
+  containsNoSpaceValidator (control: FormControl): {[s: string]: boolean} {
+    const controlValue = (<string>control.value);
+    if (!controlValue) {
+      return null;
+    }
+    if (controlValue.trim().length > 0) {
+      return null;
+    }
+    return {containsNoSpaceValidator: true};
+  }
+
 }

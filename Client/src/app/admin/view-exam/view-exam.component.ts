@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { Response } from '@angular/http';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { Response } from '@angular/http';
 
+import { Exam } from '../../Classes';
 import { ExamService } from '../../exam/exam.service';
-import { Exam } from '../../Classes/exam';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-view-exam',
-  templateUrl: './view-exam.component.html'
+  templateUrl: './view-exam.component.html',
+  styleUrls: ['./view-exam.component.css']
 })
 export class ViewExamComponent implements OnInit {
 
@@ -24,13 +25,12 @@ export class ViewExamComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (!this.isAuthenticatedService.isAdminAuthenticated()) {
-      return this.isexamFetchingFailure = 1;
-    }
     this.subscription = this.examService.getExamList().subscribe((response: Response) => {
       this.examList = response.json();
       this.isexamFetchingFailure = 0;
+      console.log(this.examList);
     }, (error: any) => {
+      console.error(error);
       if (error.status === 401) {
         this.isexamFetchingFailure = 1;
         // 401 unauthorised
@@ -44,14 +44,6 @@ export class ViewExamComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
-  }
- 
-  redirectToViewExam(examId: string) {
-    this.router.navigate(['admin', 'exam', examId]);
-  }
-
-  redirectToInsertQuestion(examId: string) {
-    this.router.navigate(['admin', 'exam', examId, 'insertque']);
   }
 
 }

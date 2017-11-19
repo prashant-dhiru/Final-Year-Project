@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Response } from '@angular/http';
-import { Subscription } from 'rxjs/Rx';
 import { Router } from '@angular/router';
+import { setTimeout } from 'timers';
+import { Subscription } from 'rxjs/Rx';
 
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 import { User } from '../../Classes/user';
@@ -59,8 +60,12 @@ export class UserMeComponent implements OnInit {
     });
   }
 
-  refreshBrowser () {
-    window.location.reload();
+  syncWithServer (): void {
+    if (this.syncStatus === 1) {
+      this.isAuthenticatedService.authenticateUser();
+    } else if (this.syncStatus === 2) {
+      this.isAuthenticatedService.unAuthenticate();
+    }
   }
 
 }

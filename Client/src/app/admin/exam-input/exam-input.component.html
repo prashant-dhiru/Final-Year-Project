@@ -1,59 +1,122 @@
-<div class="bs-component">
-  <form class="form-horizontal" [formGroup]="examForm" (ngSubmit)="onSubmit()">
-    <fieldset>
-      <legend>Create Exam</legend>
+<div class="conatiner">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 col-sm-12">
+        <div class="formcss">
+          <form class="form-horizontal" [formGroup]="examForm" (ngSubmit)="onSubmit()">
+            <fieldset>
 
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="name">Exam Name:</label>
-        <div class="col-lg-10">
-          <input type="text" id="name" placeholder="Exam Name" class="form-control" formControlName="name">
+              <div class="form-group">
+                <h2>Create Exam</h2>
+                <hr>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="name">Exam Name:
+                </label>
+                <div class="col-lg-10"
+                    [ngClass]="{
+                      'has-error': (examForm.controls.name.dirty && !examForm.controls.name.valid),
+                      'has-success': (examForm.controls.name.valid)
+                    }">
+                  <input type="text"
+                        id="name"
+                        placeholder="Exam Name"
+                        class="form-control"
+                        formControlName="name"
+                        required
+                        minlength="5"
+                        maxlength="50">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="description">Exam Description:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (examForm.controls.description.touched && !examForm.controls.description.valid),
+                  'has-success': (examForm.controls.description.valid && examForm.controls.description.touched)
+                }">
+                  <input type="text"
+                        id="description"
+                        placeholder="Exam Description"
+                        class="form-control"
+                        formControlName="description"
+                        maxlength="500">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="allowedTime">Allowed Time:
+                </label>
+                <div class="col-lg-10">
+                  <div class="input-group">
+                    <div [ngClass]="{
+                      'has-error': (examForm.controls.allowedTime.dirty && !examForm.controls.allowedTime.valid),
+                      'has-success': (examForm.controls.allowedTime.valid)
+                    }">
+                      <input type="text"
+                            id="allowedTime"
+                            placeholder="Exam Allowed Time"
+                            class="form-control"
+                            formControlName="allowedTime"
+                            minlength="1"
+                            maxlength="3"
+                            required>
+                    </div>
+                    <span class="input-group-addon">in Minutes</span>
+                  </div>
+                  
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <label class="control-label col-lg-2"
+                      for="subject">Subject:
+                </label>
+                <div class="col-lg-10" [ngClass]="{
+                  'has-error': (examForm.controls.subject.dirty && !examForm.controls.subject.valid),
+                  'has-success': (examForm.controls.subject.valid)
+                }">
+                  <input type="text"
+                        id="subject"
+                        placeholder="Subject Name"
+                        class="form-control"
+                        formControlName="subject"
+                        required
+                        minlength="1"
+                        maxlength="50">
+                </div>
+              </div>
+        
+              <div class="form-group row">
+                <div class="col-lg-10 col-lg-offset-2">
+                  <button type="reset" class="btn btn-default" (click)="examForm.reset()">Clear</button>
+                  <button type="submit" class="btn btn-primary" [disabled]="!examForm.valid">Submit</button>
+                </div>
+              </div>
+        
+            </fieldset>
+          </form>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="description">Exam Description:</label>
-        <div class="col-lg-10">
-          <input type="text" id="description" placeholder="Exam Description" class="form-control" formControlName="description">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="allowedTime">Allowed Time:</label>
-        <div class="col-lg-10">
-          <div class="input-group">
-            <input type="text" id="allowedTime" placeholder="Exam Allowed Time" class="form-control" formControlName="allowedTime">
-            <span class="input-group-addon">in Minutes</span>
+        <div class="panel panel-error" *ngIf="submissionError == 1">
+          <div class="panel-body">
+            <p class="lead"><strong>Oh snap!</strong>You appear to not synchronised from the server, please login <a [routerLink]="['/admin', 'login']">here</a> again</p>
           </div>
-          
         </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-2" for="subject">Subject:</label>
-        <div class="col-lg-10">
-          <input type="text" id="subject" placeholder="Subject Name" class="form-control" formControlName="subject">
+        
+        <div class="panel panel-error" *ngIf="submissionError == 2">
+          <div class="panel-body">
+            <strong>Oh snap!</strong>
+            We could not submit the exam, contact the System Dev Immidieatly<a [routerLink]="['/about']">Here</a>!!
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <div class="col-lg-10 col-lg-offset-2">
-          <button type="reset" class="btn btn-default" (click)="examForm.reset()">Clear</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!examForm.valid">Submit</button>
-        </div>
       </div>
-
-      <div class="alert alert-dismissible alert-warning" *ngIf="submissionError == 1">
-        <button type="button" class="close" data-dismiss="alert" (click)="resetSubmissionError()">&times;</button>
-        <p class="lead"><strong>Oh snap!</strong>You appear to not synchronised from the server, please login <a [routerLink]="['/admin']">here</a> again</p>
-      </div>
-
-      <div class="alert alert-dismissible alert-warning" *ngIf="submissionError == 2">
-        <button type="button" class="close" data-dismiss="alert" (click)="resetSubmissionError()">&times;</button>
-        <p>
-          <strong>Oh snap!</strong>
-          We could not submit the exam, contact the System Admin Immidieatly<a [routerLink]="['/exam']">Here</a>!!
-        </p>
-      </div>
-      
-    </fieldset>
-  </form>
+    </div>
+  </div>
+</div>

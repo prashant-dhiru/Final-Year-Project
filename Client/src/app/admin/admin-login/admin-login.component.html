@@ -1,42 +1,55 @@
-<div class="jumbotron">
-  <div class="row bs-component">
-    <div class="col-xs-6 col-xs-offset-3">
-  
-      <form class="form-horizontal" [formGroup]="adminLoginForm" (ngSubmit)="onSubmit()">
-        <fieldset>
-    
-          <div class="form-group">
-            <h2>Admin Login</h2>
-            <hr>
-          </div>
-          
-          <div class="form-group">
-            <label class="sr-only" for="passwd">Password:</label>
-            <input type="password" class="form-control" id="passwd" placeholder="Enter Password" formControlName="password" required>
-          </div>
-
-          <div class="form-group">
-            <button type="submit" class="btn btn-default btn-success btn-flat btn-block">Submit</button>
-          </div>
-
-          <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 1">
-            <button type="button" class="close" data-dismiss="alert" (click)="resetIsLoginFailure()">&times;</button>
-            <p>
-              <strong>Oh snap!</strong>
-              We couldnot login you up! Did you checked your password?
-            </p>
-          </div>
-
-          <div class="alert alert-dismissible alert-warning" *ngIf="isLoginFailure == 2">
-            <button type="button" class="close" data-dismiss="alert" (click)="resetIsLoginFailure()">&times;</button>
-            <p>
-              <strong>Oh snap!</strong>
-              You seem to be already logged in. Create Exams <a [routerLink]="['/admin/create-exam']">Here</a>!!
-            </p>
-          </div>
+<div class="container">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2 col-xs-12">
+        <div class="formcss">
+          <form class="form-horizontal" [formGroup]="adminLoginForm" (ngSubmit)="onSubmit()">
+            <fieldset>
         
-        </fieldset>
-      </form>
+              <div class="form-group">
+                <h2>Admin Login</h2>
+                <hr>
+              </div>
+              
+              <div class="form-group">
+                <label class="sr-only"
+                      for="passwd">Password:
+                </label>
+                <input type="password"
+                      class="form-control"
+                      id="passwd"
+                      placeholder="Enter Password"
+                      formControlName="password"
+                      required>
+              </div>
+              
+              <div class="form-group">
+                <p class="lead">Student? <a [routerLink]="['/user', 'login']">Login Here</a></p>
+              </div>
+
+              <div class="form-group">
+                <button type="submit" class="btn btn-success btn-flat btn-block">Submit</button>
+              </div>
+    
+            </fieldset>
+          </form>
+        </div>
+
+        <div class="panel panel-warning" *ngIf="isLoginFailure == 1">
+          <div class="panel-body">
+            <strong>Oh snap!</strong>
+            We couldnot login you up! Your password is incorrect.
+          </div>
+        </div>
+
+        <div class="panel panel-warning" *ngIf="isLoginFailure == 2">
+          <div class="panel-body">
+            <strong>Oh snap!</strong>
+            You seem to be already logged in. Please confirm your identity. You will be shortly redirected!
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>
