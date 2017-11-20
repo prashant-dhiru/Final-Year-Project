@@ -1,98 +1,96 @@
-<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 1">
-  <div class="panel-heading">
-    <h3 class="panel-title">Unauthorised</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
-  </div>
-</div>
-
-<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 2">
-  <div class="panel-heading">
-    <h3 class="panel-title">Internal server error</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
-  </div>
-</div>
-
-<div class="panel panel-warning" *ngIf="isexamFetchingFailure == 3">
-  <div class="panel-heading">
-    <h3 class="panel-title">No Exams Found</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
-  </div>
-</div>
-
-<div class="row" *ngIf="isexamFetchingFailure == 0">
-  <div class="col-xs-12">
-    <h1>Exam List</h1>
-    <br>
-    <div class="list-group">
+<div class="container">
+    <div class="bs-component">
       
-      <a class="list-group-item clearfix" *ngFor="let exam of examList; let i = index" >
+      <div class="list-group" *ngIf="isexamFetchingFailure == 0">
+        <h2>Exam List:</h2>
+        <hr>
+        <a class="list-group-item clearfix" *ngFor="let exam of examList; let i = index">
+          <fieldset>
+            <div class="row hideOverflow">
+              <div class="col-lg-2">{{exam._id}}</div>
+              <div class="col-lg-3 ellipsis">{{exam.name}}</div>
+              <div class="col-lg-3 ellipsis">{{exam.subject}}</div>
+              <div class="col-lg-2">
+                <button type="button" class="btn btn-primary" [disabled]="exam.hasUserAttempted" data-toggle="modal" data-target="#myModal">View Exam</button>
 
-        <fieldset>
-          <dl class="row">
-
-            <dt class="col-lg-2 col-md-5">{{exam._id}}</dt>
-            <dt class="col-lg-3 col-md-7">{{exam.name}}</dt>
-            <dt class="col-lg-3 col-md-6">{{exam.subject}}</dt>
-            <div class="col-lg-2 col-md-3">
-              <button class="btn btn-primary btn-block" [disabled]="exam.hasUserAttempted" type="button"  data-toggle="modal" data-target="#myModal">Give Exam</button>
-
-              <!-- Modal -->
-              <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
-                <div class="modal-dialog" role="document">
-                
-                  <!-- Modal content-->
-                  <div class="modal-content">
-                    
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                      <h4 class="modal-title">Confirm Exam Details</h4>
-                    </div>
-                    
-                    <div class="modal-body">
-                      <dl class="row">
-                        <dt class="col-sm-3 col-sm-offset-1">Exam Name</dt>
-                        <dd class="col-sm-8">{{exam.name}}</dd>
-                      
-                        <dt class="col-sm-3 col-sm-offset-1">Description</dt>
-                        <dd class="col-sm-8">{{exam.description}}</dd>
-
-                        <dt class="col-sm-3 col-sm-offset-1">Allowed Time</dt>
-                        <dd class="col-sm-8">{{exam.allowedTime}} (in Minutes)</dd>
-
-                        <dt class="col-sm-3 col-sm-offset-1">Subject</dt>
-                        <dd class="col-sm-8">{{exam.subject}}</dd>
-                      
-                        <dt class="col-sm-3 col-sm-offset-1">Exam ID</dt>
-                        <dd class="col-sm-8">{{exam._id}}</dd>
-
-                        <dt class="col-sm-3 col-sm-offset-1">Created At</dt>
-                        <dd class="col-sm-8">{{exam.createdAt}}</dd>
-                      </dl>
-                    </div>
-                    
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="redirecttoExam(exam._id)">Continue to Exam</button>
-                    </div>
+                <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
+                  <div class="modal-dialog" role="document">
                   
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Confirm Exam Details</h4>
+                      </div>
+                      
+                      <div class="modal-body">
+                        <dl class="row">
+                          <dt class="col-sm-3 col-sm-offset-1">Exam Name</dt>
+                          <dd class="col-sm-8">{{exam.name}}</dd>
+                        
+                          <dt class="col-sm-3 col-sm-offset-1">Description</dt>
+                          <dd class="col-sm-8">{{exam.description}}</dd>
+        
+                          <dt class="col-sm-3 col-sm-offset-1">Allowed Time</dt>
+                          <dd class="col-sm-8">{{exam.allowedTime}} (in Minutes)</dd>
+        
+                          <dt class="col-sm-3 col-sm-offset-1">Subject</dt>
+                          <dd class="col-sm-8">{{exam.subject}}</dd>
+                        
+                          <dt class="col-sm-3 col-sm-offset-1">Exam ID</dt>
+                          <dd class="col-sm-8">{{exam._id}}</dd>
+        
+                          <dt class="col-sm-3 col-sm-offset-1">Created At</dt>
+                          <dd class="col-sm-8">{{exam.createdAt}}</dd>
+                        </dl>
+                      </div>
+                      
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="redirecttoExam(exam._id)">Continue to Exam</button>
+                      </div>
+                    
+                    </div>
+                    
                   </div>
-                  
                 </div>
-              </div>
 
+              </div>
+              <div class="col-lg-2">
+                <button type="button" class="btn btn-primary"  [disabled]="!exam.hasUserAttempted" (click)="redirectToResult(exam._id)">View Result</button>
+              </div>
             </div>
-            <div class="col-lg-2 col-md-3">
-              <button class="btn btn-primary btn-block" type="button" [disabled]="!exam.hasUserAttempted" (click)="redirectToResult(exam._id)">View Result</button>
-            </div>
-          </dl>
-        </fieldset>
-      </a>
+          </fieldset>
+        </a>
+      </div>
+  
+      <div class="panel panel-warning" *ngIf="isexamFetchingFailure == 1">
+        <div class="panel-heading">
+          <h3 class="panel-title">Unauthorised</h3>
+        </div>
+        <div class="panel-body">
+          <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
+        </div>
+      </div>
+      
+      <div class="panel panel-warning" *ngIf="isexamFetchingFailure == 2">
+        <div class="panel-heading">
+          <h3 class="panel-title">Internal server error</h3>
+        </div>
+        <div class="panel-body">
+          <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
+        </div>
+      </div>
+      
+      <div class="panel panel-warning" *ngIf="isexamFetchingFailure == 3">
+        <div class="panel-heading">
+          <h3 class="panel-title">No Exams Found</h3>
+        </div>
+        <div class="panel-body">
+          <p class="lead"><strong>Bad Luck!</strong> There are no exam in the server, keep checking here!</p>
+        </div>
+      </div>
+  
     </div>
   </div>
-</div>

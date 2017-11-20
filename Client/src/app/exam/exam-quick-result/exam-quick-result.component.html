@@ -1,118 +1,131 @@
-<div class="panel panel-warning" *ngIf="errorStatus == 1">
-  <div class="panel-heading">
-    <h3 class="panel-title">Unauthorised</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
-  </div>
-</div>
+<div class="container">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 col-sm-12">
+        <div class="formcss">
+          <form class="form-horizontal">
+            <fieldset>
+        
+              <div class="form-group">
+                <h2>Exam Attemp Details:</h2>
+                <hr>
+              </div>
+        
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="ttt">Total Time Taken:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="ttt" placeholder="Total Time Taken" value="{{examReturn?.totalTimeTaken}}" readonly>
+                </div>
+              </div>
+          
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="tqa">Total Questions Attempted:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="tqa" placeholder="Total Questions Attempted" value="{{examReturn?.totalQuestionAttempted}}" readonly>
+                </div>
+              </div>
+        
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="tqna">Total Questions Not Attempted:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="tqna" placeholder="Total Questions Not Attempted" value="{{examReturn?.totalQuestionNotAttempted}}" readonly>
+                </div>
+              </div>
+        
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="poqa">Percentage of Questions Attempted:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="poqa" placeholder="Percentage of Questions Attempted" value="{{examReturn?.percentageOfQuestionAttempted}} %" readonly>
+                </div>
+              </div>
+        
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="poqna">Percentage of Questions Not Attempted:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="poqna" placeholder="Percentage of Questions Not Attempted" value="{{examReturn?.percentageOfQuestionNotAttempted}} %" readonly>
+                </div>
+              </div>
+        
+              <div class="formgroup row">
+                <label class="control-label col-lg-4" for="mo">Marks Obtained:</label>
+                <div class="col-lg-8">
+                  <input type="text" class="form-control" id="mo" placeholder="Marks Obtained" value="{{examReturn?.marksObtained}}" readonly>
+                </div>
+              </div>
 
-<div class="panel panel-warning" *ngIf="errorStatus == 2">
-  <div class="panel-heading">
-    <h3 class="panel-title">Invalid Exam ID</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Oh snap!</strong> There seems to be having some problem with the routing, the server couldnot recognise the Exam ID.</p>
-  </div>
-</div>
+              <br>
+        
+              <div class="form-group">
+                <h2>Question Answers:</h2>
+                <hr>
+              </div>
+        
+              <div class="table-responsive">
+                <table class="table table-striped table-hover ">
+                  <thead>
+                    <tr>
+                      <th>S. No.</th>
+                      <th>Question</th>
+                      <th>Time Taken In Question</th>
+                      <th>Answer Submitted</th>
+                      <th>Is your Answer Correct</th>
+                      <th>Marks Obtained in Question</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let answer of examReturn?.questionAnswers; let i = index">
+                      <td>{{i+1}}</td>
+                      <td class="text-truncate">{{answer?.question}}</td>
+                      <td>{{answer?.timeTaken}}</td>
+                      <td>{{answer?.answerSubmitted}}</td>
+                      <td>{{answer?.isAnswerCorrect}}</td>
+                      <td>{{answer?.marksObtained}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        
+            </fieldset>
+          </form>
+        </div>
 
-<div class="panel panel-warning" *ngIf="errorStatus == 3">
-  <div class="panel-heading">
-    <h3 class="panel-title">No Exams Returns</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Bad Luck!</strong> The server Doesnot have your Exam Data, either there was some error storing your data into the server, or it seems that your request is under process, try refreshing your browser</p>
-  </div>
-</div>
-
-<div class="panel panel-warning" *ngIf="errorStatus == 4">
-  <div class="panel-heading">
-    <h3 class="panel-title">Internal server error</h3>
-  </div>
-  <div class="panel-body">
-    <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
-  </div>
-</div>
-
-<div class="bs-component" *ngIf="errorStatus == 0">
-  <form class="form-horizontal">
-    <fieldset>
-
-      <legend>Exam Answer Details:</legend>
-
-      <div class="row">
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="ttt">Total Time Taken:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="ttt" placeholder="Total Time Taken" value="{{examReturn?.totalTimeTaken}}" readonly>
+        <div class="panel panel-warning" *ngIf="errorStatus == 1">
+          <div class="panel-heading">
+            <h3 class="panel-title">Unauthorised</h3>
+          </div>
+          <div class="panel-body">
+            <p class="lead"><strong>Oops!</strong> You Seem to be unauthorised, please login to fetch details!</p>
           </div>
         </div>
-  
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="tqa">Total Questions Attempted:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="tqa" placeholder="Total Questions Attempted" value="{{examReturn?.totalQuestionAttempted}}" readonly>
+        
+        <div class="panel panel-warning" *ngIf="errorStatus == 2">
+          <div class="panel-heading">
+            <h3 class="panel-title">Invalid Exam ID</h3>
+          </div>
+          <div class="panel-body">
+            <p class="lead"><strong>Oh snap!</strong> There seems to be having some problem with the routing, the server couldnot recognise the Exam ID.</p>
           </div>
         </div>
-  
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="tqna">Total Questions Not Attempted:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="tqna" placeholder="Total Questions Not Attempted" value="{{examReturn?.totalQuestionNotAttempted}}" readonly>
+        
+        <div class="panel panel-warning" *ngIf="errorStatus == 3">
+          <div class="panel-heading">
+            <h3 class="panel-title">No Exams Returns</h3>
+          </div>
+          <div class="panel-body">
+            <p class="lead"><strong>Bad Luck!</strong> The server Doesnot have your Exam Data, either there was some error storing your data into the server, or it seems that your request is under process, try refreshing your browser</p>
           </div>
         </div>
-  
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="poqa">Percentage of Questions Attempted:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="poqa" placeholder="Percentage of Questions Attempted" value="{{examReturn?.percentageOfQuestionAttempted}} %" readonly>
+        
+        <div class="panel panel-warning" *ngIf="errorStatus == 4">
+          <div class="panel-heading">
+            <h3 class="panel-title">Internal server error</h3>
+          </div>
+          <div class="panel-body">
+            <p class="lead"><strong>Oh snap!</strong> The Server CouldNot fetch your details. Please try again Later!</p>
           </div>
         </div>
-  
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="poqna">Percentage of Questions Not Attempted:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="poqna" placeholder="Percentage of Questions Not Attempted" value="{{examReturn?.percentageOfQuestionNotAttempted}} %" readonly>
-          </div>
-        </div>
-  
-        <div class="formgroup">
-          <label class="control-label col-lg-4" for="mo">Marks Obtained:</label>
-          <div class="col-lg-8">
-            <input type="text" class="form-control" id="mo" placeholder="Marks Obtained" value="{{examReturn?.marksObtained}}" readonly>
-          </div>
-        </div>
+
       </div>
-      <br>
-
-      <legend>Question Answers:</legend>
-
-      <div class="table-responsive">
-        <table class="table table-striped table-hover ">
-          <thead>
-            <tr>
-              <th>S. No.</th>
-              <th>Question</th>
-              <th>Time Taken In Question</th>
-              <th>Answer Submitted</th>
-              <th>Is your Answer Correct</th>
-              <th>Marks Obtained in Question</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let answer of examReturn?.questionAnswers; let i = index">
-              <td>{{i+1}}</td>
-              <td class="text-truncate">{{answer?.question}}</td>
-              <td>{{answer?.timeTaken}}</td>
-              <td>{{answer?.answerSubmitted}}</td>
-              <td>{{answer?.isAnswerCorrect}}</td>
-              <td>{{answer?.marksObtained}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
-
-    </fieldset>
-  </form>
+    </div>
+  </div>
 </div>

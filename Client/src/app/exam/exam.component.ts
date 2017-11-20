@@ -1,14 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'fyp-exam',
-  templateUrl: './exam.component.html'
+  template: `
+  <router-outlet></router-outlet>
+  `
 })
-export class ExamComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class ExamComponent {}

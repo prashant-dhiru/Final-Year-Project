@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs/Rx';
-import { Response } from '@angular/http';
 import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Response } from '@angular/http';
+import { Subscription } from 'rxjs/Rx';
 
+import { ExamReturn } from '../../Classes';
 import { ExamService } from '../exam.service';
-import { ExamReturn } from '../../Classes/exam-return';
 
 @Component({
   selector: 'fyp-exam-quick-result',
   templateUrl: './exam-quick-result.component.html',
-  styles: []
+  styleUrls: ['./exam-quick-result.component.css']
 })
 export class ExamQuickResultComponent implements OnInit {
 

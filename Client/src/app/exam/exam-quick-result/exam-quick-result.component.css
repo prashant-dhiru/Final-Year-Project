@@ -1,0 +1,14 @@
+.formcss {
+    border: 1px solid #ededed;
+    background-color: #fcfcfc; 
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+
+input.form-control {
+    margin-bottom: 10px;
+}

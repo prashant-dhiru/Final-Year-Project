@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
-import { Exam } from '../Classes/exam';
-import { Question } from '../Classes/question';
+import { Exam, Question } from '../Classes';
 
 @Injectable()
 export class AdminService {

@@ -3,14 +3,14 @@ import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 import { Router } from '@angular/router';
 
+import { Exam } from '../../Classes';
 import { ExamService } from '../exam.service';
-import { Exam } from '../../Classes/exam';
 import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-exam-list',
   templateUrl: './exam-list.component.html',
-  styles: []
+  styleUrls: ['./exam-list.component.css']
 })
 export class ExamListComponent implements OnInit {
 
