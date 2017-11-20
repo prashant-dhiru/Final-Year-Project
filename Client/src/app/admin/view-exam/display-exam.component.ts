@@ -3,14 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
 
-import { AdminService } from '../../admin.service';
-import { Exam } from '../../../Classes/exam';
-import { IsAuthenticatedService } from '../../../Shared/is-authenticated.service';
+import { AdminService } from '../admin.service';
+import { Exam, Question } from '../../Classes';
+import { IsAuthenticatedService } from '../../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-display-exam',
   templateUrl: './display-exam.component.html',
-  styleUrls: ['./display-exam.component.css']
+  styleUrls: ['./view-exam.component.css']
 })
 export class DisplayExamComponent implements OnInit {
 
@@ -18,6 +18,8 @@ export class DisplayExamComponent implements OnInit {
   subscription: Subscription;
   submissionError = -1;
   exam: Exam;
+  question: Question;
+  selectedQuestionNumber: number;
 
   constructor(
     private adminService: AdminService,
@@ -31,6 +33,9 @@ export class DisplayExamComponent implements OnInit {
     this.subscription = this.adminService.checkExam(this.id).subscribe((response: Response) => {
       this.submissionError = 0;
       this.exam = response.json();
+      if (this.exam.questions.length) {
+        this.selectQuestionForDisplay(this.exam.questions[0]._id, 1);
+      }
     }, (error: any) => {
       if (error.status === 401) {
         this.submissionError = 1;
@@ -48,6 +53,11 @@ export class DisplayExamComponent implements OnInit {
     }, () => {
       this.subscription.unsubscribe();
     });
+  }
+
+  selectQuestionForDisplay (questionId: string, questionNumber: number): void {
+    this.question = this.exam.questions.find(question => question._id === questionId);
+    this.selectedQuestionNumber = questionNumber;
   }
 
 }

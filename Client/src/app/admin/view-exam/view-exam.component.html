@@ -6,7 +6,7 @@
       <hr>
       <a class="list-group-item clearfix" *ngFor="let exam of examList; let i = index">
         <fieldset>
-          <div class="row">
+          <div class="row hideOverflow">
             <div class="col-lg-2">{{exam._id}}</div>
             <div class="col-lg-3 ellipsis">{{exam.name}}</div>
             <div class="col-lg-3 ellipsis">{{exam.subject}}</div>

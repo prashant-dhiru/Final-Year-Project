@@ -15,13 +15,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 
 import { ExamInputComponent } from './admin/exam-input/exam-input.component';
-import { QuestionItemListComponent } from './admin/view-exam/display-exam/question-item-list.component';
 import { QuestionInputComponent } from './admin/question-input/question-input.component';
 import { AdminComponent } from './admin/admin.component';
 import { ViewExamComponent } from './admin/view-exam/view-exam.component';
 import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
 import { AdminMeComponent } from './admin/admin-me/admin-me.component';
-import { DisplayExamComponent } from './admin/view-exam/display-exam/display-exam.component';
+import { DisplayExamComponent } from './admin/view-exam/display-exam.component';
 
 import { UserComponent } from './user/user.component';
 import { UserSignupComponent } from './user/user-signup/user-signup.component';
@@ -51,7 +50,6 @@ declare let require: any;
     RouteNotFoundComponent,
     UserSignupComponent,
     ExamInputComponent,
-    QuestionItemListComponent,
     QuestionInputComponent,
     ExamComponent,
     UserComponent,

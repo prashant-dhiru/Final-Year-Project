@@ -1,0 +1,271 @@
+<div class="container">
+  <div class="bs-component">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 col-sm-12">
+        <div class="formcss">
+          <form class="form-horizontal" *ngIf="submissionError == 0">
+            <fieldset>
+
+              <div class="form-group"><h2>Exam Details:</h2></div>
+
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="_id">Exam ID:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        id="_id"
+                        class="form-control"
+                        value="{{exam?._id}}"
+                        readonly>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="name">Exam Name:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        readonly
+                        id="name"
+                        class="form-control"
+                        value="{{exam?.name}}">
+                </div>
+              </div>
+        
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="description">Exam Description:
+                </label>
+                <div class="col-lg-10">
+                  <input readonly
+                        type="text"
+                        id="description"
+                        placeholder="Exam Description"
+                        class="form-control"
+                        value="{{exam?.description}}">
+                </div>
+              </div>
+        
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="allowedTime">Allowed Time:
+                </label>
+                <div class="col-lg-10">
+                  <div class="input-group">
+                    <input type="text"
+                          readonly
+                          id="allowedTime"
+                          class="form-control"
+                          value="{{exam?.allowedTime}}">
+                    <span class="input-group-addon">in Minutes</span>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="form-group">
+                <label class="control-label col-lg-2"
+                      for="subject">Subject:
+                </label>
+                <div class="col-lg-10">
+                  <input type="text"
+                        readonly
+                        id="subject"
+                        class="form-control"
+                        value="{{exam?.subject}}">
+                </div>
+              </div>
+        
+              <br>
+              <hr>
+              <h2>Questions:</h2>
+
+              <ul class="list-group centre">
+                <a *ngFor="let question of exam.questions; let questionId = index" class="btn btn-large btn-primary listButton" (click)="selectQuestionForDisplay(question._id, (questionId+1))">{{questionId+1}}</a>
+              </ul>      
+
+              <fieldset>
+
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="quno">Qustion Number:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="quno"
+                          value="{{selectedQuestionNumber}}"
+                          readonly>
+                  </div>
+                </div>
+          
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="question">Question:
+                  </label>
+                  <div class="col-lg-10">
+                    <textarea class="form-control"
+                              id="question"
+                              rows="3"
+                              value="{{question?.body}}"
+                              readonly>
+                    </textarea>
+                  </div>
+                </div>
+          
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="answerOptionOne">Option 1:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="answerOptionOne"
+                          readonly
+                          value="{{question?.answerOptionOne}}">
+                  </div>
+                </div>
+          
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="answerOptionTwo">Option 2:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="answerOptionTwo"
+                          readonly
+                          value="{{question?.answerOptionTwo}}">
+                  </div>
+                </div>
+      
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="answerOptionThree">Option 3:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="answerOptionThree"
+                          readonly
+                          value="{{question?.answerOptionThree}}">
+                  </div>
+                </div>
+          
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="answerOptionFour">Option 4:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="answerOptionFour"
+                          readonly
+                          value="{{question?.answerOptionFour}}">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="ca">Correct Option:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="ca"
+                          readonly
+                          value="{{question?.correctAnswer}}">
+                  </div>
+                </div>
+            
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="correctanswer">Marks:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="correctanswer"
+                          readonly
+                          value="{{question?.marksForCorrectAnswer}}">
+                  </div>
+                </div>
+          
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="wronganswer">Nagative Mark:
+                  </label>
+                  <div class="col-lg-10">
+                    <div class="input-group">
+                      <span class="input-group-addon">-</span>
+                      <input type="text"
+                        class="form-control" 
+                        id="wronganswer"
+                        readonly
+                        value="{{question?.negativeMark}}">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="control-label col-lg-2"
+                        for="difficulty">Difficulty:
+                  </label>
+                  <div class="col-lg-10">
+                    <input type="text"
+                          class="form-control"
+                          id="difficulty"
+                          placeholder="Question Difficulty"
+                          readonly
+                          value="{{question?.difficulty}}">
+                  </div>
+                </div>
+          
+              </fieldset>
+
+            </fieldset>
+          </form>
+        </div>
+
+        <div>
+          <div class="panel panel-error" *ngIf="submissionError == 1">
+            <div class="panel-body">
+              <p>
+                You seem to be unauthenticated from the server. Login <a [routerLink]="['/admin']">here</a>!!
+              </p>
+            </div>
+          </div>
+  
+          <div class="panel panel-error" *ngIf="submissionError == 2">
+            <div class="panel-body">
+              <p>
+                <strong>Oh No!</strong>
+                The Object ID you inputted seems to be incorrect. Input a correct Object ID for Exam!!
+              </p>
+            </div>
+          </div>
+      
+          <div class="panel panel-error" *ngIf="submissionError == 3">
+            <div class="panel-body">
+              <p>
+                <strong>Oops!</strong>
+                The store has no exam with the id {{id}}. Try giving the ID an check!!
+              </p>
+            </div>
+          </div>
+  
+          <div class="panel panel-error" *ngIf="submissionError == 4">
+            <div class="panel-body">
+              <p>
+                <strong>Oh snap!</strong>
+                There seems to be a technical problem with the server, or the connection. Please Try Again later
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

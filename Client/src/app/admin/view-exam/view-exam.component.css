@@ -1,4 +1,4 @@
-td, div, dt {
+div {
     white-space: nowrap;
     overflow: hidden;
 }
@@ -11,4 +11,22 @@ td, div, dt {
     margin-bottom: 20px;
     padding-top: 15px;
     padding-bottom: 15px;
+}
+
+.formcss {
+    border: 1px solid #ededed;
+    background-color: #fcfcfc; 
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.centre {
+    text-align: center;
+}
+
+.listButton {
+    margin: 10px 10px 10px 10px;
 }
