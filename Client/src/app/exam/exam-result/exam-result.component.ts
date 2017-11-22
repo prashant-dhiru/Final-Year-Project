@@ -253,6 +253,7 @@ export class ExamResultComponent implements OnInit {
       };
     });
   } // area chart
+  // done
 
   selectQuestionForDisplay (questionID: string, questionNumber: number): void {
     const question = this.questions.find(que => que._id === questionID);

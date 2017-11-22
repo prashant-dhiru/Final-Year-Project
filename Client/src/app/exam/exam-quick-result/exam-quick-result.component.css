@@ -12,3 +12,12 @@
 input.form-control {
     margin-bottom: 10px;
 }
+
+td {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+}

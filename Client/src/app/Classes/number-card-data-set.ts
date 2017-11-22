@@ -4,6 +4,6 @@ export class NumberCardDataSet {
     constructor (
         graphData: SeriesData[],
         graphColorScheme: ColorScheme,
-        graphSize: number[]
+        graphSize?: number[]
     ) {}
 }

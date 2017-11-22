@@ -1,86 +1,88 @@
-<div data-spy="scroll" data-target="#myScrollspy" data-offset="15" *ngIf="examLoadSuccess == 1">
-    <div class="row"> 
-        <nav class="col-sm-4 col-md-3 hidden-xs hidden-sm" id="myScrollspy">
-            <div data-offset-top="70" data-spy="affix">
-                <h3>Time: {{timeNowInMinutes}} : {{timeNow%60}}</h3>
-                <h4>Allowed Time {{exam?.allowedTime}} Minute(s)</h4>
-                <hr>
-                <h2>Questions:</h2>
+<div class="container">
+  <div class="bs-component">
+    <div class="row" *ngIf="examLoadSuccess == 1">
+      
+      <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <h3>Time: {{timeNowInMinutes}} : {{timeNow%60}}</h3>
+        <h4>Allowed Time {{exam?.allowedTime}} Minute(s)</h4>
+        <hr>
+        <h2>Questions:</h2>
+        <ul class="list-group centre">
+          <a class="btn btn-large btn-primary listButton" *ngFor="let question of exam?.questions; let questionId = index" href="exam/{{exam?._id}}#ques{{question?._id}}" routerLinkActive="active" id="sb{{question?._id}}">{{questionId+1}}</a>
+        </ul>
+      </div>
 
-                <ul class="nav nav-pills nav-stacked" id="examButtonsGroup">
-                    <li><a *ngFor="let question of exam?.questions; let questionId = index" class="text-truncate" id="sb{{question?._id}}" href="exam/{{exam?._id}}#ques{{question?._id}}" routerLinkActive="active">{{questionId+1}} {{question?.body}}</a></li>
-                </ul>
-            </div>
-            
-        </nav>
-    
-        <div class="col-sm-8 col-md-9 main bs-component">   
-            <form [formGroup]="examForm" (ngSubmit)="finishExam()">
-                <div formArrayName="questionAnswers">  
-            
-                    <div *ngFor="let question of exam?.questions; let questionId = index" class="well" id="ques{{question._id}}">
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <p><kbd>{{questionId+1}}</kbd> {{question?.body}}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-offset-1 col-sm-11 col-xs-12">
-                                    
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio"
-                                            formControlName="{{questionId}}"
-                                            [value]="question?.answerOptionOne">
-                                            {{question?.answerOptionOne}}
-                                        </label>
-                                    </div>
+      <div class="col-md-9 col-sm-12">
 
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio"
-                                            formControlName="{{questionId}}"
-                                            [value]="question?.answerOptionTwo">
-                                            {{question?.answerOptionTwo}}
-                                        </label>
-                                    </div>
-
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio"
-                                            formControlName="{{questionId}}"
-                                            [value]="question?.answerOptionThree">
-                                            {{question?.answerOptionThree}}
-                                        </label>
-                                    </div>
-
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio"
-                                            formControlName="{{questionId}}"
-                                            [value]="question?.answerOptionFour">
-                                            {{question?.answerOptionFour}}
-                                        </label>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
-                                    <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)" id="btn{{question?._id}}">Submit Answer</button>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                
+        <form [formGroup]="examForm" (ngSubmit)="finishExam()">
+          <div formArrayName="questionAnswers">  
+      
+            <div *ngFor="let question of exam?.questions; let questionId = index" class="well" id="ques{{question._id}}">
+              <fieldset>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <p><kbd>{{questionId+1}}</kbd> {{question?.body}}</p>
+                  </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
-                        <button type="submit" class="btn btn-danger">Submit Exam</button>
+                  <div class="col-sm-offset-1 col-sm-11 col-xs-12">
+                        
+                    <div class="radio">
+                      <label>
+                        <input type="radio"
+                            formControlName="{{questionId}}"
+                            [value]="question?.answerOptionOne">
+                            {{question?.answerOptionOne}}
+                      </label>
                     </div>
+
+                    <div class="radio">
+                      <label>
+                        <input type="radio"
+                            formControlName="{{questionId}}"
+                            [value]="question?.answerOptionTwo">
+                            {{question?.answerOptionTwo}}
+                      </label>
+                    </div>
+
+                    <div class="radio">
+                      <label>
+                        <input type="radio"
+                            formControlName="{{questionId}}"
+                            [value]="question?.answerOptionThree">
+                            {{question?.answerOptionThree}}
+                      </label>
+                    </div>
+
+                    <div class="radio">
+                      <label>
+                        <input type="radio"
+                            formControlName="{{questionId}}"
+                            [value]="question?.answerOptionFour">
+                            {{question?.answerOptionFour}}
+                      </label>
+                    </div>
+
+                  </div>
                 </div>
-            </form>
-        </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
+                    <button class="btn btn-primary" type="button" (click)="submitAnswer(question?._id, questionId)" id="btn{{question?._id}}">Submit Answer</button>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-4 col-md-2 col-md-offset-9">
+              <button type="submit" class="btn btn-danger">Submit Exam</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
     </div>
+  </div>
 </div>

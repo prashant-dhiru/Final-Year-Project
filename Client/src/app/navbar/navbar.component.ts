@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { Response } from '@angular/http';
 import { Router } from '@angular/router';
@@ -9,9 +9,14 @@ import { IsAuthenticatedService } from '../Shared/is-authenticated.service';
 
 @Component({
   selector: 'fyp-navbar',
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  styles: [`
+  .navbar {
+    margin-bottom: 0px;
+}
+  `]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
 
   subscription: Subscription;
 
@@ -21,9 +26,6 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private isAuthenticatedService: IsAuthenticatedService
   ) { }
-
-  ngOnInit() {
-  }
 
   logoutUser () {
     this.subscription = this.userService.logoutuser().subscribe((response: Response) => {

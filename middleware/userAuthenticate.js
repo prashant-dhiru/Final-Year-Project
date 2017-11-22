@@ -18,11 +18,11 @@ var userAuthenticate = (request, response, next) => {
         request.student = student;
         //calling next to finish execution of route
         next();
-    })/*
-        on error call sening back error with Not Implemented status code
-    */.catch((error) => response.status(501).send(error));
-    //function ends here
 
+    // on error call sening back error with Not Implemented status code
+    }, (error) => response.status(501).send(error));
+
+    //function ends here
 };
 
 //exporting the function to be used in routes

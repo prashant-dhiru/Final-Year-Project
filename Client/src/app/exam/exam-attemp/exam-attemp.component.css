@@ -21,3 +21,13 @@ div.col-sm-9 div {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.listButton {
+    margin: 5px;
+}
+
+#sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}

@@ -75,11 +75,11 @@
                   <tbody>
                     <tr *ngFor="let answer of examReturn?.questionAnswers; let i = index">
                       <td>{{i+1}}</td>
-                      <td class="text-truncate">{{answer?.question}}</td>
-                      <td>{{answer?.timeTaken}}</td>
-                      <td>{{answer?.answerSubmitted}}</td>
-                      <td>{{answer?.isAnswerCorrect}}</td>
-                      <td>{{answer?.marksObtained}}</td>
+                      <td class="text-truncate ellipsis">{{answer?.question}}</td>
+                      <td class="ellipsis">{{answer?.timeTaken}}</td>
+                      <td class="ellipsis">{{answer?.answerSubmitted}}</td>
+                      <td class="ellipsis">{{answer?.isAnswerCorrect}}</td>
+                      <td class="ellipsis">{{answer?.marksObtained}}</td>
                     </tr>
                   </tbody>
                 </table>

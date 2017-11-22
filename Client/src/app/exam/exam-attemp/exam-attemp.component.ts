@@ -1,12 +1,11 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs/Rx';
 import { Response } from '@angular/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription, Observable } from 'rxjs/Rx';
 
-import { Exam } from '../../Classes/exam';
+import { Exam, Question } from '../../Classes';
 import { ExamService } from '../exam.service';
-import { Question } from '../../Classes/question';
 
 @Component({
   selector: 'fyp-exam-attemp',
@@ -39,101 +38,104 @@ export class ExamAttempComponent implements OnInit {
 
   submitAnswer(questionId: string, questionIndex: number) {
 
+    // if radio button has no value selected
     if (!this.examForm.value.questionAnswers[questionIndex]) {
       return;
     }
 
+    // if answer has already been submitted once
     if (this.examData.questionAnswers.find((element) => element.question === questionId)) {
       return console.error('Answer for this question has already been submitted, not submitting this attemp');
     }
 
+    // creating value to push in final data
     const someval = {
       question: questionId,
-      timeTaken: this.onLap(),
+      // lapping time here
+      timeTaken: (this.timeNow - this.lastSprintTime),
       answerSubmitted: this.examForm.value.questionAnswers[questionIndex]
     };
 
+    // pushing data in final dataset
     this.examData.questionAnswers.push(someval);
 
     // sprinting value becuase it is needed to spring value on every lap
     // sprinting has to be done after lap
-    this.onSprint();
+    this.lastSprintTime = this.timeNow;
 
+    // adjusting the frontend
     document.getElementById('btn' + questionId).setAttribute('disabled', 'true');
-    document.getElementById('sb' + questionId).setAttribute('class', 'text-truncate text-success');
+    document.getElementById('sb' + questionId).setAttribute('class', ' btn btn-large listButton btn-success');
 
   }
 
-  getExam () {
+  ngOnInit() {
+
+    // getting exam from backend
     this.subscription = this.examService.getExam(this.id).subscribe((response: Response) => {
+
       this.exam = response.json();
-      console.log(this.exam);
+
+      // converting time limit from minutes to seconds
       this.examTimeLimit = this.exam.allowedTime * 60;
+
+      // creating the form and adding controls to the form
+      this.examForm = new FormGroup({
+        'questionAnswers': new FormArray([])
+      });
+      (<Question[]>this.exam.questions).forEach((question, index) => {
+        (<FormArray>this.examForm.controls.questionAnswers).push(new FormControl());
+      });
+
+      // setting flag to render the markup
       this.examLoadSuccess = 1;
-      this.initExamForm();
+
+      // starting the timer to tick
+      this.timerSubscription = this.timer.subscribe((value) => {
+
+        // tickering function
+        this.timeNow++;
+
+        // converting current time to minutes
+        this.timeNowInMinutes = Math.floor(this.timeNow / 60);
+
+        // checking if time limit has exceeded,and if the condition, finishing the exam
+        if (this.timeNow >= this.examTimeLimit) {
+          this.finishExam();
+        }
+
+        // tickering ends here
+      });
+
     }, (error: any) => {
+      console.error(error);
       window.alert('Error Occured while fetching exam: ' + error.message);
       setTimeout(() => this.router.navigate(['../']), 1500);
       this.examLoadSuccess = 0;
+      // setting flag to mark the fetching failure
     }, () => {
       this.subscription.unsubscribe();
     });
   }
 
-  initExamForm () {
-    this.examForm = new FormGroup({
-      'questionAnswers': new FormArray([])
-    });
-    (<Question[]>this.exam.questions).forEach((question, index) => {
-      (<FormArray>this.examForm.controls.questionAnswers).push(new FormControl());
-    });
-
-    // starting the timer to tick
-    this.timerSubscription = this.timer.subscribe((value) => {
-      this.tickerFunc();
-    });
-
-  }
-
-  ngOnInit() {
-    this.getExam();
-  }
-
-  tickerFunc () {
-    this.timeNow++;
-
-    this.timeNowInMinutes = Math.floor(this.timeNow / 60);
-
-    if (this.timeNow >= this.examTimeLimit) {
-      this.finishExam();
-    }
-  }
-
-  onSprint () {
-    this.lastSprintTime = this.timeNow;
-  }
-
-  onLap (): number {
-    return this.timeNow - this.lastSprintTime;
-  }
-
   finishExam () {
     // stopping the timer
     this.timerSubscription.unsubscribe();
+
+    // setting value fo these two data fields in here
     this.examData.totalTimeTaken = this.timeNow;
     this.examData.exam = this.exam._id;
 
-    console.log(this.examData);
-
+    // sending response data back to server
     this.subscription = this.examService.submitExam(this.id, this.examData).subscribe((response: Response) => {
-      console.log(response);
+      // on successfull submission of exam, redirecting to exam quick result
       this.router.navigate(['exam', 'submit', this.id]);
     }, (error: any) => {
-      console.log(error);
+      console.error(error);
       if (error.status === 401) {
         // 401 unauthenticated
       } else if (error.status === 501) {
-        // 501 error whil fetching student detail
+        // 501 error while fetching student detail
       } else if (error.status === 400) {
         // 400 invalid id
       } else {

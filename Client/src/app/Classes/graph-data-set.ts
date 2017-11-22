@@ -4,6 +4,6 @@ export class GraphDataSet {
     constructor (
         graphData: GraphData[],
         graphColorScheme: ColorScheme,
-        graphSize: number[]
+        graphSize?: number[]
     ) {}
 }

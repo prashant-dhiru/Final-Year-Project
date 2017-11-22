@@ -1,3 +1,5 @@
+@import url("../about/css/font-awesome.min.css");
+
 header {
     padding-left: 20px;
 }
@@ -8,10 +10,6 @@ header {
 
 p {
     text-align: justify;
-}
-
-.pad-para {
-    
 }
 
 header h2:after {
@@ -28,22 +26,76 @@ header h2:after {
 }
 
 .border {
-
-    border-style: solid;
-    border-color: rgb(221, 221, 221);
-    border-width: 1px;
-    box-sizing: border-box;
-    margin: 0px;
-    margin-bottom: 35px;
     padding: 12px;
-    border-top-left-radius: 100%;
-    border-top-right-radius: 100%;
-    border-bottom-left-radius: 100%;
-    border-bottom-right-radius: 100%;
-    cursor: default;
-    display: inline-block;
+}
 
+.color {
+    background-image: -ms-linear-gradient(bottom, #ffffff 0%, #333333 100%);
+    background-image: -moz-linear-gradient(bottom, #ffffff 0%, #333333 100%);
+    background-image: -o-linear-gradient(bottom, #ffffff 0%, #333333 100%);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ffffff), color-stop(1, #333333));
+    background-image: -webkit-linear-gradient(bottom, #ffffff 0%, #333333 100%);
+    background-image: linear-gradient(to top, #ffffff 0%, #333333 100%);
+}
+
+section.main {
+    padding: 90px;
+}
+
+.collectSections {
+    background-color: #ffffff;
+    border-radius: 5px;
+    color: #636363;
+}
+
+.headerSection {
+    color: #ffffff;
+}
+
+.right {
+    text-align: right;
+}
+
+.underline {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #e6e6e6;
+}
+
+p {
+    font-size: 17px;
 }
 
 
+.custom-icon {    
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 100%;
+    border: 12px solid #fff;
+    color: #fff;
+    display: table-cell;
+    font-size: 50px;
+    height: 60px;
+    padding: 30px;
+    text-align: center;
+    transition: .5s;
+    vertical-align: middle;
+    width: 60px;
+    box-shadow: 0 1px rgba(0, 0, 0, 0.46);
+}
 
+.fix-editor {
+    display: none;
+}
+
+.icon-wrapper {
+    display: inline-block;
+}
+  
+
+/* 
+i.fa {
+    display: inline-block;
+    border-radius: 60px;
+    box-shadow: 0px 0px 2px #888;
+    padding: 0.5em 0.6em;
+  } */

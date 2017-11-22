@@ -1,17 +1,17 @@
 .footer {
     width: 100%;
-  }
-  
-  #footertext {
+}
+
+#footertext {
     text-align: center;
-  }
-  
-  .Site {
+}
+
+.Site {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  }
-  
-  .Site-content {
+}
+
+.Site-content {
     flex: 1;
-  }
+}

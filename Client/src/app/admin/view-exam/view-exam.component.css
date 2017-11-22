@@ -30,3 +30,7 @@ div {
 .listButton {
     margin: 10px 10px 10px 10px;
 }
+
+ul {
+    white-space: normal;
+}
