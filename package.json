@@ -27,7 +27,7 @@
     "cors": "^2.8.4",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.12",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.10",
     "validator": "^8.1.0"
