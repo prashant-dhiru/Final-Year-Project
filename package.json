@@ -6,7 +6,9 @@
   "scripts": {
     "test": "SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
     "testWatch": "nodemon --exec 'npm test'",
-    "start": "node index.js"
+    "start": "node index.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "MEAN",
@@ -30,6 +32,8 @@
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.10",
-    "validator": "^8.1.0"
-  }
+    "validator": "^8.1.0",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
